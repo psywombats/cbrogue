@@ -30,47 +30,47 @@
 #include "IncludeGlobals.h"
 
 short randClump(randomRange theRange) {
-	return randClumpedRange(theRange.lowerBound, theRange.upperBound, theRange.clumpFactor);
+    return randClumpedRange(theRange.lowerBound, theRange.upperBound, theRange.clumpFactor);
 }
 
 // Get a random int between lowerBound and upperBound, inclusive, with probability distribution
 // affected by clumpFactor.
 short randClumpedRange(short lowerBound, short upperBound, short clumpFactor) {
-	if (upperBound <= lowerBound) {
-		return lowerBound;
-	}
-	if (clumpFactor <= 1) {
-		return rand_range(lowerBound, upperBound);
-	}
-	
-	short i, total = 0, numSides = (upperBound - lowerBound) / clumpFactor;
-	
-	for(i=0; i < (upperBound - lowerBound) % clumpFactor; i++) {
-		total += rand_range(0, numSides + 1);
-	}
-	
-	for(; i< clumpFactor; i++) {
-		total += rand_range(0, numSides);
-	}
-	
-	return (total + lowerBound);
+    if (upperBound <= lowerBound) {
+        return lowerBound;
+    }
+    if (clumpFactor <= 1) {
+        return rand_range(lowerBound, upperBound);
+    }
+    
+    short i, total = 0, numSides = (upperBound - lowerBound) / clumpFactor;
+    
+    for(i=0; i < (upperBound - lowerBound) % clumpFactor; i++) {
+        total += rand_range(0, numSides + 1);
+    }
+    
+    for(; i< clumpFactor; i++) {
+        total += rand_range(0, numSides);
+    }
+    
+    return (total + lowerBound);
 }
 
 // Get a random int between lowerBound and upperBound, inclusive
 boolean rand_percent(short percent) {
-	return (rand_range(0, 99) < clamp(percent, 0, 100));
+    return (rand_range(0, 99) < clamp(percent, 0, 100));
 }
 
 void shuffleList(short *list, short listLength) {
-	short i, r, buf;
-	for (i=0; i<listLength; i++) {
-		r = rand_range(0, listLength-1);
-		if (i != r) {
-			buf = list[r];
-			list[r] = list[i];
-			list[i] = buf;
-		}
-	}
+    short i, r, buf;
+    for (i=0; i<listLength; i++) {
+        r = rand_range(0, listLength-1);
+        if (i != r) {
+            buf = list[r];
+            list[r] = list[i];
+            list[i] = buf;
+        }
+    }
 }
 
 void fillSequentialList(short *list, short listLength) {
@@ -115,61 +115,61 @@ void raninit( ranctx *x, u4 seed ) {
 #define RAND_MAX_COMBO ((unsigned long) UINT32_MAX)
 
 int range(int n, short RNG) {
-	unsigned long div;
-	int r;
-	
-	div = RAND_MAX_COMBO/n;
-	
-	do {
-		r = ranval(&(RNGState[RNG])) / div;
-	} while (r >= n);
-	
-	return r;
+    unsigned long div;
+    int r;
+    
+    div = RAND_MAX_COMBO/n;
+    
+    do {
+        r = ranval(&(RNGState[RNG])) / div;
+    } while (r >= n);
+    
+    return r;
 }
 
 // Get a random int between lowerBound and upperBound, inclusive, with uniform probability distribution
 
 #ifdef AUDIT_RNG // debug version
 int rand_range(int lowerBound, int upperBound) {
-	int retval;
-	char RNGMessage[100];
-	
+    int retval;
+    char RNGMessage[100];
+    
     brogueAssert(lowerBound <= INT_MAX && upperBound <= INT_MAX);
-	
-	if (upperBound <= lowerBound) {
-		return lowerBound;
-	}
-	retval = lowerBound + range(upperBound-lowerBound+1, rogue.RNG);
-	if (rogue.RNG == RNG_SUBSTANTIVE) {
-		randomNumbersGenerated++;
-		if (1) { //randomNumbersGenerated >= 1128397) {
-			sprintf(RNGMessage, "\n#%lu, %i to %i: %i", randomNumbersGenerated, lowerBound, upperBound, retval);
-			RNGLog(RNGMessage);
-		}
-	}
-	return retval;
+    
+    if (upperBound <= lowerBound) {
+        return lowerBound;
+    }
+    retval = lowerBound + range(upperBound-lowerBound+1, rogue.RNG);
+    if (rogue.RNG == RNG_SUBSTANTIVE) {
+        randomNumbersGenerated++;
+        if (1) { //randomNumbersGenerated >= 1128397) {
+            sprintf(RNGMessage, "\n#%lu, %i to %i: %i", randomNumbersGenerated, lowerBound, upperBound, retval);
+            RNGLog(RNGMessage);
+        }
+    }
+    return retval;
 }
 #else // normal version
 int rand_range(int lowerBound, int upperBound) {
     brogueAssert(lowerBound <= INT_MAX && upperBound <= INT_MAX);
-	if (upperBound <= lowerBound) {
-		return lowerBound;
-	}
-	if (rogue.RNG == RNG_SUBSTANTIVE) {
-		randomNumbersGenerated++;
-	}
-	return lowerBound + range(upperBound-lowerBound+1, rogue.RNG);
+    if (upperBound <= lowerBound) {
+        return lowerBound;
+    }
+    if (rogue.RNG == RNG_SUBSTANTIVE) {
+        randomNumbersGenerated++;
+    }
+    return lowerBound + range(upperBound-lowerBound+1, rogue.RNG);
 }
 #endif
 
 // seeds with the time if called with a parameter of 0; returns the seed regardless.
 // All RNGs are seeded simultaneously and identically.
 unsigned long seedRandomGenerator(unsigned long seed) {
-	if (seed == 0) {
-		seed = (unsigned long) time(NULL) - 1352700000;
-	}
-	raninit(&(RNGState[RNG_SUBSTANTIVE]), seed);
-	raninit(&(RNGState[RNG_COSMETIC]), seed);
-	return seed;
+    if (seed == 0) {
+        seed = (unsigned long) time(NULL) - 1352700000;
+    }
+    raninit(&(RNGState[RNG_SUBSTANTIVE]), seed);
+    raninit(&(RNGState[RNG_COSMETIC]), seed);
+    return seed;
 }
 

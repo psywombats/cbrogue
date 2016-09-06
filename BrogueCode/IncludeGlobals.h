@@ -21,12 +21,12 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-extern tcell tmap[DCOLS][DROWS];						// grids with info about the map
-extern pcell pmap[DCOLS][DROWS];						// grids with info about the map
+extern tcell tmap[DCOLS][DROWS];                        // grids with info about the map
+extern pcell pmap[DCOLS][DROWS];                        // grids with info about the map
 extern short **scentMap;
 extern cellDisplayBuffer displayBuffer[COLS][ROWS];
 extern short terrainRandomValues[DCOLS][DROWS][8];
-extern short **safetyMap;										// used to help monsters flee
+extern short **safetyMap;                                       // used to help monsters flee
 extern short **allySafetyMap;
 extern short **chokeMap;
 
@@ -66,7 +66,7 @@ extern unsigned long positionInPlaybackFile;
 extern unsigned long lengthOfPlaybackFile;
 extern unsigned long recordingLocation;
 extern unsigned long maxLevelChanges;
-extern char annotationPathname[BROGUE_FILENAME_MAX];	// pathname of annotation file
+extern char annotationPathname[BROGUE_FILENAME_MAX];    // pathname of annotation file
 extern unsigned long previousGameSeed;
 
 // basic colors

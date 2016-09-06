@@ -24,26 +24,26 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define	VERT_PX		18
-#define	HORIZ_PX	11
+#define VERT_PX     18
+#define HORIZ_PX    11
 
-#define kROWS		(30+3+1)
-#define kCOLS		100
+#define kROWS       (30+3+1)
+#define kCOLS       100
 
 // This is only used as a starting point for the calculation after the
 // window resizes.
-#define FONT_SIZE	10
+#define FONT_SIZE   10
 // This is only the basic font.  There are also fixed-name fallback fonts.
-#define FONT_NAME	@"Monaco"
+#define FONT_NAME   @"Monaco"
 
 @interface Viewport : NSView
 {
-	NSString *_letterArray[kCOLS][kROWS];
-	CGColorRef _bgColorArray[kCOLS][kROWS];
+    NSString *_letterArray[kCOLS][kROWS];
+    CGColorRef _bgColorArray[kCOLS][kROWS];
     CGColorRef _letterColorArray[kCOLS][kROWS];
-	NSMutableDictionary *_attributes[kCOLS][kROWS];
-	NSMutableDictionary *_characterSizeDictionary;
-	NSRect _rectArray[kCOLS][kROWS];
+    NSMutableDictionary *_attributes[kCOLS][kROWS];
+    NSMutableDictionary *_characterSizeDictionary;
+    NSRect _rectArray[kCOLS][kROWS];
     unsigned short _charArray[kCOLS][kROWS];
     NSSize _fastFontCharSize;
     CGContextRef _context;
@@ -66,16 +66,16 @@
 - (void)setString:(NSString *)c
    withBackground:(CGColorRef)bgColor
   withLetterColor:(CGColorRef)letterColor
-	  atLocationX:(short)x
-		locationY:(short)y
+      atLocationX:(short)x
+        locationY:(short)y
     withFancyFont:(bool)fancyFont
          withChar:(unsigned short)character;
 
 - (void)drawTheString:(NSString *)theString centeredIn:(NSRect)rect withAttributes:(NSMutableDictionary *)theAttributes withChar:(unsigned short)character;
 
 - (void)setHorizWindow:(short)hPx
-			vertWindow:(short)vPx
-			  fontSize:(short)size;
+            vertWindow:(short)vPx
+              fontSize:(short)size;
 
 // window size
 @property (nonatomic, assign) short horizWindow;

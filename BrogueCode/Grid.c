@@ -27,96 +27,96 @@
 
 // mallocing two-dimensional arrays! dun dun DUN!
 short **allocGrid() {
-	short i;
-	short **array = malloc(DCOLS * sizeof(short *));
+    short i;
+    short **array = malloc(DCOLS * sizeof(short *));
     
-	array[0] = malloc(DROWS * DCOLS * sizeof(short));
-	for(i = 1; i < DCOLS; i++) {
-		array[i] = array[0] + i * DROWS;
-	}
-	return array;
+    array[0] = malloc(DROWS * DCOLS * sizeof(short));
+    for(i = 1; i < DCOLS; i++) {
+        array[i] = array[0] + i * DROWS;
+    }
+    return array;
 }
 
 void freeGrid(short **array) {
-	free(array[0]);
-	free(array);
+    free(array[0]);
+    free(array);
 }
 
 void copyGrid(short **to, short **from) {
-	short i, j;
-	
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
-			to[i][j] = from[i][j];
-		}
-	}
+    short i, j;
+    
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
+            to[i][j] = from[i][j];
+        }
+    }
 }
 
 void fillGrid(short **grid, short fillValue) {
-	short i, j;
-	
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
-			grid[i][j] = fillValue;
-		}
-	}
+    short i, j;
+    
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
+            grid[i][j] = fillValue;
+        }
+    }
 }
 
 // Highlight the portion indicated by hiliteCharGrid with the hiliteColor at the hiliteStrength -- both latter arguments are optional.
 void hiliteGrid(short **grid, color *hiliteColor, short hiliteStrength) {
-	short i, j, x, y;
-	color hCol;
-	
-	assureCosmeticRNG;
-	
-	if (hiliteColor) {
-		hCol = *hiliteColor;
-	} else {
-		hCol = yellow;
-	}
-	
-	bakeColor(&hCol);
-	
-	if (!hiliteStrength) {
-		hiliteStrength = 75;
-	}
-	
-	for (i=0; i<DCOLS; i++) {
-		for (j=0; j<DROWS; j++) {
-			if (grid[i][j]) {
-				x = mapToWindowX(i);
-				y = mapToWindowY(j);
-				
-				displayBuffer[x][y].needsUpdate = true;
-				displayBuffer[x][y].backColorComponents[0] = clamp(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-				displayBuffer[x][y].backColorComponents[1] = clamp(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-				displayBuffer[x][y].backColorComponents[2] = clamp(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
-				displayBuffer[x][y].foreColorComponents[0] = clamp(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-				displayBuffer[x][y].foreColorComponents[1] = clamp(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-				displayBuffer[x][y].foreColorComponents[2] = clamp(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
-			}
-		}
-	}
-	restoreRNG;
+    short i, j, x, y;
+    color hCol;
+    
+    assureCosmeticRNG;
+    
+    if (hiliteColor) {
+        hCol = *hiliteColor;
+    } else {
+        hCol = yellow;
+    }
+    
+    bakeColor(&hCol);
+    
+    if (!hiliteStrength) {
+        hiliteStrength = 75;
+    }
+    
+    for (i=0; i<DCOLS; i++) {
+        for (j=0; j<DROWS; j++) {
+            if (grid[i][j]) {
+                x = mapToWindowX(i);
+                y = mapToWindowY(j);
+                
+                displayBuffer[x][y].needsUpdate = true;
+                displayBuffer[x][y].backColorComponents[0] = clamp(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[1] = clamp(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[2] = clamp(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[0] = clamp(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[1] = clamp(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[2] = clamp(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+            }
+        }
+    }
+    restoreRNG;
 }
 
 void findReplaceGrid(short **grid, short findValueMin, short findValueMax, short fillValue) {
-	short i, j;
-	
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    short i, j;
+    
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] >= findValueMin && grid[i][j] <= findValueMax) {
                 grid[i][j] = fillValue;
             }
-		}
-	}
+        }
+    }
 }
 
 // Flood-fills the grid from (x, y) along cells that are within the eligible range.
 // Returns the total count of filled cells.
 short floodFillGrid(short **grid, short x, short y, short eligibleValueMin, short eligibleValueMax, short fillValue) {
     enum directions dir;
-	short newX, newY, fillCount = 1;
+    short newX, newY, fillCount = 1;
     
     brogueAssert(fillValue < eligibleValueMin || fillValue > eligibleValueMax);
     
@@ -157,8 +157,8 @@ void drawCircleOnGrid(short **grid, short x, short y, short radius, short value)
 
 void intersectGrids(short **onto, short **from) {
     short i, j;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (onto[i][j] && from[i][j]) {
                 onto[i][j] = true;
             } else {
@@ -170,8 +170,8 @@ void intersectGrids(short **onto, short **from) {
 
 void uniteGrids(short **onto, short **from) {
     short i, j;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (!onto[i][j] && from[i][j]) {
                 onto[i][j] = from[i][j];
             }
@@ -181,8 +181,8 @@ void uniteGrids(short **onto, short **from) {
 
 void invertGrid(short **grid) {
     short i, j;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             grid[i][j] = !grid[i][j];
         }
     }
@@ -192,8 +192,8 @@ void invertGrid(short **grid) {
 // Otherwise does not change the grid location.
 void getTerrainGrid(short **grid, short value, unsigned long terrainFlags, unsigned long mapFlags) {
     short i, j;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] != value && cellHasTerrainFlag(i, j, terrainFlags) || (pmap[i][j].flags & mapFlags)) {
                 grid[i][j] = value;
             }
@@ -203,8 +203,8 @@ void getTerrainGrid(short **grid, short value, unsigned long terrainFlags, unsig
 
 void getTMGrid(short **grid, short value, unsigned long TMflags) {
     short i, j;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] != value && cellHasTMFlag(i, j, TMflags)) {
                 grid[i][j] = value;
             }
@@ -214,8 +214,8 @@ void getTMGrid(short **grid, short value, unsigned long TMflags) {
 
 void getPassableArcGrid(short **grid, short minPassableArc, short maxPassableArc, short value) {
     short i, j, count;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] != value) {
                 count = passableArcCount(i, j);
                 if (count >= minPassableArc && count <= maxPassableArc) {
@@ -229,8 +229,8 @@ void getPassableArcGrid(short **grid, short minPassableArc, short maxPassableArc
 short validLocationCount(short **grid, short validValue) {
     short i, j, count;
     count = 0;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] == validValue) {
                 count++;
             }
@@ -241,8 +241,8 @@ short validLocationCount(short **grid, short validValue) {
 
 short leastPositiveValueInGrid(short **grid) {
     short i, j, leastPositiveValue = 0;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] > 0 && (leastPositiveValue == 0 || grid[i][j] < leastPositiveValue)) {
                 leastPositiveValue = grid[i][j];
             }
@@ -262,8 +262,8 @@ void randomLocationInGrid(short **grid, short *x, short *y, short validValue) {
         return;
     }
     short index = rand_range(0, locationCount - 1);
-	for(i = 0; i < DCOLS && index >= 0; i++) {
-		for(j = 0; j < DROWS && index >= 0; j++) {
+    for(i = 0; i < DCOLS && index >= 0; i++) {
+        for(j = 0; j < DROWS && index >= 0; j++) {
             if (grid[i][j] == validValue) {
                 if (index == 0) {
                     *x = i;
@@ -289,8 +289,8 @@ void randomLeastPositiveLocationInGrid(short **grid, short *x, short *y, boolean
     }
     
     locationCount = 0;
-	for(i = 0; i < DCOLS; i++) {
-		for(j = 0; j < DROWS; j++) {
+    for(i = 0; i < DCOLS; i++) {
+        for(j = 0; j < DROWS; j++) {
             if (grid[i][j] == targetValue) {
                 locationCount++;
             }
@@ -303,8 +303,8 @@ void randomLeastPositiveLocationInGrid(short **grid, short *x, short *y, boolean
         index = rand_range(0, locationCount - 1);
     }
     
-	for(i = 0; i < DCOLS && index >= 0; i++) {
-		for(j = 0; j < DROWS && index >= 0; j++) {
+    for(i = 0; i < DCOLS && index >= 0; i++) {
+        for(j = 0; j < DROWS && index >= 0; j++) {
             if (grid[i][j] == targetValue) {
                 if (index == 0) {
                     *x = i;
@@ -415,11 +415,11 @@ void cellularAutomataRound(short **grid, char birthParameters[9], char survivalP
                 }
             }
             if (!buffer2[i][j] && birthParameters[nbCount] == 't') {
-                grid[i][j] = 1;	// birth
+                grid[i][j] = 1; // birth
             } else if (buffer2[i][j] && survivalParameters[nbCount] == 't') {
                 // survival
             } else {
-                grid[i][j] = 0;	// death
+                grid[i][j] = 0; // death
             }
         }
     }
@@ -430,22 +430,22 @@ void cellularAutomataRound(short **grid, char birthParameters[9], char survivalP
 // Marks a cell as being a member of blobNumber, then recursively iterates through the rest of the blob
 short fillContiguousRegion(short **grid, short x, short y, short fillValue) {
     enum directions dir;
-	short newX, newY, numberOfCells = 1;
-	
-	grid[x][y] = fillValue;
-	
-	// Iterate through the four cardinal neighbors.
-	for (dir=0; dir<4; dir++) {
-		newX = x + nbDirs[dir][0];
-		newY = y + nbDirs[dir][1];
-		if (!coordinatesAreInMap(newX, newY)) {
-			break;
-		}
-		if (grid[newX][newY] == 1) { // If the neighbor is an unmarked region cell,
-			numberOfCells += fillContiguousRegion(grid, newX, newY, fillValue); // then recurse.
-		}
-	}
-	return numberOfCells;
+    short newX, newY, numberOfCells = 1;
+    
+    grid[x][y] = fillValue;
+    
+    // Iterate through the four cardinal neighbors.
+    for (dir=0; dir<4; dir++) {
+        newX = x + nbDirs[dir][0];
+        newY = y + nbDirs[dir][1];
+        if (!coordinatesAreInMap(newX, newY)) {
+            break;
+        }
+        if (grid[newX][newY] == 1) { // If the neighbor is an unmarked region cell,
+            numberOfCells += fillContiguousRegion(grid, newX, newY, fillValue); // then recurse.
+        }
+    }
+    return numberOfCells;
 }
 
 // Loads up **grid with the results of a cellular automata simulation.
@@ -453,126 +453,126 @@ void createBlobOnGrid(short **grid,
                       short *retMinX, short *retMinY, short *retWidth, short *retHeight,
                       short roundCount,
                       short minBlobWidth, short minBlobHeight,
-					  short maxBlobWidth, short maxBlobHeight, short percentSeeded,
-					  char birthParameters[9], char survivalParameters[9]) {
+                      short maxBlobWidth, short maxBlobHeight, short percentSeeded,
+                      char birthParameters[9], char survivalParameters[9]) {
     
-	short i, j, k;
-	short blobNumber, blobSize, topBlobNumber, topBlobSize;
+    short i, j, k;
+    short blobNumber, blobSize, topBlobNumber, topBlobSize;
     
     short topBlobMinX, topBlobMinY, topBlobMaxX, topBlobMaxY, blobWidth, blobHeight;
-	//short buffer2[maxBlobWidth][maxBlobHeight]; // buffer[][] is already a global short array
-	boolean foundACellThisLine;
-	
-	// Generate blobs until they satisfy the minBlobWidth and minBlobHeight restraints
-	do {
-		// Clear buffer.
+    //short buffer2[maxBlobWidth][maxBlobHeight]; // buffer[][] is already a global short array
+    boolean foundACellThisLine;
+    
+    // Generate blobs until they satisfy the minBlobWidth and minBlobHeight restraints
+    do {
+        // Clear buffer.
         fillGrid(grid, 0);
-		
-		// Fill relevant portion with noise based on the percentSeeded argument.
-		for(i=0; i<maxBlobWidth; i++) {
-			for(j=0; j<maxBlobHeight; j++) {
-				grid[i][j] = (rand_percent(percentSeeded) ? 1 : 0);
-			}
-		}
-		
+        
+        // Fill relevant portion with noise based on the percentSeeded argument.
+        for(i=0; i<maxBlobWidth; i++) {
+            for(j=0; j<maxBlobHeight; j++) {
+                grid[i][j] = (rand_percent(percentSeeded) ? 1 : 0);
+            }
+        }
+        
 //        colorOverDungeon(&darkGray);
 //        hiliteGrid(grid, &white, 100);
 //        temporaryMessage("Random starting noise:", true);
-		
-		// Some iterations of cellular automata
-		for (k=0; k<roundCount; k++) {
-			cellularAutomataRound(grid, birthParameters, survivalParameters);
+        
+        // Some iterations of cellular automata
+        for (k=0; k<roundCount; k++) {
+            cellularAutomataRound(grid, birthParameters, survivalParameters);
             
 //            colorOverDungeon(&darkGray);
 //            hiliteGrid(grid, &white, 100);
 //            temporaryMessage("Cellular automata progress:", true);
-		}
+        }
         
 //        colorOverDungeon(&darkGray);
 //        hiliteGrid(grid, &white, 100);
 //        temporaryMessage("Cellular automata result:", true);
         
-		// Now to measure the result. These are best-of variables; start them out at worst-case values.
-		topBlobSize =   0;
-		topBlobNumber = 0;
-		topBlobMinX =   maxBlobWidth;
-		topBlobMaxX =   0;
-		topBlobMinY =   maxBlobHeight;
-		topBlobMaxY =   0;
+        // Now to measure the result. These are best-of variables; start them out at worst-case values.
+        topBlobSize =   0;
+        topBlobNumber = 0;
+        topBlobMinX =   maxBlobWidth;
+        topBlobMaxX =   0;
+        topBlobMinY =   maxBlobHeight;
+        topBlobMaxY =   0;
         
-		// Fill each blob with its own number, starting with 2 (since 1 means floor), and keeping track of the biggest:
-		blobNumber = 2;
-		
-		for(i=0; i<DCOLS; i++) {
-			for(j=0; j<DROWS; j++) {
-				if (grid[i][j] == 1) { // an unmarked blob
-					// Mark all the cells and returns the total size:
-					blobSize = fillContiguousRegion(grid, i, j, blobNumber);
-					if (blobSize > topBlobSize) { // if this blob is a new record
-						topBlobSize = blobSize;
-						topBlobNumber = blobNumber;
-					}
-					blobNumber++;
-				}
-			}
-		}
-		
-		// Figure out the top blob's height and width:
-		// First find the max & min x:
-		for(i=0; i<DCOLS; i++) {
-			foundACellThisLine = false;
-			for(j=0; j<DROWS; j++) {
-				if (grid[i][j] == topBlobNumber) {
-					foundACellThisLine = true;
-					break;
-				}
-			}
-			if (foundACellThisLine) {
-				if (i < topBlobMinX) {
-					topBlobMinX = i;
-				}
-				if (i > topBlobMaxX) {
-					topBlobMaxX = i;
-				}
-			}
-		}
-		
-		// Then the max & min y:
-		for(j=0; j<DROWS; j++) {
-			foundACellThisLine = false;
-			for(i=0; i<DCOLS; i++) {
-				if (grid[i][j] == topBlobNumber) {
-					foundACellThisLine = true;
-					break;
-				}
-			}
-			if (foundACellThisLine) {
-				if (j < topBlobMinY) {
-					topBlobMinY = j;
-				}
-				if (j > topBlobMaxY) {
-					topBlobMaxY = j;
-				}
-			}
-		}
+        // Fill each blob with its own number, starting with 2 (since 1 means floor), and keeping track of the biggest:
+        blobNumber = 2;
         
-		blobWidth =		(topBlobMaxX - topBlobMinX) + 1;
-		blobHeight =	(topBlobMaxY - topBlobMinY) + 1;
+        for(i=0; i<DCOLS; i++) {
+            for(j=0; j<DROWS; j++) {
+                if (grid[i][j] == 1) { // an unmarked blob
+                    // Mark all the cells and returns the total size:
+                    blobSize = fillContiguousRegion(grid, i, j, blobNumber);
+                    if (blobSize > topBlobSize) { // if this blob is a new record
+                        topBlobSize = blobSize;
+                        topBlobNumber = blobNumber;
+                    }
+                    blobNumber++;
+                }
+            }
+        }
         
-	} while (blobWidth < minBlobWidth
+        // Figure out the top blob's height and width:
+        // First find the max & min x:
+        for(i=0; i<DCOLS; i++) {
+            foundACellThisLine = false;
+            for(j=0; j<DROWS; j++) {
+                if (grid[i][j] == topBlobNumber) {
+                    foundACellThisLine = true;
+                    break;
+                }
+            }
+            if (foundACellThisLine) {
+                if (i < topBlobMinX) {
+                    topBlobMinX = i;
+                }
+                if (i > topBlobMaxX) {
+                    topBlobMaxX = i;
+                }
+            }
+        }
+        
+        // Then the max & min y:
+        for(j=0; j<DROWS; j++) {
+            foundACellThisLine = false;
+            for(i=0; i<DCOLS; i++) {
+                if (grid[i][j] == topBlobNumber) {
+                    foundACellThisLine = true;
+                    break;
+                }
+            }
+            if (foundACellThisLine) {
+                if (j < topBlobMinY) {
+                    topBlobMinY = j;
+                }
+                if (j > topBlobMaxY) {
+                    topBlobMaxY = j;
+                }
+            }
+        }
+        
+        blobWidth =     (topBlobMaxX - topBlobMinX) + 1;
+        blobHeight =    (topBlobMaxY - topBlobMinY) + 1;
+        
+    } while (blobWidth < minBlobWidth
              || blobHeight < minBlobHeight
              || topBlobNumber == 0);
-	
-	// Replace the winning blob with 1's, and everything else with 0's:
+    
+    // Replace the winning blob with 1's, and everything else with 0's:
     for(i=0; i<DCOLS; i++) {
         for(j=0; j<DROWS; j++) {
-			if (grid[i][j] == topBlobNumber) {
-				grid[i][j] = 1;
-			} else {
-				grid[i][j] = 0;
-			}
-		}
-	}
+            if (grid[i][j] == topBlobNumber) {
+                grid[i][j] = 1;
+            } else {
+                grid[i][j] = 0;
+            }
+        }
+    }
     
     // Populate the returned variables.
     *retMinX = topBlobMinX;

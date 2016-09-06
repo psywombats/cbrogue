@@ -27,9 +27,9 @@
 #import "Rogue.h"
 
 @interface RogueDriver : NSObject {
-	IBOutlet Viewport *theDisplay;
-	IBOutlet NSMenu *fileMenu;
-	IBOutlet NSWindow *theWindow;
+    IBOutlet Viewport *theDisplay;
+    IBOutlet NSMenu *fileMenu;
+    IBOutlet NSWindow *theWindow;
 }
 
 - (void)playBrogue:(id)sender;

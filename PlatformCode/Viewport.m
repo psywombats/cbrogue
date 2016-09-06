@@ -40,39 +40,39 @@
 
 - (id)initWithFrame:(NSRect)rect
 {
-	if (![super initWithFrame:rect]) {
-		return nil;
-	}
+    if (![super initWithFrame:rect]) {
+        return nil;
+    }
     
-	int i, j;
+    int i, j;
     
-	for (j = 0; j < kROWS; j++) {
-		for (i = 0; i < kCOLS; i++) {
+    for (j = 0; j < kROWS; j++) {
+        for (i = 0; i < kCOLS; i++) {
             self.basicFontName = FONT_NAME;
             self.characterSizeDictionary = [NSMutableDictionary dictionaryWithCapacity:1];
-			_letterArray[i][j] = [@" " retain];
-			[_letterArray[i][j] retain];
-			_bgColorArray[i][j] = nil;
+            _letterArray[i][j] = [@" " retain];
+            [_letterArray[i][j] retain];
+            _bgColorArray[i][j] = nil;
             _letterColorArray[i][j] = nil;
             
-			_attributes[i][j] = [[NSMutableDictionary alloc] init];
-			[_attributes[i][j] setObject:[self fastFont] forKey:NSFontAttributeName];
-			[_attributes[i][j] setObject:[NSColor blackColor]
+            _attributes[i][j] = [[NSMutableDictionary alloc] init];
+            [_attributes[i][j] setObject:[self fastFont] forKey:NSFontAttributeName];
+            [_attributes[i][j] setObject:[NSColor blackColor]
                                   forKey:NSForegroundColorAttributeName];
-			_rectArray[i][j] = NSMakeRect(HORIZ_PX*i, (VERT_PX * kROWS)-(VERT_PX*(j+1)), HORIZ_PX, VERT_PX);
+            _rectArray[i][j] = NSMakeRect(HORIZ_PX*i, (VERT_PX * kROWS)-(VERT_PX*(j+1)), HORIZ_PX, VERT_PX);
             
             _cgFont = CGFontCreateWithFontName((CFStringRef)FONT_NAME);
             
             _vPixels = VERT_PX;
             _hPixels = HORIZ_PX;
             _theFontSize = FONT_SIZE;
-		}
-	}
+        }
+    }
     
     // adjust font sizes
     [self setFontSize];
     
-	return self;
+    return self;
 }
 
 #pragma mark - Fonts
@@ -92,35 +92,35 @@
 // the cascade list is used only for foliage characters.
 
 - (NSFont *)slowFont {
-	if (!_slowFont) {
-		NSFont *baseFont = [NSFont fontWithName:_basicFontName size:_theFontSize];
-		NSArray *fallbackDescriptors = [NSArray arrayWithObjects:
-		                                // Arial provides reasonable versions of most characters.
-		                                [NSFontDescriptor fontDescriptorWithName:@"Arial Unicode MS" size:_theFontSize],
-		                                // Apple Symbols provides U+26AA, for rings, which Arial does not.
-		                                [NSFontDescriptor fontDescriptorWithName:@"Apple Symbols" size:_theFontSize],
-		                                nil];
-		NSDictionary *fodDict = [NSDictionary dictionaryWithObject:fallbackDescriptors forKey:NSFontCascadeListAttribute];
-		NSFontDescriptor *desc = [baseFont.fontDescriptor fontDescriptorByAddingAttributes:fodDict];
-		_slowFont = [[NSFont fontWithDescriptor:desc size:_theFontSize] retain];
+    if (!_slowFont) {
+        NSFont *baseFont = [NSFont fontWithName:_basicFontName size:_theFontSize];
+        NSArray *fallbackDescriptors = [NSArray arrayWithObjects:
+                                        // Arial provides reasonable versions of most characters.
+                                        [NSFontDescriptor fontDescriptorWithName:@"Arial Unicode MS" size:_theFontSize],
+                                        // Apple Symbols provides U+26AA, for rings, which Arial does not.
+                                        [NSFontDescriptor fontDescriptorWithName:@"Apple Symbols" size:_theFontSize],
+                                        nil];
+        NSDictionary *fodDict = [NSDictionary dictionaryWithObject:fallbackDescriptors forKey:NSFontCascadeListAttribute];
+        NSFontDescriptor *desc = [baseFont.fontDescriptor fontDescriptorByAddingAttributes:fodDict];
+        _slowFont = [[NSFont fontWithDescriptor:desc size:_theFontSize] retain];
         
-	}
-	return _slowFont;
+    }
+    return _slowFont;
 }
 
 - (NSFont *)fastFont {
-	if (!_fastFont) {
-		_fastFont = [[NSFont fontWithName:_basicFontName size:_theFontSize] retain];
+    if (!_fastFont) {
+        _fastFont = [[NSFont fontWithName:_basicFontName size:_theFontSize] retain];
     }
     
-	return _fastFont;
+    return _fastFont;
 }
 
 - (NSFont *)fontForString:(NSString *)s {
-	if (s.length == 1 && ([s characterAtIndex:0] < 128)) {
-		return [self fastFont];
-	} else {
-		return [self slowFont];
+    if (s.length == 1 && ([s characterAtIndex:0] < 128)) {
+        return [self fastFont];
+    } else {
+        return [self slowFont];
     }
 }
 
@@ -130,7 +130,7 @@
     NSSize stringSize;
     id cachedSize = [_characterSizeDictionary objectForKey:aString];
     if (cachedSize == nil) {
-        stringSize = [aString sizeWithAttributes:attributes];	// quite expensive
+        stringSize = [aString sizeWithAttributes:attributes];   // quite expensive
         [_characterSizeDictionary setObject:[NSValue valueWithSize:stringSize] forKey:aString];
     } else {
         stringSize = [[_characterSizeDictionary objectForKey:aString] sizeValue];
@@ -142,8 +142,8 @@
 - (void)setString:(NSString *)c
    withBackground:(CGColorRef)bgColor
   withLetterColor:(CGColorRef)letterColor
-	  atLocationX:(short)x
-		locationY:(short)y
+      atLocationX:(short)x
+        locationY:(short)y
     withFancyFont:(bool)fancyFont
          withChar:(unsigned short)character
 {
@@ -186,7 +186,7 @@
 
 - (void)drawRect:(NSRect)rect
 {
-	int i, j, startX, startY, endX, endY;
+    int i, j, startX, startY, endX, endY;
     
     startX = (int) (kCOLS * (rect.origin.x) / _hWindow);
     startY = kROWS - (int) (kCOLS * (rect.origin.y + rect.size.height + _vPixels - 1 ) / _vWindow);
@@ -240,13 +240,13 @@
 }
 
 - (void)drawTheString:(NSString *)theString centeredIn:(NSRect)rect withAttributes:(NSMutableDictionary *)theAttributes withChar:(unsigned short)character {
-	// Assuming a space character is an empty rectangle provides a major
-	// increase in redraw speed.
-	if (character == 32) {
-		return;
-	}
+    // Assuming a space character is an empty rectangle provides a major
+    // increase in redraw speed.
+    if (character == 32) {
+        return;
+    }
     
-	NSPoint stringOrigin;
+    NSPoint stringOrigin;
     
     if (character > 127 && character != kDotChar) {
         NSSize stringSize = [self getStringSizeForString:theString withAttributes:theAttributes];
