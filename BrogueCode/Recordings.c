@@ -372,7 +372,7 @@ void loadNextAnnotation() {
 	short i;
 	FILE *annotationFile;
 	
-	if (rogue.nextAnnotationTurn == -1) {
+	if (rogue.nextAnnotationTurn == ((unsigned long) -1)) {
 		return;
 	}
 	
@@ -421,7 +421,7 @@ void displayAnnotation() {
 	cellDisplayBuffer rbuf[COLS][ROWS];
 	
 	if (rogue.playbackMode
-		&& rogue.playerTurnNumber == rogue.nextAnnotationTurn) {
+		&& rogue.playerTurnNumber == (unsigned long)rogue.nextAnnotationTurn) {
 		
 		if (!rogue.playbackFastForward) {
 			refreshSideBar(-1, -1, false);

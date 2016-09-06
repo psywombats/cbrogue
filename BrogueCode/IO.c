@@ -387,6 +387,7 @@ short actionMenu(short x, boolean playingBack) {
         }
     } while (takeActionOurselves[buttonChosen]);
     brogueAssert(false);
+    return 0;
 }
 
 #define MAX_MENU_BUTTON_COUNT 5

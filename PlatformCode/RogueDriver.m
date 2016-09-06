@@ -256,21 +256,21 @@ void nextKeyOrMouseEvent(rogueEvent *returnEvent, __unused boolean textInput, bo
                    || theEventType == NSRightMouseDragged) {
             [NSApp sendEvent:theEvent];
             switch (theEventType) {
-                case NSLeftMouseDown:
+                case NSEventTypeLeftMouseDown:
                     returnEvent->eventType = MOUSE_DOWN;
                     break;
-                case NSLeftMouseUp:
+                case NSEventTypeLeftMouseUp:
                     returnEvent->eventType = MOUSE_UP;
                     break;
-                case NSRightMouseDown:
+                case NSEventTypeRightMouseDown:
                     returnEvent->eventType = RIGHT_MOUSE_DOWN;
                     break;
-                case NSRightMouseUp:
+                case NSEventTypeRightMouseUp:
                     returnEvent->eventType = RIGHT_MOUSE_UP;
                     break;
-                case NSMouseMoved:
-                case NSLeftMouseDragged:
-                case NSRightMouseDragged:
+                case NSEventTypeMouseMoved:
+                case NSEventTypeLeftMouseDragged:
+                case NSEventTypeRightMouseDragged:
                     returnEvent->eventType = MOUSE_ENTERED_CELL;
                     break;
                 default:
