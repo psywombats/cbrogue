@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>Brogue Icon.icns</string>
+	<string>cBrogue Icon</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
