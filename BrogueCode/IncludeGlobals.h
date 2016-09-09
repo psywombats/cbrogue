@@ -158,11 +158,46 @@ extern const color inDarknessMultiplierColor;
 extern const color buttonHoverColor;
 extern color titleButtonColor;
 
-// other colors
-extern color centipedeColor;
-extern color confusionGasColor;
-extern color lightningColor;
-extern color spectralImageColor;
+// other colors (some for chimeras)
+extern const color confusionGasColor;
+extern const color lightningColor;
+extern const color poisonGasColor;
+extern const color acidBackColor;
+extern const color wispLightColor;
+extern const color vomitColor;
+extern const color lichLightColor;
+extern const color lavaForeColor;
+extern const color ectoplasmColor;
+extern const color yendorLightColor;
+extern const color glyphColor;
+extern const color beckonColor;
+
+// these are from monster colors and exposed here for use in chimeras
+// why the hell is there one header for the whole project
+extern const color goblinColor;
+extern const color jackalColor;
+extern const color ogreColor;
+extern const color eelColor;
+extern const color goblinConjurerColor;
+extern const color spectralBladeColor;
+extern const color spectralImageColor;
+extern const color toadColor;
+extern const color trollColor;
+extern const color centipedeColor;
+extern const color dragonColor;
+extern const color krakenColor;
+extern const color salamanderColor;
+extern const color pixieColor;
+extern const color darPriestessColor;
+extern const color darMageColor;
+extern const color wraithColor;
+extern const color pinkJellyColor;
+extern const color wormColor;
+extern const color sentinelColor;
+extern const color goblinMysticColor;
+extern const color ifritColor;
+extern const color phoenixColor;
+
 
 extern color goodMessageColor;
 extern color badMessageColor;
@@ -191,8 +226,6 @@ extern lightSource lightCatalog[NUMBER_LIGHT_KINDS];
 
 extern const blueprint blueprintCatalog[NUMBER_BLUEPRINTS];
 
-extern creatureType monsterCatalog[NUMBER_MONSTER_KINDS];
-extern monsterWords monsterText[NUMBER_MONSTER_KINDS];
 extern hordeType hordeCatalog[NUMBER_HORDES];
 extern const mutation mutationCatalog[NUMBER_MUTATORS];
 extern const monsterClass monsterClassCatalog[MONSTER_CLASS_COUNT];

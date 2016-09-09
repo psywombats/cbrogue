@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "getMonsterCatalog:MonsterGlobals.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "storedMonsters">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "initializeRogue:RogueMain.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "monsterCatalog[i]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

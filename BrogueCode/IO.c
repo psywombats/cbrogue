@@ -26,6 +26,7 @@
 
 #include "Rogue.h"
 #include "IncludeGlobals.h"
+#include "MonsterGlobals.h"
 
 // Populates path[][] with a list of coordinates starting at origin and traversing down the map. Returns the number of steps in the path.
 short getPlayerPathOnMap(short path[1000][2], short **map, short originX, short originY) {
@@ -1009,6 +1010,8 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
     } else {
         theItem = itemAtLoc(x, y);
     }
+    
+    creatureType *monsterCatalog = getMonsterCatalog();
     
     if (!playerCanSeeOrSense(x, y)
         && !(pmap[x][y].flags & (ITEM_DETECTED | HAS_PLAYER))
@@ -4243,7 +4246,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
             }
         }
         if (monst->targetCorpseLoc[0] == monst->xLoc && monst->targetCorpseLoc[1] == monst->yLoc) {
-            printProgressBar(0, y++,  monsterText[monst->info.monsterID].absorbStatus, monst->corpseAbsorptionCounter, 20, &redBar, dim);
+            printProgressBar(0, y++,  getMonsterText()[monst->info.monsterID].absorbStatus, monst->corpseAbsorptionCounter, 20, &redBar, dim);
         }
     }
     

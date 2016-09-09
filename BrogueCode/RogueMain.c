@@ -23,6 +23,7 @@
 
 #include "Rogue.h"
 #include "IncludeGlobals.h"
+#include "MonsterGlobals.h"
 #include <math.h>
 #include <time.h>
 
@@ -297,6 +298,8 @@ void initializeRogue(unsigned long seed) {
     restoreRNG;
     
     zeroOutGrid(displayDetail);
+    
+    creatureType *monsterCatalog = getMonsterCatalog();
     
     for (i=0; i<NUMBER_MONSTER_KINDS; i++) {
         monsterCatalog[i].monsterID = i;

@@ -24,6 +24,7 @@
 #include <math.h>
 #include "Rogue.h"
 #include "IncludeGlobals.h"
+#include "MonsterGlobals.h"
 
 
 /* Combat rules:
@@ -210,6 +211,7 @@ void splitMonster(creature *monst, short x, short y) {
                     // Split monsters don't inherit the learnings of their parents.
                     // Sorry, but self-healing jelly armies are too much.
                     // Mutation effects can be inherited, however; they're not learned abilities.
+                    creatureType *monsterCatalog = getMonsterCatalog();
                     if (monst->mutationIndex) {
                         clone->info.flags           &= (monsterCatalog[clone->info.monsterID].flags | mutationCatalog[monst->mutationIndex].monsterFlags);
                         clone->info.abilityFlags    &= (monsterCatalog[clone->info.monsterID].abilityFlags | mutationCatalog[monst->mutationIndex].monsterAbilityFlags);
@@ -597,7 +599,7 @@ boolean forceWeaponHit(creature *defender, item *theItem) {
 void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
     char buf[DCOLS*3], monstName[DCOLS], theItemName[DCOLS];
     
-    color *effectColors[NUMBER_WEAPON_RUNIC_KINDS] = {&white, &black,
+    const color *effectColors[NUMBER_WEAPON_RUNIC_KINDS] = {&white, &black,
         &yellow, &pink, &green, &confusionGasColor, NULL, NULL, &darkRed, &rainbow};
     //  W_SPEED, W_QUIETUS, W_PARALYSIS, W_MULTIPLICITY, W_SLOWING, W_CONFUSION, W_FORCE, W_SLAYING, W_MERCY, W_PLENTY
     short chance, i;
@@ -801,6 +803,8 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
         strcpy(returnString, "punch");
         return;
     }
+    
+    monsterWords *monsterText = getMonsterText();
     
     for (verbCount = 0; verbCount < 4 && monsterText[attacker->info.monsterID].attack[verbCount + 1][0] != '\0'; verbCount++);
     increment = (100 / (verbCount + 1));
@@ -1607,6 +1611,7 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
     if (!administrativeDeath && (decedent->info.abilityFlags & MA_DF_ON_DEATH)) {
         spawnDungeonFeature(decedent->xLoc, decedent->yLoc, &dungeonFeatureCatalog[decedent->info.DFType], true, false);
         
+        monsterWords *monsterText = getMonsterText();
         if (monsterText[decedent->info.monsterID].DFMessage[0] && canSeeMonster(decedent)) {
             monsterName(monstName, decedent, true);
             sprintf(buf, "%s %s", monstName, monsterText[decedent->info.monsterID].DFMessage);

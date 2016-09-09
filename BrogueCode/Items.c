@@ -24,6 +24,7 @@
 
 #include "Rogue.h"
 #include "IncludeGlobals.h"
+#include "MonsterGlobals.h"
 #include <math.h>
 
 item *initializeItem() {
@@ -3620,6 +3621,7 @@ boolean polymorph(creature *monst) {
     monst->mutationIndex = -1; // Polymorph cures mutation -- basic science.
     healthFraction = monst->currentHP * 1000 / monst->info.maxHP;
     previousDamageTaken = monst->info.maxHP - monst->currentHP;
+    creatureType *monsterCatalog = getMonsterCatalog();
     
     do {
         newMonsterIndex = rand_range(1, NUMBER_MONSTER_KINDS - 1);
@@ -6370,7 +6372,7 @@ void describeMonsterClass(char *buf, const short classID, boolean conjunctionAnd
     
     buf[0] = '\0';
     for (i = 0; monsterClassCatalog[classID].memberList[i] != 0; i++) {
-        strcpy(buf2, monsterCatalog[monsterClassCatalog[classID].memberList[i]].monsterName);
+        strcpy(buf2, getMonsterCatalog()[monsterClassCatalog[classID].memberList[i]].monsterName);
         if (monsterClassCatalog[classID].memberList[i + 1] != 0) {
             if (monsterClassCatalog[classID].memberList[i + 2] == 0) {
                 strcat(buf2, conjunctionAnd ? " and " : " or ");
