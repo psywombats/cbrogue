@@ -3,20 +3,18 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "getMonsterCatalog:MonsterGlobals.c">
+         contextName = "generateMonster:Monsters.c">
          <PersistentStrings>
             <PersistentString
-               value = "storedMonsters">
+               value = "getMonsterCatalog()">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "initializeRogue:RogueMain.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "monsterCatalog[i]">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "paintLight:Light.c">
+      </ContextState>
+      <ContextState
+         contextName = "updateLighting:Light.c">
       </ContextState>
    </ContextStates>
 </VariablesViewState>
