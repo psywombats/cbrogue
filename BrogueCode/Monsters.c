@@ -946,8 +946,8 @@ boolean summonMinions(creature *summoner) {
     
     if (canSeeMonster(summoner)) {
         monsterName(monstName, summoner, true);
-        if (getMonsterText()[summoner->info.monsterID].summonMessage) {
-            sprintf(buf, "%s %s", monstName, getMonsterText()[summoner->info.monsterID].summonMessage);
+        if (getMonsterCatalog()[summoner->info.monsterID].summonMessage) {
+            sprintf(buf, "%s %s", monstName, getMonsterCatalog()[summoner->info.monsterID].summonMessage);
         } else {
             sprintf(buf, "%s incants darkly!", monstName);
         }
@@ -2963,7 +2963,7 @@ void moveAlly(creature *monst) {
             && !(monst->bookkeepingFlags & MB_ABSORBING)) {
             if (canSeeMonster(monst)) {
                 monsterName(monstName, monst, true);
-                sprintf(buf, "%s begins %s the fallen %s.", monstName, getMonsterText()[monst->info.monsterID].absorbing, monst->targetCorpseName);
+                sprintf(buf, "%s begins %s the fallen %s.", monstName, getMonsterCatalog()[monst->info.monsterID].absorbing, monst->targetCorpseName);
                 messageWithColor(buf, &goodMessageColor, false);
             }
             monst->corpseAbsorptionCounter = 20;
@@ -3032,7 +3032,7 @@ boolean updateMonsterCorpseAbsorption(creature *monst) {
             }
             if (canSeeMonster(monst)) {
                 monsterName(buf2, monst, true);
-                sprintf(buf, "%s finished %s the %s.", buf2, getMonsterText()[monst->info.monsterID].absorbing, monst->targetCorpseName);
+                sprintf(buf, "%s finished %s the %s.", buf2, getMonsterCatalog()[monst->info.monsterID].absorbing, monst->targetCorpseName);
                 messageWithColor(buf, &goodMessageColor, false);
                 if (monst->absorptionBolt != BOLT_NONE) {
                     sprintf(buf, "%s %s!", buf2, boltCatalog[monst->absorptionBolt].abilityDescription);
@@ -4002,7 +4002,7 @@ void monsterDetails(char buf[], creature *monst) {
     if (!(monst->info.flags & MONST_RESTRICTED_TO_LIQUID)
          || cellHasTMFlag(monst->xLoc, monst->yLoc, TM_ALLOWS_SUBMERGING)) {
         // If the monster is not a beached whale, print the ordinary flavor text.
-        sprintf(newText, "     %s\n     ", getMonsterText()[monst->info.monsterID].flavorText);
+        sprintf(newText, "     %s\n     ", getMonsterCatalog()[monst->info.monsterID].flavorText);
         strcat(buf, newText);
     }
     

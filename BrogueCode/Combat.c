@@ -804,12 +804,12 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
         return;
     }
     
-    monsterWords *monsterText = getMonsterText();
+    creatureType *catalog = getMonsterCatalog();
     
-    for (verbCount = 0; verbCount < 4 && monsterText[attacker->info.monsterID].attack[verbCount + 1][0] != '\0'; verbCount++);
+    for (verbCount = 0; verbCount < 4 && catalog[attacker->info.monsterID].attack[verbCount + 1][0] != '\0'; verbCount++);
     increment = (100 / (verbCount + 1));
     hitPercentile = max(0, min(hitPercentile, increment * (verbCount + 1) - 1));
-    strcpy(returnString, monsterText[attacker->info.monsterID].attack[hitPercentile / increment]);
+    strcpy(returnString, catalog[attacker->info.monsterID].attack[hitPercentile / increment]);
     resolvePronounEscapes(returnString, attacker);
 }
 
@@ -1611,10 +1611,10 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
     if (!administrativeDeath && (decedent->info.abilityFlags & MA_DF_ON_DEATH)) {
         spawnDungeonFeature(decedent->xLoc, decedent->yLoc, &dungeonFeatureCatalog[decedent->info.DFType], true, false);
         
-        monsterWords *monsterText = getMonsterText();
-        if (monsterText[decedent->info.monsterID].DFMessage[0] && canSeeMonster(decedent)) {
+        creatureType *catalog = getMonsterCatalog();
+        if (catalog[decedent->info.monsterID].DFMessage[0] && canSeeMonster(decedent)) {
             monsterName(monstName, decedent, true);
-            sprintf(buf, "%s %s", monstName, monsterText[decedent->info.monsterID].DFMessage);
+            sprintf(buf, "%s %s", monstName, catalog[decedent->info.monsterID].DFMessage);
             resolvePronounEscapes(buf, decedent);
             message(buf, false);
         }

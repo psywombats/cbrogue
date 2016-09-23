@@ -2056,16 +2056,16 @@ typedef struct creatureType {
     enum boltType bolts[20];
     unsigned long flags;
     unsigned long abilityFlags;
-} creatureType;
-
-typedef struct monsterWords {
+    
+    // flavor text
     char flavorText[COLS*5];
     char absorbing[40];
     char absorbStatus[40];
     char attack[5][30];
     char DFMessage[DCOLS * 2];
     char summonMessage[DCOLS * 2];
-} monsterWords;
+    
+} creatureType;
 
 enum creatureStates {
     MONSTER_SLEEPING,

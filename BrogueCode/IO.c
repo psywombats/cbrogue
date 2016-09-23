@@ -4246,7 +4246,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
             }
         }
         if (monst->targetCorpseLoc[0] == monst->xLoc && monst->targetCorpseLoc[1] == monst->yLoc) {
-            printProgressBar(0, y++,  getMonsterText()[monst->info.monsterID].absorbStatus, monst->corpseAbsorptionCounter, 20, &redBar, dim);
+            printProgressBar(0, y++,  getMonsterCatalog()[monst->info.monsterID].absorbStatus, monst->corpseAbsorptionCounter, 20, &redBar, dim);
         }
     }
     

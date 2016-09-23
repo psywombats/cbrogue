@@ -14,6 +14,5 @@
 
 // returns the array of monsters generated this game
 creatureType *getMonsterCatalog();
-monsterWords *getMonsterText();
 
 #endif /* MonsterGlobals_h */
