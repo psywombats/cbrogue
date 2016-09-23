@@ -747,7 +747,7 @@ monsterWords *getMonsterText() {
     strcpy(words[id].attack[2], "buries $HISHER fangs in");
     strcpy(words[id].summonMessage, "spreads his cloak and bursts into a cloud of bats!");
     
-    id = MK_FLAMEDANCER
+    id = MK_FLAMEDANCER;
     strcpy(words[id].flavorText, "An elemental creature from another plane of existence, the infernal flamedancer burns with such intensity that $HESHE is painful to behold.");
     strcpy(words[id].absorbing, "immolating");
     strcpy(words[id].absorbStatus, "Consuming");
