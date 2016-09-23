@@ -1,0 +1,19 @@
+# Compiled source #
+###################
+*.o
+
+# OS garbage #
+##############
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Xcode garbage #
+#################
+*.xcuserstate
+*.xcbkptlist
