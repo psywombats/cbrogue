@@ -11,10 +11,12 @@
 
 creatureType *catalog;
 hordeType *hordeCatalog;
+monsterClass *monsterClassCatalog;
 
 void ensureCatalogsInitialized();
 void initMonsterCatalog();
 void initHordeCatalog();
+void initMonsterClassCatalog();
 
 creatureType *getMonsterCatalog() {
     ensureCatalogsInitialized();
@@ -26,6 +28,11 @@ hordeType *getHordeCatalog() {
     return hordeCatalog;
 }
 
+monsterClass *getMonsterClassCatalog() {
+    ensureCatalogsInitialized();
+    return monsterClassCatalog;
+}
+
 void ensureCatalogsInitialized() {
     static boolean catalogInitialized = false;
     if (catalogInitialized) {
@@ -34,6 +41,8 @@ void ensureCatalogsInitialized() {
     
     initMonsterCatalog();
     initHordeCatalog();
+    initMonsterClassCatalog();
+    
     catalogInitialized = true;
 }
 
@@ -913,5 +922,26 @@ void initHordeCatalog() {
     hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,2,      {MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC}, {{0,1,1}, {1,1,1}},             7,      15,     4,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN};
     hordeCatalog[id++] = (hordeType) {MK_GOBLIN_TOTEM,   4,      {MK_GOBLIN_TOTEM, MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC, MK_GOBLIN}, {{1,2,1},{1,2,1},{1,2,1},{3,5,1}},10,17,8,0,MT_CAMP_AREA,   HORDE_MACHINE_GOBLIN_WARREN};
     hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         1,      {MK_GOBLIN},                            {{1, 2, 1}},                    3,      7,      1,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN | HORDE_LEADER_CAPTIVE};
+}
 
+void initMonsterClassCatalog() {
+    monsterClassCatalog = (monsterClass *)malloc(sizeof(monsterClass) * MONSTER_CLASS_COUNT);
+    memset(monsterClassCatalog, 0, sizeof(monsterClass) * MONSTER_CLASS_COUNT);
+    
+    unsigned int id = 0;
+    
+    //                                          name               frequency   maxDepth    memberList
+    monsterClassCatalog[id++] = (monsterClass) {"abomination",     10,         -1,         {MK_BOG_MONSTER, MK_UNDERWORM, MK_KRAKEN, MK_TENTACLE_HORROR}};
+    monsterClassCatalog[id++] = (monsterClass) {"dar",             10,         22,         {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE}};
+    monsterClassCatalog[id++] = (monsterClass) {"animal",          10,         10,         {MK_RAT, MK_MONKEY, MK_JACKAL, MK_EEL, MK_TOAD, MK_CENTIPEDE, MK_SPIDER}};
+    monsterClassCatalog[id++] = (monsterClass) {"goblin",          10,         10,         {MK_GOBLIN, MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC, MK_GOBLIN_TOTEM, MK_GOBLIN_CHIEFTAN}};
+    monsterClassCatalog[id++] = (monsterClass) {"ogre",            10,         16,         {MK_OGRE, MK_OGRE_SHAMAN, MK_OGRE_TOTEM}};
+    monsterClassCatalog[id++] = (monsterClass) {"dragon",          10,         -1,         {MK_DRAGON}};
+    monsterClassCatalog[id++] = (monsterClass) {"undead",          10,         -1,         {MK_ZOMBIE, MK_WRAITH, MK_VAMPIRE, MK_PHANTOM, MK_LICH, MK_REVENANT}};
+    monsterClassCatalog[id++] = (monsterClass) {"jelly",           10,         15,         {MK_PINK_JELLY, MK_BLACK_JELLY, MK_ACID_JELLY}};
+    monsterClassCatalog[id++] = (monsterClass) {"turret",          5,          18,         {MK_ARROW_TURRET, MK_SPARK_TURRET, MK_DART_TURRET, MK_FLAME_TURRET}};
+    monsterClassCatalog[id++] = (monsterClass) {"infernal",        10,         -1,         {MK_FLAMEDANCER, MK_IMP, MK_REVENANT, MK_FURY, MK_PHANTOM}};
+    monsterClassCatalog[id++] = (monsterClass) {"waterborne",      10,         17,         {MK_EEL, MK_NAGA, MK_KRAKEN}};
+    monsterClassCatalog[id++] = (monsterClass) {"fireborne",       10,         12,         {MK_WILL_O_THE_WISP, MK_SALAMANDER, MK_FLAMEDANCER}};
+    monsterClassCatalog[id++] = (monsterClass) {"troll",           10,         15,         {MK_TROLL}};
 }

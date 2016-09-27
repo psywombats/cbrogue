@@ -1563,25 +1563,6 @@ const mutation mutationCatalog[NUMBER_MUTATORS] = {
         "A rare mutation has coated $HISHER flesh with reflective scales."},
 };
 
-#pragma mark Monster class definitions
-
-const monsterClass monsterClassCatalog[MONSTER_CLASS_COUNT] = {
-    // name             frequency   maxDepth    member list
-    {"abomination",     10,         -1,         {MK_BOG_MONSTER, MK_UNDERWORM, MK_KRAKEN, MK_TENTACLE_HORROR}},
-    {"dar",             10,         22,         {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE}},
-    {"animal",          10,         10,         {MK_RAT, MK_MONKEY, MK_JACKAL, MK_EEL, MK_TOAD, MK_CENTIPEDE, MK_SPIDER}},
-    {"goblin",          10,         10,         {MK_GOBLIN, MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC, MK_GOBLIN_TOTEM, MK_GOBLIN_CHIEFTAN}},
-    {"ogre",            10,         16,         {MK_OGRE, MK_OGRE_SHAMAN, MK_OGRE_TOTEM}},
-    {"dragon",          10,         -1,         {MK_DRAGON}},
-    {"undead",          10,         -1,         {MK_ZOMBIE, MK_WRAITH, MK_VAMPIRE, MK_PHANTOM, MK_LICH, MK_REVENANT}},
-    {"jelly",           10,         15,         {MK_PINK_JELLY, MK_BLACK_JELLY, MK_ACID_JELLY}},
-    {"turret",          5,          18,         {MK_ARROW_TURRET, MK_SPARK_TURRET, MK_DART_TURRET, MK_FLAME_TURRET}},
-    {"infernal",        10,         -1,         {MK_FLAMEDANCER, MK_IMP, MK_REVENANT, MK_FURY, MK_PHANTOM}},
-    {"waterborne",      10,         17,         {MK_EEL, MK_NAGA, MK_KRAKEN}},
-    {"fireborne",       10,         12,         {MK_WILL_O_THE_WISP, MK_SALAMANDER, MK_FLAMEDANCER}},
-    {"troll",           10,         15,         {MK_TROLL}},
-};
-
 // ITEMS
 
 #pragma mark Item flavors

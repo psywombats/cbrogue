@@ -1328,7 +1328,7 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
                         if (theItem->enchant2 == W_SLAYING) {
                             sprintf(root, "%s of %s slaying%s",
                                     root,
-                                    monsterClassCatalog[theItem->vorpalEnemy].name,
+                                    getMonsterClassCatalog()[theItem->vorpalEnemy].name,
                                     grayEscapeSequence);
                         } else {
                             sprintf(root, "%s of %s%s",
@@ -1354,7 +1354,7 @@ void itemName(item *theItem, char *root, boolean includeDetails, boolean include
                     && ((theItem->flags & ITEM_RUNIC_IDENTIFIED)
                         || rogue.playbackOmniscience)) {
                         if (theItem->enchant2 == A_IMMUNITY) {
-                            sprintf(root, "%s of %s immunity", root, monsterClassCatalog[theItem->vorpalEnemy].name);
+                            sprintf(root, "%s of %s immunity", root, getMonsterClassCatalog()[theItem->vorpalEnemy].name);
                         } else {
                             sprintf(root, "%s of %s", root, armorRunicNames[theItem->enchant2]);
                         }
@@ -6354,6 +6354,7 @@ short lotteryDraw(short *frequencies, short itemCount) {
 
 short chooseVorpalEnemy() {
     short i, frequencies[MONSTER_CLASS_COUNT];
+    monsterClass *monsterClassCatalog = getMonsterClassCatalog();
     for (i = 0; i < MONSTER_CLASS_COUNT; i++) {
         if (monsterClassCatalog[i].maxDepth <= 0
             || rogue.depthLevel <= monsterClassCatalog[i].maxDepth) {
@@ -6369,6 +6370,7 @@ short chooseVorpalEnemy() {
 void describeMonsterClass(char *buf, const short classID, boolean conjunctionAnd) {
     short i;
     char buf2[50];
+    monsterClass *monsterClassCatalog = getMonsterClassCatalog();
     
     buf[0] = '\0';
     for (i = 0; monsterClassCatalog[classID].memberList[i] != 0; i++) {

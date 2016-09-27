@@ -261,8 +261,8 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
 
 boolean monsterIsInClass(const creature *monst, const short monsterClass) {
     short i;
-    for (i = 0; monsterClassCatalog[monsterClass].memberList[i] != 0; i++) {
-        if (monsterClassCatalog[monsterClass].memberList[i] == monst->info.monsterID) {
+    for (i = 0; getMonsterClassCatalog()[monsterClass].memberList[i] != 0; i++) {
+        if (getMonsterClassCatalog()[monsterClass].memberList[i] == monst->info.monsterID) {
             return true;
         }
     }
