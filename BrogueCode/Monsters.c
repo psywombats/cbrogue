@@ -463,6 +463,7 @@ void resolvePronounEscapes(char *text, creature *monst) {
 // Pass 0 for summonerType for an ordinary selection.
 short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long forbiddenFlags, unsigned long requiredFlags) {
     short i, index, possCount = 0;
+    hordeType *hordeCatalog = getHordeCatalog();
     
     if (depth <= 0) {
         depth = rogue.depthLevel;
@@ -667,6 +668,8 @@ boolean spawnMinions(short hordeID, creature *leader, boolean summoned) {
     short failsafe;
     boolean atLeastOneMinion = false;
     
+    hordeType *hordeCatalog = getHordeCatalog();
+    
     x = leader->xLoc;
     y = leader->yLoc;
     
@@ -750,6 +753,7 @@ creature *spawnHorde(short hordeID, short x, short y, unsigned long forbiddenFla
     hordeType *theHorde;
     creature *leader, *preexistingMonst;
     boolean tryAgain;
+    hordeType *hordeCatalog = getHordeCatalog();
     
     if (rogue.depthLevel > 1 && rand_percent(10)) {
         depth = rogue.depthLevel + rand_range(1, min(5, rogue.depthLevel / 2));
@@ -888,6 +892,7 @@ boolean summonMinions(creature *summoner) {
     char buf[DCOLS];
     char monstName[DCOLS];
     short **grid;
+    hordeType *hordeCatalog = getHordeCatalog();
     
     if (hordeID < 0) {
         return false;

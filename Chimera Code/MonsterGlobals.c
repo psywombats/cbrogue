@@ -9,13 +9,35 @@
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
+creatureType *catalog;
+hordeType *hordeCatalog;
+
+void ensureCatalogsInitialized();
+void initMonsterCatalog();
+void initHordeCatalog();
+
 creatureType *getMonsterCatalog() {
-    static creatureType *catalog;
+    ensureCatalogsInitialized();
+    return catalog;
+}
+
+hordeType *getHordeCatalog() {
+    ensureCatalogsInitialized();
+    return hordeCatalog;
+}
+
+void ensureCatalogsInitialized() {
     static boolean catalogInitialized = false;
-    
     if (catalogInitialized) {
-        return catalog;
+        return;
     }
+    
+    initMonsterCatalog();
+    initHordeCatalog();
+    catalogInitialized = true;
+}
+
+void initMonsterCatalog() {
     
     catalog = (creatureType *)malloc(sizeof(creatureType) * NUMBER_MONSTER_KINDS);
     memset(catalog, 0, sizeof(creatureType) * NUMBER_MONSTER_KINDS);
@@ -689,7 +711,207 @@ creatureType *getMonsterCatalog() {
     strcpy(catalog[id].attack[1], "lashes");
     strcpy(catalog[id].attack[2], "thrashes");
     strcpy(catalog[id].attack[3], "lacerates");
+}
+
+void initHordeCatalog() {
+    hordeCatalog = (hordeType *)malloc(sizeof(hordeType) * NUMBER_HORDES);
+    memset(hordeCatalog, 0, sizeof(hordeType) * NUMBER_HORDES);
     
-    catalogInitialized = true;
-    return catalog;
+    unsigned int id = 0;
+    
+    //                                 leader       #members    member list                             member numbers                  minL    maxL    freq    spawnsIn        machine         flags
+    hordeCatalog[id++] = (hordeType) {MK_RAT,            0,      {0},                                    {{0}},                          1,      5,      15};
+    hordeCatalog[id++] = (hordeType) {MK_KOBOLD,         0,      {0},                                    {{0}},                          1,      6,      15};
+    hordeCatalog[id++] = (hordeType) {MK_JACKAL,         0,      {0},                                    {{0}},                          1,      3,      10};
+    hordeCatalog[id++] = (hordeType) {MK_JACKAL,         1,      {MK_JACKAL},                            {{1, 3, 1}},                    3,      7,      5};
+    hordeCatalog[id++] = (hordeType) {MK_EEL,            0,      {0},                                    {{0}},                          2,      17,     10,     DEEP_WATER};
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         0,      {0},                                    {{0}},                          2,      9,      5};
+    hordeCatalog[id++] = (hordeType) {MK_BLOAT,          0,      {0},                                    {{0}},                          2,      13,     3};
+    hordeCatalog[id++] = (hordeType) {MK_PIT_BLOAT,      0,      {0},                                    {{0}},                          2,      13,     1};
+    hordeCatalog[id++] = (hordeType) {MK_BLOAT,          1,      {MK_BLOAT},                             {{0, 2, 1}},                    14,     26,     3};
+    hordeCatalog[id++] = (hordeType) {MK_PIT_BLOAT,      1,      {MK_PIT_BLOAT},                         {{0, 2, 1}},                    14,     26,     1};
+    hordeCatalog[id++] = (hordeType) {MK_EXPLOSIVE_BLOAT,0,      {0},                                    {{0}},                          10,     26,     1};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         0,      {0},                                    {{0}},                          3,      10,     10};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,0,      {0},                                    {{0}},                          3,      10,     6};
+    hordeCatalog[id++] = (hordeType) {MK_TOAD,           0,      {0},                                    {{0}},                          4,      11,     10};
+    hordeCatalog[id++] = (hordeType) {MK_PINK_JELLY,     0,      {0},                                    {{0}},                          4,      13,     10};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_TOTEM,   1,      {MK_GOBLIN},                            {{2,4,1}},                      5,      13,     10,     0,              MT_CAMP_AREA,   HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_ARROW_TURRET,   0,      {0},                                    {{0}},                          5,      13,     10,     WALL,   0,                      HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         1,      {MK_MONKEY},                            {{2,4,1}},                      5,      13,     2};
+    hordeCatalog[id++] = (hordeType) {MK_VAMPIRE_BAT,    0,      {0},                                    {{0}},                          6,      13,     3};
+    hordeCatalog[id++] = (hordeType) {MK_VAMPIRE_BAT,    1,      {MK_VAMPIRE_BAT},                       {{1,2,1}},                      6,      13,     7,      0,              0,              HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_ACID_MOUND,     0,      {0},                                    {{0}},                          6,      13,     10};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         3,      {MK_GOBLIN, MK_GOBLIN_MYSTIC, MK_JACKAL},{{2, 3, 1}, {1,2,1}, {1,2,1}}, 6,      12,     4};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,2,      {MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC}, {{0,1,1}, {1,1,1}},             7,      15,     4};
+    hordeCatalog[id++] = (hordeType) {MK_CENTIPEDE,      0,      {0},                                    {{0}},                          7,      14,     10};
+    hordeCatalog[id++] = (hordeType) {MK_BOG_MONSTER,    0,      {0},                                    {{0}},                          7,      14,     8,      MUD,            0,              HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           0,      {0},                                    {{0}},                          7,      13,     10};
+    hordeCatalog[id++] = (hordeType) {MK_EEL,            1,      {MK_EEL},                               {{2, 4, 1}},                    8,      22,     7,      DEEP_WATER};
+    hordeCatalog[id++] = (hordeType) {MK_ACID_MOUND,     1,      {MK_ACID_MOUND},                        {{2, 4, 1}},                    9,      13,     3};
+    hordeCatalog[id++] = (hordeType) {MK_SPIDER,         0,      {0},                                    {{0}},                          9,      16,     10};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,1,      {MK_DAR_BLADEMASTER},                   {{0, 1, 1}},                    10,     14,     10};
+    hordeCatalog[id++] = (hordeType) {MK_WILL_O_THE_WISP,0,      {0},                                    {{0}},                          10,     17,     10};
+    hordeCatalog[id++] = (hordeType) {MK_WRAITH,         0,      {0},                                    {{0}},                          10,     17,     10};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_TOTEM,   4,      {MK_GOBLIN_TOTEM, MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC, MK_GOBLIN}, {{1,2,1},{1,2,1},{1,2,1},{3,5,1}},10,17,8,0,MT_CAMP_AREA,   HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_SPARK_TURRET,   0,      {0},                                    {{0}},                          11,     18,     10,     WALL,   0,                      HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_ZOMBIE,         0,      {0},                                    {{0}},                          11,     18,     10};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          0,      {0},                                    {{0}},                          12,     19,     10};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE_TOTEM,     1,      {MK_OGRE},                              {{2,4,1}},                      12,     19,     6,      0,          0,                  HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_BOG_MONSTER,    1,      {MK_BOG_MONSTER},                       {{2,4,1}},                      12,     26,     10,     MUD};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           0,      {0},                                    {{0}},                          13,     20,     10,     DEEP_WATER};
+    hordeCatalog[id++] = (hordeType) {MK_SALAMANDER,     0,      {0},                                    {{0}},                          13,     20,     10,     LAVA};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE_SHAMAN,    1,      {MK_OGRE},                              {{1, 3, 1}},                    14,     20,     10};
+    hordeCatalog[id++] = (hordeType) {MK_CENTAUR,        1,      {MK_CENTAUR},                           {{1, 1, 1}},                    14,     21,     10};
+    hordeCatalog[id++] = (hordeType) {MK_ACID_JELLY,     0,      {0},                                    {{0}},                          14,     21,     10};
+    hordeCatalog[id++] = (hordeType) {MK_ACID_TURRET,    0,      {0},                                    {{0}},                          15,     22,     10,     WALL,   0,                      HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_DART_TURRET,    0,      {0},                                    {{0}},                          15,     22,     10,     WALL,   0,                      HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_PIXIE,          0,      {0},                                    {{0}},                          14,     21,     8};
+    hordeCatalog[id++] = (hordeType) {MK_FLAME_TURRET,   0,      {0},                                    {{0}},                          14,     24,     10,     WALL,   0,                      HORDE_NO_PERIODIC_SPAWN};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,2,      {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS}, {{0, 1, 1}, {0, 1, 1}},         15,     17,     10};
+    hordeCatalog[id++] = (hordeType) {MK_PINK_JELLY,     2,      {MK_PINK_JELLY, MK_DAR_PRIESTESS},      {{0, 1, 1}, {1, 2, 1}},         17,     23,     7};
+    hordeCatalog[id++] = (hordeType) {MK_KRAKEN,         0,      {0},                                    {{0}},                          15,     30,     10,     DEEP_WATER};
+    hordeCatalog[id++] = (hordeType) {MK_PHANTOM,        0,      {0},                                    {{0}},                          16,     23,     10};
+    hordeCatalog[id++] = (hordeType) {MK_WRAITH,         1,      {MK_WRAITH},                            {{1, 4, 1}},                    16,     23,     8};
+    hordeCatalog[id++] = (hordeType) {MK_IMP,            0,      {0},                                    {{0}},                          17,     24,     10};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,3,      {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE},{{1,2,1},{1,1,1},{1,1,1}},18,25,10};
+    hordeCatalog[id++] = (hordeType) {MK_FURY,           1,      {MK_FURY},                              {{2, 4, 1}},                    18,     26,     8};
+    hordeCatalog[id++] = (hordeType) {MK_REVENANT,       0,      {0},                                    {{0}},                          19,     27,     10};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          0,      {0},                                    {{0}},                          21,     30,     10};
+    hordeCatalog[id++] = (hordeType) {MK_TENTACLE_HORROR,0,      {0},                                    {{0}},                          22,     DEEPEST_LEVEL-1,        10};
+    hordeCatalog[id++] = (hordeType) {MK_PHYLACTERY,     0,      {0},                                    {{0}},                          22,     DEEPEST_LEVEL-1,        10};
+    hordeCatalog[id++] = (hordeType) {MK_DRAGON,         0,      {0},                                    {{0}},                          24,     DEEPEST_LEVEL-1,        7};
+    hordeCatalog[id++] = (hordeType) {MK_DRAGON,         1,      {MK_DRAGON},                            {{1,1,1}},                      27,     DEEPEST_LEVEL-1,        3};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          3,      {MK_GOLEM, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE}, {{1, 2, 1}, {0,1,1},{0,1,1}},27,DEEPEST_LEVEL-1,   8};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          1,      {MK_GOLEM},                             {{5, 10, 2}},                   30,     DEEPEST_LEVEL-1,    2};
+    hordeCatalog[id++] = (hordeType) {MK_KRAKEN,         1,      {MK_KRAKEN},                            {{5, 10, 2}},                   30,     DEEPEST_LEVEL-1,    10,     DEEP_WATER};
+    hordeCatalog[id++] = (hordeType) {MK_TENTACLE_HORROR,2,      {MK_TENTACLE_HORROR, MK_REVENANT},      {{1, 3, 1}, {2, 4, 1}},         32,     DEEPEST_LEVEL-1,    2};
+    hordeCatalog[id++] = (hordeType) {MK_DRAGON,         1,      {MK_DRAGON},                            {{3, 5, 1}},                    34,     DEEPEST_LEVEL-1,    2};
+    
+    // summons
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,1,      {MK_SPECTRAL_BLADE},                    {{3, 5, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED | HORDE_DIES_ON_LEADER_DEATH};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE_SHAMAN,    1,      {MK_OGRE},                              {{1, 1, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_VAMPIRE,        1,      {MK_VAMPIRE_BAT},                       {{3, 3, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_LICH,           1,      {MK_PHANTOM},                           {{2, 3, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_LICH,           1,      {MK_FURY},                              {{2, 3, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_PHYLACTERY,     1,      {MK_LICH},                              {{1,1,1}},                      0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CHIEFTAN,2,      {MK_GOBLIN_CONJURER, MK_GOBLIN},        {{1,1,1}, {3,4,1}},             0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED | HORDE_SUMMONED_AT_DISTANCE};
+    hordeCatalog[id++] = (hordeType) {MK_PHOENIX_EGG,    1,      {MK_PHOENIX},                           {{1,1,1}},                      0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED};
+    hordeCatalog[id++] = (hordeType) {MK_ELDRITCH_TOTEM, 1,      {MK_SPECTRAL_BLADE},                    {{4, 7, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED | HORDE_DIES_ON_LEADER_DEATH};
+    hordeCatalog[id++] = (hordeType) {MK_ELDRITCH_TOTEM, 1,      {MK_FURY},                              {{2, 3, 1}},                    0,      0,      10,     0,          0,                  HORDE_IS_SUMMONED | HORDE_DIES_ON_LEADER_DEATH};
+    
+    // captives
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         1,      {MK_KOBOLD},                            {{1, 2, 1}},                    1,      5,      1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         1,      {MK_GOBLIN},                            {{1, 2, 1}},                    3,      7,      1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           1,      {MK_GOBLIN},                            {{3, 5, 1}},                    4,      10,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_MYSTIC,  1,      {MK_KOBOLD},                            {{3, 7, 1}},                    5,      11,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           1,      {MK_OGRE},                              {{1, 2, 1}},                    8,      15,     2,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          1,      {MK_TROLL},                             {{1, 2, 1}},                    12,     19,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_CENTAUR,        1,      {MK_TROLL},                             {{1, 2, 1}},                    12,     19,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          2,      {MK_OGRE, MK_OGRE_SHAMAN},              {{2, 3, 1}, {0, 1, 1}},         14,     19,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,1,      {MK_TROLL},                             {{1, 2, 1}},                    12,     19,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           1,      {MK_SALAMANDER},                        {{1, 2, 1}},                    13,     20,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_SALAMANDER,     1,      {MK_NAGA},                              {{1, 2, 1}},                    13,     20,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          1,      {MK_SALAMANDER},                        {{1, 2, 1}},                    13,     19,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_IMP,            1,      {MK_FURY},                              {{2, 4, 1}},                    18,     26,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_PIXIE,          1,      {MK_IMP, MK_PHANTOM},                   {{1, 2, 1}, {1, 2, 1}},         14,     21,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,1,      {MK_FURY},                              {{2, 4, 1}},                    18,     26,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,1,      {MK_IMP},                               {{2, 3, 1}},                    18,     26,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_PRIESTESS,  1,      {MK_FURY},                              {{2, 4, 1}},                    18,     26,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BATTLEMAGE, 1,      {MK_IMP},                               {{2, 3, 1}},                    18,     26,     1,      0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_TENTACLE_HORROR,3,      {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE},{{1,2,1},{1,1,1},{1,1,1}},20,26,1,    0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          3,      {MK_DAR_BLADEMASTER, MK_DAR_PRIESTESS, MK_DAR_BATTLEMAGE},{{1,2,1},{1,1,1},{1,1,1}},18,25,1,    0,          0,                  HORDE_LEADER_CAPTIVE | HORDE_NEVER_OOD};
+    
+    // bosses
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CHIEFTAN,2,      {MK_GOBLIN_MYSTIC, MK_GOBLIN, MK_GOBLIN_TOTEM}, {{1,1,1}, {2,3,1}, {2,2,1}},2,  10,     5,      0,          0,                  HORDE_MACHINE_BOSS};
+    hordeCatalog[id++] = (hordeType) {MK_BLACK_JELLY,    0,      {0},                                    {{0}},                          5,      15,     5,      0,          0,                  HORDE_MACHINE_BOSS};
+    hordeCatalog[id++] = (hordeType) {MK_VAMPIRE,        0,      {0},                                    {{0}},                          10,     DEEPEST_LEVEL,  5,  0,      0,                  HORDE_MACHINE_BOSS};
+    hordeCatalog[id++] = (hordeType) {MK_FLAMEDANCER,    0,      {0},                                    {{0}},                          10,     DEEPEST_LEVEL,  5,  0,      0,                  HORDE_MACHINE_BOSS};
+    
+    // machine water monsters
+    hordeCatalog[id++] = (hordeType) {MK_EEL,            0,      {0},                                    {{0}},                          2,      7,      10,     DEEP_WATER, 0,                  HORDE_MACHINE_WATER_MONSTER};
+    hordeCatalog[id++] = (hordeType) {MK_EEL,            1,      {MK_EEL},                               {{2, 4, 1}},                    5,      15,     10,     DEEP_WATER, 0,                  HORDE_MACHINE_WATER_MONSTER};
+    hordeCatalog[id++] = (hordeType) {MK_KRAKEN,         0,      {0},                                    {{0}},                          12,     DEEPEST_LEVEL,  10, DEEP_WATER, 0,              HORDE_MACHINE_WATER_MONSTER};
+    hordeCatalog[id++] = (hordeType) {MK_KRAKEN,         1,      {MK_EEL},                               {{1, 2, 1}},                    12,     DEEPEST_LEVEL,  8,  DEEP_WATER, 0,              HORDE_MACHINE_WATER_MONSTER};
+    
+    // dungeon captives -- no captors
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           0,      {0},                                    {{0}},                          1,      5,      10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           0,      {0},                                    {{0}},                          2,      8,      10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_MYSTIC,  0,      {0},                                    {{0}},                          2,      8,      10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          0,      {0},                                    {{0}},                          10,     20,     10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,0,      {0},                                    {{0}},                          8,      14,     10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_PRIESTESS,  0,      {0},                                    {{0}},                          8,      14,     10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_WRAITH,         0,      {0},                                    {{0}},                          11,     17,     10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          0,      {0},                                    {{0}},                          17,     23,     10,     0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_TENTACLE_HORROR,0,      {0},                                    {{0}},                          20,     AMULET_LEVEL,10,0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DRAGON,         0,      {0},                                    {{0}},                          23,     AMULET_LEVEL,10,0,          0,                  HORDE_MACHINE_CAPTIVE | HORDE_LEADER_CAPTIVE};
+    
+    // machine statue monsters
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         0,      {0},                                    {{0}},                          1,      6,      10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           0,      {0},                                    {{0}},                          6,      12,     10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_WRAITH,         0,      {0},                                    {{0}},                          10,     17,     10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           0,      {0},                                    {{0}},                          12,     19,     10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          0,      {0},                                    {{0}},                          14,     21,     10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_GOLEM,          0,      {0},                                    {{0}},                          21,     30,     10,     STATUE_DORMANT, 0,              HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_DRAGON,         0,      {0},                                    {{0}},                          29,     DEEPEST_LEVEL,  10, STATUE_DORMANT, 0,          HORDE_MACHINE_STATUE};
+    hordeCatalog[id++] = (hordeType) {MK_TENTACLE_HORROR,0,      {0},                                    {{0}},                          29,     DEEPEST_LEVEL,  10, STATUE_DORMANT, 0,          HORDE_MACHINE_STATUE};
+    
+    // machine turrets
+    hordeCatalog[id++] = (hordeType) {MK_ARROW_TURRET,   0,      {0},                                    {{0}},                          5,      13,     10,     TURRET_DORMANT, 0,              HORDE_MACHINE_TURRET};
+    hordeCatalog[id++] = (hordeType) {MK_SPARK_TURRET,   0,      {0},                                    {{0}},                          11,     18,     10,     TURRET_DORMANT, 0,              HORDE_MACHINE_TURRET};
+    hordeCatalog[id++] = (hordeType) {MK_ACID_TURRET,    0,      {0},                                    {{0}},                          15,     22,     10,     TURRET_DORMANT, 0,              HORDE_MACHINE_TURRET};
+    hordeCatalog[id++] = (hordeType) {MK_DART_TURRET,    0,      {0},                                    {{0}},                          15,     22,     10,     TURRET_DORMANT, 0,              HORDE_MACHINE_TURRET};
+    hordeCatalog[id++] = (hordeType) {MK_FLAME_TURRET,   0,      {0},                                    {{0}},                          17,     24,     10,     TURRET_DORMANT, 0,              HORDE_MACHINE_TURRET};
+    
+    // machine mud monsters
+    hordeCatalog[id++] = (hordeType) {MK_BOG_MONSTER,    0,      {0},                                    {{0}},                          12,     26,     10,     MACHINE_MUD_DORMANT, 0,         HORDE_MACHINE_MUD};
+    hordeCatalog[id++] = (hordeType) {MK_KRAKEN,         0,      {0},                                    {{0}},                          17,     26,     3,      MACHINE_MUD_DORMANT, 0,         HORDE_MACHINE_MUD};
+    
+    // kennel monsters
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         0,      {0},                                    {{0}},                          1,      5,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         0,      {0},                                    {{0}},                          1,      8,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,0,      {0},                                    {{0}},                          2,      9,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_MYSTIC,  0,      {0},                                    {{0}},                          2,      9,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           0,      {0},                                    {{0}},                          5,      15,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          0,      {0},                                    {{0}},                          10,     19,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           0,      {0},                                    {{0}},                          9,      20,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_SALAMANDER,     0,      {0},                                    {{0}},                          9,      20,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_IMP,            0,      {0},                                    {{0}},                          15,     26,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_PIXIE,          0,      {0},                                    {{0}},                          11,     21,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,0,      {0},                                    {{0}},                          9,      AMULET_LEVEL, 10, MONSTER_CAGE_CLOSED, 0,       HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_PRIESTESS,  0,      {0},                                    {{0}},                          12,     AMULET_LEVEL, 10, MONSTER_CAGE_CLOSED, 0,       HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BATTLEMAGE, 0,      {0},                                    {{0}},                          13,     AMULET_LEVEL, 10, MONSTER_CAGE_CLOSED, 0,       HORDE_MACHINE_KENNEL | HORDE_LEADER_CAPTIVE};
+    
+    // vampire bloodbags
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         0,      {0},                                    {{0}},                          1,      5,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         0,      {0},                                    {{0}},                          1,      8,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,0,      {0},                                    {{0}},                          2,      9,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_MYSTIC,  0,      {0},                                    {{0}},                          2,      9,      10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_OGRE,           0,      {0},                                    {{0}},                          5,      15,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_TROLL,          0,      {0},                                    {{0}},                          10,     19,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_NAGA,           0,      {0},                                    {{0}},                          9,      20,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_IMP,            0,      {0},                                    {{0}},                          15,     AMULET_LEVEL,10,MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_PIXIE,          0,      {0},                                    {{0}},                          11,     21,     10,     MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BLADEMASTER,0,      {0},                                    {{0}},                          9,      AMULET_LEVEL,10,MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_PRIESTESS,  0,      {0},                                    {{0}},                          12,     AMULET_LEVEL,10,MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    hordeCatalog[id++] = (hordeType) {MK_DAR_BATTLEMAGE, 0,      {0},                                    {{0}},                          13,     AMULET_LEVEL,10,MONSTER_CAGE_CLOSED, 0,         HORDE_VAMPIRE_FODDER | HORDE_LEADER_CAPTIVE};
+    
+    // key thieves
+    hordeCatalog[id++] = (hordeType) {MK_MONKEY,         0,      {0},                                    {{0}},                          1,      14,     10,     0,          0,                  HORDE_MACHINE_THIEF};
+    hordeCatalog[id++] = (hordeType) {MK_IMP,            0,      {0},                                    {{0}},                          15,     DEEPEST_LEVEL,  10, 0,      0,                  HORDE_MACHINE_THIEF};
+    
+    // legendary allies
+    hordeCatalog[id++] = (hordeType) {MK_UNICORN,        0,      {0},                                    {{0}},                          1,      DEEPEST_LEVEL,  10, 0,      0,                  HORDE_MACHINE_LEGENDARY_ALLY | HORDE_ALLIED_WITH_PLAYER};
+    hordeCatalog[id++] = (hordeType) {MK_IFRIT,          0,      {0},                                    {{0}},                          1,      DEEPEST_LEVEL,  10, 0,      0,                  HORDE_MACHINE_LEGENDARY_ALLY | HORDE_ALLIED_WITH_PLAYER};
+    hordeCatalog[id++] = (hordeType) {MK_PHOENIX_EGG,    0,      {0},                                    {{0}},                          1,      DEEPEST_LEVEL,  10, 0,      0,                  HORDE_MACHINE_LEGENDARY_ALLY | HORDE_ALLIED_WITH_PLAYER};
+    hordeCatalog[id++] = (hordeType) {MK_ANCIENT_SPIRIT, 0,      {0},                                    {{0}},                          1,      DEEPEST_LEVEL,  10, 0,      0,                  HORDE_MACHINE_LEGENDARY_ALLY | HORDE_ALLIED_WITH_PLAYER};
+    
+    // goblin warren
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         0,      {0},                                    {{0}},                          1,      10,     10,     0,              0,              HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,0,      {0},                                    {{0}},                          1,      10,     6,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_TOTEM,   1,      {MK_GOBLIN},                            {{2,4,1}},                      5,      13,     10,     0,              MT_CAMP_AREA,   HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         3,      {MK_GOBLIN, MK_GOBLIN_MYSTIC, MK_JACKAL},{{2, 3, 1}, {1,2,1}, {1,2,1}}, 6,      12,     4,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_CONJURER,2,      {MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC}, {{0,1,1}, {1,1,1}},             7,      15,     4,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN_TOTEM,   4,      {MK_GOBLIN_TOTEM, MK_GOBLIN_CONJURER, MK_GOBLIN_MYSTIC, MK_GOBLIN}, {{1,2,1},{1,2,1},{1,2,1},{3,5,1}},10,17,8,0,MT_CAMP_AREA,   HORDE_MACHINE_GOBLIN_WARREN};
+    hordeCatalog[id++] = (hordeType) {MK_GOBLIN,         1,      {MK_GOBLIN},                            {{1, 2, 1}},                    3,      7,      1,      0,              0,              HORDE_MACHINE_GOBLIN_WARREN | HORDE_LEADER_CAPTIVE};
+
 }

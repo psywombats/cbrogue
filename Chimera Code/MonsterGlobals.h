@@ -14,5 +14,6 @@
 
 // returns the array of monsters generated this game
 creatureType *getMonsterCatalog();
+hordeType *getHordeCatalog();
 
 #endif /* MonsterGlobals_h */

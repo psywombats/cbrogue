@@ -226,7 +226,6 @@ extern lightSource lightCatalog[NUMBER_LIGHT_KINDS];
 
 extern const blueprint blueprintCatalog[NUMBER_BLUEPRINTS];
 
-extern hordeType hordeCatalog[NUMBER_HORDES];
 extern const mutation mutationCatalog[NUMBER_MUTATORS];
 extern const monsterClass monsterClassCatalog[MONSTER_CLASS_COUNT];
 
