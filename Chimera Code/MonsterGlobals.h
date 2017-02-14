@@ -17,4 +17,19 @@ creatureType *getMonsterCatalog();
 hordeType *getHordeCatalog();
 monsterClass *getMonsterClassCatalog();
 
+// individual monsters needed for machines etc
+int getRatTrapMonsterId();
+int getWarrenBossMonsterId();
+int getVampireBossMonsterId();
+int getWingedGuardianMonsterId();
+int getGuardianMonsterId();
+int getSentinelMonsterId();
+int getWardenMonsterId();
+int getMirrorMonsterId();
+int getWebberMonsterId();
+int getDiggerMonsterId();
+int getSparkMonsterId();
+int getUndeadMonsterId();
+int getInvisibleMonsterId();
+
 #endif /* MonsterGlobals_h */
