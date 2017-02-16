@@ -16,6 +16,7 @@
 creatureType *getMonsterCatalog();
 hordeType *getHordeCatalog();
 monsterClass *getMonsterClassCatalog();
+blueprint *getBlueprintCatalog();
 
 // individual monsters needed for machines etc
 int getRatTrapMonsterId();

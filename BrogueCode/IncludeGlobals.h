@@ -224,8 +224,6 @@ extern dungeonProfile dungeonProfileCatalog[NUMBER_DUNGEON_PROFILES];
 
 extern lightSource lightCatalog[NUMBER_LIGHT_KINDS];
 
-extern const blueprint blueprintCatalog[NUMBER_BLUEPRINTS];
-
 extern const mutation mutationCatalog[NUMBER_MUTATORS];
 
 extern const feat featTable[FEAT_COUNT];
