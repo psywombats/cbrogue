@@ -1272,7 +1272,7 @@ typedef struct item {
     short enchant1;
     short enchant2;
     short timesEnchanted;
-    enum monsterTypes vorpalEnemy;
+    short vorpalEnemy;              // this is the ID of the monster class
     short strengthRequired;
     unsigned short quiverNumber;
     uchar displayChar;
@@ -1957,7 +1957,7 @@ enum monsterBookkeepingFlags {
 
 // Defines all creatures, which include monsters and the player:
 typedef struct creatureType {
-    enum monsterTypes monsterID; // index number for the monsterCatalog
+    short monsterID; // index number for the monsterCatalog
     char monsterName[COLS];
     uchar displayChar;
     const color *foreColor;
@@ -2018,11 +2018,11 @@ typedef struct mutation {
 } mutation;
 
 typedef struct hordeType {
-    enum monsterTypes leaderType;
+    short leaderType;                   // this is a monster ID
     
     // membership information
     short numberOfMemberTypes;
-    enum monsterTypes memberType[5];
+    short memberType[5];   // also monster IDs
     randomRange memberCount[5];
     
     // spawning information
@@ -2039,7 +2039,7 @@ typedef struct monsterClass {
     char name[30];
     short frequency;
     short maxDepth;
-    enum monsterTypes memberList[15];
+    short memberList[15];  // monster IDs
 } monsterClass;
 
 typedef struct creature {
@@ -2783,7 +2783,7 @@ extern "C" {
     void initializeGender(creature *monst);
     boolean stringsMatch(const char *str1, const char *str2);
     void resolvePronounEscapes(char *text, creature *monst);
-    short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long forbiddenFlags, unsigned long requiredFlags);
+    short pickHordeType(short depth, short summonerType, unsigned long forbiddenFlags, unsigned long requiredFlags); // where summonerType is a monsterID
     creature *cloneMonster(creature *monst, boolean announce, boolean placeClone);
     void empowerMonster(creature *monst);
     unsigned long forbiddenFlagsForMonster(creatureType *monsterType);

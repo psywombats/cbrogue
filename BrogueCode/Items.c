@@ -784,14 +784,14 @@ void pickUpItemAt(short x, short y) {
             && !(rogue.yendorWarden)) {
             // Identify the amulet guardian, or generate one if there isn't one.
             for (monst = monsters->nextCreature; monst != NULL; monst = monst->nextCreature) {
-                if (monst->info.monsterID == MK_WARDEN_OF_YENDOR) {
+                if (monst->info.monsterID == getWardenMonsterId()) {
                     rogue.yendorWarden = monst;
                     break;
                 }
             }
             if (!rogue.yendorWarden) {
                 getRandomMonsterSpawnLocation(&guardianX, &guardianY);
-                monst = generateMonster(MK_WARDEN_OF_YENDOR, false, false);
+                monst = generateMonster(getWardenMonsterId(), false, false);
                 monst->xLoc = guardianX;
                 monst->yLoc = guardianY;
                 pmap[guardianX][guardianY].flags |= HAS_MONSTER;
@@ -3624,7 +3624,7 @@ boolean polymorph(creature *monst) {
     creatureType *monsterCatalog = getMonsterCatalog();
     
     do {
-        newMonsterIndex = rand_range(1, NUMBER_MONSTER_KINDS - 1);
+        newMonsterIndex = rand_range(1, getMonsterCatalogCount() - 1);
     } while (monsterCatalog[newMonsterIndex].flags & (MONST_INANIMATE | MONST_NO_POLYMORPH) // Can't turn something into an inanimate object or lich/phoenix/warden.
              || newMonsterIndex == monst->info.monsterID); // Can't stay the same monster.
     monst->info = monsterCatalog[newMonsterIndex]; // Presto change-o!
@@ -4490,7 +4490,7 @@ void detonateBolt(bolt *theBolt, creature *caster, short x, short y, boolean *au
             break;
         case BE_CONJURATION:
             for (i = 0; i < (staffBladeCount(theBolt->magnitude)); i++) {
-                monst = generateMonster(MK_SPECTRAL_BLADE, true, false);
+                monst = generateMonster(getConjurationMonsterId(), true, false);
                 getQualifyingPathLocNear(&(monst->xLoc), &(monst->yLoc), x, y, true,
                                          T_DIVIDES_LEVEL & avoidedFlagsForMonster(&(monst->info)) & ~T_SPONTANEOUSLY_IGNITES, HAS_PLAYER,
                                          avoidedFlagsForMonster(&(monst->info)) & ~T_SPONTANEOUSLY_IGNITES, (HAS_PLAYER | HAS_MONSTER | HAS_UP_STAIRS | HAS_DOWN_STAIRS), false);
@@ -6061,7 +6061,7 @@ void summonGuardian(item *theItem) {
     short x = player.xLoc, y = player.yLoc;
     creature *monst;
     
-    monst = generateMonster(MK_CHARM_GUARDIAN, false, false);
+    monst = generateMonster(getCharmSummonMonsterId(), false, false);
     getQualifyingPathLocNear(&(monst->xLoc), &(monst->yLoc), x, y, true,
                              T_DIVIDES_LEVEL & avoidedFlagsForMonster(&(monst->info)) & ~T_SPONTANEOUSLY_IGNITES, HAS_PLAYER,
                              avoidedFlagsForMonster(&(monst->info)) & ~T_SPONTANEOUSLY_IGNITES, (HAS_PLAYER | HAS_MONSTER | HAS_UP_STAIRS | HAS_DOWN_STAIRS), false);
@@ -6353,9 +6353,9 @@ short lotteryDraw(short *frequencies, short itemCount) {
 }
 
 short chooseVorpalEnemy() {
-    short i, frequencies[MONSTER_CLASS_COUNT];
+    short i, frequencies[getMonsterClassCount()];
     monsterClass *monsterClassCatalog = getMonsterClassCatalog();
-    for (i = 0; i < MONSTER_CLASS_COUNT; i++) {
+    for (i = 0; i < getMonsterClassCount(); i++) {
         if (monsterClassCatalog[i].maxDepth <= 0
             || rogue.depthLevel <= monsterClassCatalog[i].maxDepth) {
             
@@ -6364,7 +6364,7 @@ short chooseVorpalEnemy() {
             frequencies[i] = 0;
         }
     }
-    return lotteryDraw(frequencies, MONSTER_CLASS_COUNT);
+    return lotteryDraw(frequencies, getMonsterClassCount());
 }
 
 void describeMonsterClass(char *buf, const short classID, boolean conjunctionAnd) {

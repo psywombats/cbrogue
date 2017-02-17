@@ -173,6 +173,18 @@ int getInvisibleMonsterId() {
     return MK_PHANTOM;
 }
 
+int getSpectralImageMonsterId() {
+    return MK_SPECTRAL_IMAGE;
+}
+
+int getConjurationMonsterId() {
+    return MK_SPECTRAL_BLADE;
+}
+
+int getCharmSummonMonsterId() {
+    return MK_CHARM_GUARDIAN;
+}
+
 void ensureCatalogsInitialized() {
     static boolean catalogInitialized = false;
     if (catalogInitialized) {
@@ -185,6 +197,14 @@ void ensureCatalogsInitialized() {
     initBlueprintCatalog();
     
     catalogInitialized = true;
+}
+
+int getMonsterCatalogCount() {
+    return NUMBER_MONSTER_KINDS;
+}
+
+int getMonsterClassCount() {
+    return MONSTER_CLASS_COUNT;
 }
 
 void initMonsterCatalog() {

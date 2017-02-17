@@ -244,7 +244,7 @@ void monsterName(char *buf, creature *monst, boolean includeArticle) {
             rogue.RNG = RNG_COSMETIC;
             //assureCosmeticRNG;
             sprintf(buf, "%s%s", (includeArticle ? "the " : ""),
-                    getMonsterCatalog()[rand_range(1, NUMBER_MONSTER_KINDS - 1)].monsterName);
+                    getMonsterCatalog()[rand_range(1, getMonsterCatalogCount() - 1)].monsterName);
             restoreRNG;
             
             return;
@@ -460,8 +460,8 @@ void resolvePronounEscapes(char *text, creature *monst) {
     *insert = '\0';
 }
 
-// Pass 0 for summonerType for an ordinary selection.
-short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long forbiddenFlags, unsigned long requiredFlags) {
+// Pass 0 for summonerType for an ordinary selection, or non-zero as a monster ID
+short pickHordeType(short depth, short summonerType, unsigned long forbiddenFlags, unsigned long requiredFlags) {
     short i, index, possCount = 0;
     hordeType *hordeCatalog = getHordeCatalog();
     
@@ -469,7 +469,7 @@ short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long f
         depth = rogue.depthLevel;
     }
     
-    for (i=0; i<NUMBER_HORDES; i++) {
+    for (i=0; i<getMonsterCatalogCount(); i++) {
         if (!(hordeCatalog[i].flags & forbiddenFlags)
             && !(~(hordeCatalog[i].flags) & requiredFlags)
             && ((!summonerType && hordeCatalog[i].minLevel <= depth && hordeCatalog[i].maxLevel >= depth)
@@ -484,7 +484,7 @@ short pickHordeType(short depth, enum monsterTypes summonerType, unsigned long f
     
     index = rand_range(1, possCount);
     
-    for (i=0; i<NUMBER_HORDES; i++) {
+    for (i=0; i<getMonsterCatalogCount(); i++) {
         if (!(hordeCatalog[i].flags & forbiddenFlags)
             && !(~(hordeCatalog[i].flags) & requiredFlags)
             && ((!summonerType && hordeCatalog[i].minLevel <= depth && hordeCatalog[i].maxLevel >= depth)
@@ -884,7 +884,7 @@ boolean removeMonsterFromChain(creature *monst, creature *theChain) {
 }
 
 boolean summonMinions(creature *summoner) {
-    enum monsterTypes summonerType = summoner->info.monsterID;
+    short summonerType = summoner->info.monsterID;
     const short hordeID = pickHordeType(0, summonerType, 0, 0);
     short seenMinionCount = 0, x, y;
     boolean atLeastOneMinion = false;

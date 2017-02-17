@@ -1125,7 +1125,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
                 if (rand_range(0, 1)) {
                     cellChar += 'A' - 'a';
                 }
-                cellForeColor = *(monsterCatalog[rand_range(1, NUMBER_MONSTER_KINDS - 1)].foreColor);
+                cellForeColor = *(monsterCatalog[rand_range(1, getMonsterCatalogCount() - 1)].foreColor);
             } else {
                 cellChar = monst->info.displayChar;
                 cellForeColor = *(monst->info.foreColor);
@@ -1196,7 +1196,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
                 && !monsterHiddenBySubmersion(monst, &player)) {
                 
                 if (player.status[STATUS_HALLUCINATING] && !rogue.playbackOmniscience) {
-                    cellChar = monsterCatalog[rand_range(1, NUMBER_MONSTER_KINDS - 1)].displayChar;
+                    cellChar = monsterCatalog[rand_range(1, getMonsterCatalogCount() - 1)].displayChar;
                 } else {
                     cellChar = monst->info.displayChar;
                 }

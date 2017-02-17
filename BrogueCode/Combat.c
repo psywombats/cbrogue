@@ -689,7 +689,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
                 buf[DCOLS] = '\0';
                 
                 for (i = 0; i < (weaponImageCount(enchant)); i++) {
-                    newMonst = generateMonster(MK_SPECTRAL_IMAGE, true, false);
+                    newMonst = generateMonster(getSpectralImageMonsterId(), true, false);
                     getQualifyingPathLocNear(&(newMonst->xLoc), &(newMonst->yLoc), defender->xLoc, defender->yLoc, true,
                                              T_DIVIDES_LEVEL & avoidedFlagsForMonster(&(newMonst->info)), HAS_PLAYER,
                                              avoidedFlagsForMonster(&(newMonst->info)), (HAS_PLAYER | HAS_MONSTER | HAS_UP_STAIRS | HAS_DOWN_STAIRS), false);
@@ -850,7 +850,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
                     monst->creatureState = MONSTER_ALLY;
                     monst->status[STATUS_DISCORDANT] = 0; // Otherwise things can get out of control...
                     monst->ticksUntilTurn = 100;
-                    monst->info.monsterID = MK_SPECTRAL_IMAGE;
+                    monst->info.monsterID = getSpectralImageMonsterId();
                     if (monst->carriedMonster) {
                         killCreature(monst->carriedMonster, true); // Otherwise you can get infinite phoenices from a discordant phoenix.
                         monst->carriedMonster = NULL;
@@ -1166,11 +1166,11 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
             if (&player == defender) {
                 gameOver(attacker->info.monsterName, false);
                 return true;
-            } else if (&player == attacker
-                       && defender->info.monsterID == MK_DRAGON) {
-                
-                rogue.featRecord[FEAT_DRAGONSLAYER] = true;
             }
+            // good luck finding a real dragon in cBrogue, loser
+//            if (&player == attacker && defender->info.monsterID == MK_DRAGON) {
+//                rogue.featRecord[FEAT_DRAGONSLAYER] = true;
+//            }
         } else { // if the defender survived
             if (!rogue.blockCombatText && (canSeeMonster(attacker) || canSeeMonster(defender))) {
                 attackVerb(verb, attacker, max(damage - attacker->info.damage.lowerBound * monsterDamageAdjustmentAmount(attacker), 0) * 100

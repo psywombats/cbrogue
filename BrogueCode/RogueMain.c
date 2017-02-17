@@ -301,7 +301,7 @@ void initializeRogue(unsigned long seed) {
     
     creatureType *monsterCatalog = getMonsterCatalog();
     
-    for (i=0; i<NUMBER_MONSTER_KINDS; i++) {
+    for (i=0; i<getMonsterCatalogCount(); i++) {
         monsterCatalog[i].monsterID = i;
     }
     
