@@ -30,6 +30,7 @@
 		69C7414A1775466100CD2D5F /* Time.c in Sources */ = {isa = PBXBuildFile; fileRef = 69C741491775466100CD2D5F /* Time.c */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		F030731C1E56AD870045C83E /* Blueprints.c in Sources */ = {isa = PBXBuildFile; fileRef = F030731A1E56AD870045C83E /* Blueprints.c */; };
 		F075856D1D7FAB5C004246C8 /* MonsterGlobals.c in Sources */ = {isa = PBXBuildFile; fileRef = F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */; };
 /* End PBXBuildFile section */
 
@@ -67,6 +68,8 @@
 		69C741491775466100CD2D5F /* Time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Time.c; path = BrogueCode/Time.c; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* cBrogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cBrogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F030731A1E56AD870045C83E /* Blueprints.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Blueprints.c; path = "Chimera Code/Blueprints.c"; sourceTree = "<group>"; };
+		F030731B1E56AD870045C83E /* Blueprints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Blueprints.h; path = "Chimera Code/Blueprints.h"; sourceTree = "<group>"; };
 		F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MonsterGlobals.c; path = "Chimera Code/MonsterGlobals.c"; sourceTree = "<group>"; };
 		F075856C1D7FAB5C004246C8 /* MonsterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonsterGlobals.h; path = "Chimera Code/MonsterGlobals.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -185,6 +188,8 @@
 			children = (
 				F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */,
 				F075856C1D7FAB5C004246C8 /* MonsterGlobals.h */,
+				F030731A1E56AD870045C83E /* Blueprints.c */,
+				F030731B1E56AD870045C83E /* Blueprints.h */,
 			);
 			name = "Chimera Code";
 			sourceTree = "<group>";
@@ -271,6 +276,7 @@
 				58EE4FF7120E01FB0020458E /* Random.c in Sources */,
 				58A17EDB1235ACA100647687 /* Recordings.c in Sources */,
 				69A642211476EC76006246FB /* Buttons.c in Sources */,
+				F030731C1E56AD870045C83E /* Blueprints.c in Sources */,
 				696F73E814C27D9F00CF8C90 /* MainMenu.c in Sources */,
 				F075856D1D7FAB5C004246C8 /* MonsterGlobals.c in Sources */,
 				694753061672E75D003BE7CB /* Grid.c in Sources */,

@@ -24,6 +24,7 @@
 #include "Rogue.h"
 #include "IncludeGlobals.h"
 #include "MonsterGlobals.h"
+#include "Blueprints.h"
 
 short topBlobMinX, topBlobMinY, blobWidth, blobHeight;
 
