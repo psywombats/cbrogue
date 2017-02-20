@@ -1,9 +1,9 @@
 LIBTCODDIR=libtcod-1.5.1
 SDLDIR=SDL-1.2.14
-CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
+CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
 
 %.o : %.c
-	gcc $(CFLAGS) -O2 -s -o $@ -c $< 
+	g++ $(CFLAGS) -O2 -s -o $@ -c $< 
 
 OBJS=BrogueCode/Architect.o \
 	BrogueCode/Combat.o \
@@ -19,6 +19,7 @@ OBJS=BrogueCode/Architect.o \
 	BrogueCode/RogueMain.o \
 	BrogueCode/Random.o \
 	BrogueCode/Recordings.o \
+	ChimeraCode/MonsterGlobals.o \
 	PlatformCode/main.o \
 	PlatformCode/platformdependent.o \
 	PlatformCode/tcod-platform.o 
