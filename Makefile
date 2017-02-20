@@ -3,12 +3,13 @@ SDLDIR=SDL-1.2.14
 CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
 
 %.o : %.c
-	g++ $(CFLAGS) -O2 -s -o $@ -c $< 
+	gcc $(CFLAGS) -O2 -s -o $@ -c $< 
 
 OBJS=BrogueCode/Architect.o \
 	BrogueCode/Combat.o \
 	BrogueCode/Dijkstra.o \
 	BrogueCode/Globals.o \
+	BrogueCode/Grid.o \
 	BrogueCode/IO.o \
 	BrogueCode/Buttons.o \
 	BrogueCode/MainMenu.o \
@@ -19,6 +20,7 @@ OBJS=BrogueCode/Architect.o \
 	BrogueCode/RogueMain.o \
 	BrogueCode/Random.o \
 	BrogueCode/Recordings.o \
+	BrogueCode/Time.o \
 	ChimeraCode/MonsterGlobals.o \
 	PlatformCode/main.o \
 	PlatformCode/platformdependent.o \
