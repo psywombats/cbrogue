@@ -55,7 +55,7 @@ void updateFlavorText() {
         if (rogue.armor
             && (rogue.armor->flags & ITEM_RUNIC)
             && rogue.armor->enchant2 == A_RESPIRATION
-            && tileCatalog[pmap[player.xLoc][player.yLoc].layers[highestPriorityLayer(player.xLoc, player.yLoc, false)]].flags & T_RESPIRATION_IMMUNITIES) {
+            && (tileCatalog[pmap[player.xLoc][player.yLoc].layers[highestPriorityLayer(player.xLoc, player.yLoc, false)]].flags & T_RESPIRATION_IMMUNITIES)) {
             
             flavorMessage("A pocket of cool, clean air swirls around you.");
         } else if (player.status[STATUS_LEVITATING]) {
@@ -547,7 +547,7 @@ void updateClairvoyance() {
             dy = (player.yLoc - j);
             
             if (dx*dx + dy*dy < clairvoyanceRadius*clairvoyanceRadius + clairvoyanceRadius
-                && (pmap[i][j].layers[DUNGEON] != GRANITE || pmap[i][j].flags & DISCOVERED)) {
+                && (pmap[i][j].layers[DUNGEON] != GRANITE || (pmap[i][j].flags & DISCOVERED))) {
                 
                 if (cFlags & DISCOVERED) {
                     discoverCell(i, j);
@@ -1756,8 +1756,8 @@ void rechargeItemsIncrementally(short multiplier) {
     
     for (theItem = packItems->nextItem; theItem != NULL; theItem = theItem->nextItem) {
         if (theItem->category & STAFF) {
-            if (theItem->charges < theItem->enchant1 && rechargeIncrement > 0
-                || theItem->charges > 0 && rechargeIncrement < 0) {
+            if ((theItem->charges < theItem->enchant1 && rechargeIncrement > 0)
+                || (theItem->charges > 0 && rechargeIncrement < 0)) {
                 
                 theItem->enchant2 -= rechargeIncrement;
             }
@@ -2208,7 +2208,7 @@ void playerTurnEnded() {
         rogue.updatedMapToSafeTerrainThisTurn   = false;
         
         for (monst = monsters->nextCreature; monst != NULL; monst = monst->nextCreature) {
-            if (D_SAFETY_VISION || monst->creatureState == MONSTER_FLEEING && pmap[monst->xLoc][monst->yLoc].flags & IN_FIELD_OF_VIEW) {
+            if (D_SAFETY_VISION || (monst->creatureState == MONSTER_FLEEING && (pmap[monst->xLoc][monst->yLoc].flags & IN_FIELD_OF_VIEW))) {
                 updateSafetyMap(); // only if there is a fleeing monster who can see the player
                 break;
             }
@@ -2356,7 +2356,7 @@ void playerTurnEnded() {
                     discover(monst->xLoc, monst->yLoc);
                 }
                 if (canDirectlySeeMonster(monst)) {
-                    if (rogue.weapon && rogue.weapon->flags & ITEM_RUNIC
+                    if (rogue.weapon && (rogue.weapon->flags & ITEM_RUNIC)
                         && rogue.weapon->enchant2 == W_SLAYING
                         && !(rogue.weapon->flags & ITEM_RUNIC_HINTED)
                         && monsterIsInClass(monst, rogue.weapon->vorpalEnemy)) {
@@ -2366,7 +2366,7 @@ void playerTurnEnded() {
                         sprintf(buf, "the runes on your %s gleam balefully.", buf2);
                         messageWithColor(buf, &itemMessageColor, true);
                     }
-                    if (rogue.armor && rogue.armor->flags & ITEM_RUNIC
+                    if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC)
                         && rogue.armor->enchant2 == A_IMMUNITY
                         && !(rogue.armor->flags & ITEM_RUNIC_HINTED)
                         && monsterIsInClass(monst, rogue.armor->vorpalEnemy)) {

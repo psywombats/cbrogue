@@ -1099,7 +1099,7 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
                 }
                 displayInventory(ALL_ITEMS, 0, 0, true, false);
             }
-        } while (!(theEvent.eventType == KEYSTROKE && (theEvent.param1 == ACKNOWLEDGE_KEY || theEvent.param1 == ESCAPE_KEY)
+        } while (!((theEvent.eventType == KEYSTROKE && (theEvent.param1 == ACKNOWLEDGE_KEY || theEvent.param1 == ESCAPE_KEY))
                    || theEvent.eventType == MOUSE_UP));
         
         confirmMessages();

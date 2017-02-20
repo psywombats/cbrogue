@@ -362,7 +362,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
             return;
         }
         
-        if (attacker->info.abilityFlags & MA_HIT_DEGRADE_ARMOR
+        if ((attacker->info.abilityFlags & MA_HIT_DEGRADE_ARMOR)
             && defender == &player
             && rogue.armor
             && !(rogue.armor->flags & ITEM_PROTECTED)) {
@@ -385,7 +385,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
             player.maxStatus[STATUS_HALLUCINATING] = max(player.maxStatus[STATUS_HALLUCINATING], player.status[STATUS_HALLUCINATING]);
         }
         
-        if (attacker->info.abilityFlags & MA_HIT_STEAL_FLEE
+        if ((attacker->info.abilityFlags & MA_HIT_STEAL_FLEE)
             && !(attacker->carriedItem)
             && (packItems->nextItem)
             && attacker->currentHP > 0
@@ -823,7 +823,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
     
     returnString[0] = '\0';
     
-    if (!(rogue.armor && rogue.armor->flags & ITEM_RUNIC)) {
+    if (!(rogue.armor && (rogue.armor->flags & ITEM_RUNIC))) {
         return; // just in case
     }
     
@@ -976,6 +976,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
                 spawnDungeonFeature(player.xLoc, player.yLoc, &(dungeonFeatureCatalog[DF_ARMOR_IMMOLATION]), true, false);
                 runicDiscovered = true;
             }
+            break;
         default:
             break;
     }
@@ -1129,7 +1130,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
             strcpy(explicationClause, " in $HISHER sleep");
         } else if (sneakAttack) {
             strcpy(explicationClause, ", catching $HIMHER unaware");
-        } else if (defender->status[STATUS_STUCK] || defender->bookkeepingFlags & MB_CAPTIVE) {
+        } else if (defender->status[STATUS_STUCK] || (defender->bookkeepingFlags & MB_CAPTIVE)) {
             sprintf(explicationClause, " while %s dangle%s helplessly",
                     (canSeeMonster(defender) ? "$HESHE" : "it"),
                     (defender == &player ? "" : "s"));
@@ -1538,7 +1539,7 @@ boolean inflictDamage(creature *attacker, creature *defender,
         }
         
         if (defender != &player && defender->creatureState != MONSTER_ALLY
-            && defender->info.flags & MONST_FLEES_NEAR_DEATH
+            && (defender->info.flags & MONST_FLEES_NEAR_DEATH)
             && defender->info.maxHP / 4 >= defender->currentHP) {
             
             defender->creatureState = MONSTER_FLEEING;

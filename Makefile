@@ -22,6 +22,7 @@ OBJS=BrogueCode/Architect.o \
 	BrogueCode/Recordings.o \
 	BrogueCode/Time.o \
 	ChimeraCode/MonsterGlobals.o \
+	ChimeraCode/Blueprints.o \
 	PlatformCode/main.o \
 	PlatformCode/platformdependent.o \
 	PlatformCode/tcod-platform.o 

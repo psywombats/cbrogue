@@ -16,14 +16,25 @@
 creatureType *getMonsterCatalog();
 hordeType *getHordeCatalog();
 monsterClass *getMonsterClassCatalog();
-blueprint *getBlueprintCatalog();
 
 int getMonsterCatalogCount();
 int getMonsterClassCount();
 
 // individual monsters needed for machines etc
-int getSpectralImageMonsterId();
+int getRatTrapMonsterId();
+int getWarrenBossMonsterId();
+int getVampireBossMonsterId();
+int getWingedGuardianMonsterId();
+int getGuardianMonsterId();
+int getSentinelMonsterId();
 int getWardenMonsterId();
+int getMirrorMonsterId();
+int getWebberMonsterId();
+int getDiggerMonsterId();
+int getSparkMonsterId();
+int getUndeadMonsterId();
+int getInvisibleMonsterId();
+int getSpectralImageMonsterId();
 int getConjurationMonsterId();
 int getCharmSummonMonsterId();
 

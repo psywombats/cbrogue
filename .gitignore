@@ -22,3 +22,5 @@ Thumbs.db
 # Brogue junk #
 ###############
 *.broguesave
+*.broguerec
+BrogueHighScores.txt

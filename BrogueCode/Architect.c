@@ -239,7 +239,7 @@ void analyzeMap(boolean calculateChokeMap) {
                     if ((coordinatesAreInMap(newX, newY) && passMap[newX][newY])
                         != (coordinatesAreInMap(oldX, oldY) && passMap[oldX][oldY])) {
                         if (++passableArcCount > 2) {
-                            if (!passMap[i-1][j] && !passMap[i+1][j] || !passMap[i][j-1] && !passMap[i][j+1]) {
+                            if ((!passMap[i-1][j] && !passMap[i+1][j]) || (!passMap[i][j-1] && !passMap[i][j+1])) {
                                 pmap[i][j].flags |= IS_CHOKEPOINT;
                             }
                             break;
