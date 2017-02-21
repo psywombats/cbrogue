@@ -132,7 +132,7 @@ void addMonsterToContiguousMonsterGrid(short x, short y, creature *monst, char g
     creature *tempMonst;
     
     grid[x][y] = true;
-    for (dir=0; dir<4; dir++) {
+    for (dir=0; dir<4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         
@@ -173,7 +173,7 @@ void splitMonster(creature *monst, short x, short y) {
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
             if (monsterGrid[i][j]) {
-                for (dir=0; dir<4; dir++) {
+                for (dir=0; dir<4; NEXT_DIR(dir)) {
                     newX = i + nbDirs[dir][0];
                     newY = j + nbDirs[dir][1];
                     if (coordinatesAreInMap(newX, newY)

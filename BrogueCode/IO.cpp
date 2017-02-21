@@ -159,7 +159,7 @@ void processSnapMap(short **map) {
     for (i = 0; i < DCOLS; i++) {
         for (j = 0; j < DROWS; j++) {
             if (cellHasTMFlag(i, j, TM_INVERT_WHEN_HIGHLIGHTED)) {
-                for (dir = 0; dir < 4; dir++) {
+                for (dir = 0; dir < 4; NEXT_DIR(dir)) {
                     newX = i + nbDirs[dir][0];
                     newY = j + nbDirs[dir][1];
                     if (coordinatesAreInMap(newX, newY)
@@ -750,7 +750,7 @@ void mainInputLoop() {
                 // Control-clicking moves the player one step along the path.
                 for (dir=0;
                      dir < DIRECTION_COUNT && (player.xLoc + nbDirs[dir][0] != path[0][0] || player.yLoc + nbDirs[dir][1] != path[0][1]);
-                     dir++);
+                     NEXT_DIR(dir));
                 playerMoves(dir);
             } else if (D_WORMHOLING) {
                 travel(cursor[0], cursor[1], true);
@@ -768,7 +768,7 @@ void mainInputLoop() {
                                                                                                                                                                                       // Clicking one space away will cause the player to try to move there directly irrespective of path.
                                    for (dir=0;
                                         dir < DIRECTION_COUNT && (player.xLoc + nbDirs[dir][0] != cursor[0] || player.yLoc + nbDirs[dir][1] != cursor[1]);
-                                        dir++);
+                                        NEXT_DIR(dir));
                                    playerMoves(dir);
                                } else if (steps) {
                                    travelRoute(path, steps);
@@ -906,7 +906,7 @@ void shuffleTerrainColors(short percentOfCells, boolean refreshCells) {
                 && (i != rogue.cursorLoc[0] || j != rogue.cursorLoc[1])
                 && (percentOfCells >= 100 || rand_range(1, 100) <= percentOfCells)) {
                     
-                    for (dir=0; dir<DIRECTION_COUNT; dir++) {
+                    for (dir=0; dir<DIRECTION_COUNT; NEXT_DIR(dir)) {
                         terrainRandomValues[i][j][dir] += rand_range(-600, 600);
                         terrainRandomValues[i][j][dir] = clamp(terrainRandomValues[i][j][dir], 0, 1000);
                     }
@@ -1043,7 +1043,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
             maxLayer = NUMBER_TERRAIN_LAYERS;
         }
         
-        for (layer = 0; layer < maxLayer; layer++) {
+        for (layer = 0; layer < maxLayer; NEXT_LAYER(layer)) {
             // Gas shows up as a color average, not directly.
             if (pmap[x][y].layers[layer] && layer != GAS) {
                 tile = pmap[x][y].layers[layer];
@@ -2226,7 +2226,7 @@ void exploreKey(const boolean controlKey) {
     // fight any adjacent enemies first
     dir = adjacentFightingDir();
     if (dir == NO_DIRECTION) {
-        for (dir = 0; dir < DIRECTION_COUNT; dir++) {
+        for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
             x = player.xLoc + nbDirs[dir][0];
             y = player.yLoc + nbDirs[dir][1];
             if (coordinatesAreInMap(x, y)

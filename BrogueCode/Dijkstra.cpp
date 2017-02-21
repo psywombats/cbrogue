@@ -49,7 +49,7 @@ void pdsUpdate(pdsMap *map) {
     map->front.right = NULL;
 
     while (head != NULL) {
-        for (dir = 0; dir < dirs; dir++) {
+        for (dir = 0; dir < dirs; NEXT_DIR(dir)) {
             link = head + (nbDirs[dir][0] + DCOLS * nbDirs[dir][1]);
             if (link < map->links || link >= map->links + DCOLS * DROWS) continue;
 

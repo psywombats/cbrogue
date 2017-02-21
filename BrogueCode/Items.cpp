@@ -388,7 +388,7 @@ item *placeItem(item *theItem, short x, short y) {
             sprintf(buf, "a pressure plate clicks underneath the %s!", theItemName);
             message(buf, true);
         }
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].flags & T_IS_DF_TRAP) {
                 spawnDungeonFeature(x, y, &(dungeonFeatureCatalog[tileCatalog[pmap[x][y].layers[layer]].fireType]), true, false);
                 promoteTile(x, y, layer, false);
@@ -410,7 +410,7 @@ void fillItemSpawnHeatMap(unsigned short heatMap[DCOLS][DROWS], unsigned short h
     if (heatMap[x][y] > heatLevel) {
         heatMap[x][y] = heatLevel;
     }
-    for (dir = 0; dir < 4; dir++) {
+    for (dir = 0; dir < 4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -709,7 +709,7 @@ void removeItemFrom(short x, short y) {
     pmap[x][y].flags &= ~HAS_ITEM;
     
     if (cellHasTMFlag(x, y, TM_PROMOTES_ON_ITEM_PICKUP)) {
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_ON_ITEM_PICKUP) {
                 promoteTile(x, y, layer, false);
             }
@@ -1107,7 +1107,7 @@ void updateFloorItems() {
             continue;
         }
         if (cellHasTMFlag(x, y, TM_PROMOTES_ON_STEP)) {
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_ON_STEP) {
                     promoteTile(x, y, layer, false);
                 }
@@ -1772,7 +1772,7 @@ void itemDetails(char *buf, item *theItem) {
     char buf2[1000], buf3[1000], theName[500], goodColorEscape[20], badColorEscape[20], whiteColorEscape[20];
     boolean singular, carried;
     float enchant;
-    short nextLevelState = 0, new;
+    short nextLevelState = 0, temp;
     float accuracyChange, damageChange, current, currentDamage, newDamage;
     const char weaponRunicEffectDescriptions[NUMBER_WEAPON_RUNIC_KINDS][DCOLS] = {
         "time will stop while you take an extra turn",
@@ -1986,16 +1986,16 @@ void itemDetails(char *buf, item *theItem) {
                         currentDamage = (((float) player.info.damage.lowerBound) + ((float) player.info.damage.upperBound)) / 2;
                     }
                     
-                    new = player.info.accuracy;
+                    temp = player.info.accuracy;
                     newDamage = (((float) theItem->damage.lowerBound) + ((float) theItem->damage.upperBound)) / 2;
                     if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-                        new *= pow(WEAPON_ENCHANT_ACCURACY_FACTOR, netEnchant(theItem));
+                    	temp *= pow(WEAPON_ENCHANT_ACCURACY_FACTOR, netEnchant(theItem));
                         newDamage *= pow(WEAPON_ENCHANT_DAMAGE_FACTOR, netEnchant(theItem));
                     } else {
-                        new *= pow(WEAPON_ENCHANT_ACCURACY_FACTOR, strengthModifier(theItem));
+                    	temp *= pow(WEAPON_ENCHANT_ACCURACY_FACTOR, strengthModifier(theItem));
                         newDamage *= pow(WEAPON_ENCHANT_DAMAGE_FACTOR, strengthModifier(theItem));
                     }
-                    accuracyChange  = (new * 100 / current) - 100 + FLOAT_FUDGE;
+                    accuracyChange  = (temp * 100 / current) - 100 + FLOAT_FUDGE;
                     damageChange    = (newDamage * 100 / currentDamage) - 100 + FLOAT_FUDGE;
                     sprintf(buf2, "Wielding the %s%s will %s your current accuracy by %s%i%%%s, and will %s your current damage by %s%i%%%s. ",
                             theName,
@@ -2009,19 +2009,19 @@ void itemDetails(char *buf, item *theItem) {
                             abs((short) damageChange),
                             whiteColorEscape);
                 } else {
-                    new = theItem->armor;
+                	temp = theItem->armor;
                     if ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) {
-                        new += 10 * netEnchant(theItem);
+                    	temp += 10 * netEnchant(theItem);
                     } else {
-                        new += 10 * strengthModifier(theItem);
+                    	temp += 10 * strengthModifier(theItem);
                     }
-                    new = max(0, new);
-                    new /= 10;
+                    temp = max(0, temp);
+                    temp /= 10;
                     sprintf(buf2, "Wearing the %s%s will result in an armor rating of %s%i%s. ",
                             theName,
                             ((theItem->flags & ITEM_IDENTIFIED) || rogue.playbackOmniscience) ? "" : ", assuming it has no hidden properties,",
-                            (new > displayedArmorValue() ? goodColorEscape : (new < displayedArmorValue() ? badColorEscape : whiteColorEscape)),
-                            (int) (new + FLOAT_FUDGE),
+                            (temp > displayedArmorValue() ? goodColorEscape : (temp < displayedArmorValue() ? badColorEscape : whiteColorEscape)),
+                            (int) (temp + FLOAT_FUDGE),
                             whiteColorEscape);
                 }
                 strcat(buf, buf2);
@@ -2042,15 +2042,15 @@ void itemDetails(char *buf, item *theItem) {
                 && !(theItem->flags & ITEM_EQUIPPED)
                 && (current != armorAggroAdjustment(theItem))) {
                 
-                new = armorAggroAdjustment(theItem);
+            	temp = armorAggroAdjustment(theItem);
                 if (rogue.armor) {
-                    new -= armorAggroAdjustment(rogue.armor);
+                	temp -= armorAggroAdjustment(rogue.armor);
                 }
                 sprintf(buf2, "Equipping the %s will %s%s your stealth range by %i%s. ",
                         theName,
-                        new > 0 ? badColorEscape : goodColorEscape,
-                        new > 0 ? "increase" : "decrease",
-                        abs(new),
+                        temp > 0 ? badColorEscape : goodColorEscape,
+              	        temp > 0 ? "increase" : "decrease",
+                        abs(temp),
                         whiteColorEscape);
                 strcat(buf, buf2);
             }
@@ -2318,14 +2318,14 @@ void itemDetails(char *buf, item *theItem) {
             
             // charges
             if ((theItem->flags & ITEM_IDENTIFIED)  || rogue.playbackOmniscience) {
-                new = apparentRingBonus(RING_WISDOM);
+            	temp = apparentRingBonus(RING_WISDOM);
                 
                 sprintf(buf2, "\n\nThe %s has %i charges remaining out of a maximum of %i charges, and%s recovers a charge in approximately %i turns. ",
                         theName,
                         theItem->charges,
                         theItem->enchant1,
-                        new == 0 ? "" : ", with your current rings,",
-                        staffChargeDuration(theItem) / ringWisdomMultiplier(new));
+                        temp == 0 ? "" : ", with your current rings,",
+                        staffChargeDuration(theItem) / ringWisdomMultiplier(temp));
                 strcat(buf, buf2);
             } else if (theItem->flags & ITEM_MAX_CHARGES_KNOWN) {
                 sprintf(buf2, "\n\nThe %s has a maximum of %i charges, and recovers its charges gradually over time. ",
@@ -3456,7 +3456,7 @@ boolean tunnelize(short x, short y) {
         pmap[x][y].layers[DUNGEON] = CRYSTAL_WALL; // don't dissolve the boundary walls
         didSomething = true;
     } else {
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].flags & (T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION)) {
                 pmap[x][y].layers[layer] = (layer == DUNGEON ? FLOOR : NOTHING);
                 didSomething = true;
@@ -3476,7 +3476,7 @@ boolean tunnelize(short x, short y) {
     if (!cellHasTerrainFlag(x, y, T_OBSTRUCTS_DIAGONAL_MOVEMENT)
         && didSomething) {
         // Tunnel out any diagonal kinks between walls.
-        for (dir = 0; dir < DIRECTION_COUNT; dir++) {
+        for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
             x2 = x + nbDirs[dir][0];
             y2 = y + nbDirs[dir][1];
             if (coordinatesAreInMap(x2, y2)
@@ -4081,7 +4081,7 @@ void checkForMissingKeys(short x, short y) {
     short layer;
     
     if (cellHasTMFlag(x, y, TM_PROMOTES_WITHOUT_KEY) && !keyOnTileAt(x, y)) {
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_WITHOUT_KEY) {
                 promoteTile(x, y, layer, false);
             }

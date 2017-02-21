@@ -158,7 +158,7 @@ void antiAlias(unsigned char mask[COLS][ROWS]) {
         for (j=0; j<ROWS; j++) {
             if (mask[i][j] < 100) {
                 nbCount = 0;
-                for (dir=0; dir<4; dir++) {
+                for (dir=0; dir<4; NEXT_DIR(dir)) {
                     x = i + nbDirs[dir][0];
                     y = j + nbDirs[dir][1];
                     if (coordinatesAreInWindow(x, y) && mask[x][y] == 100) {

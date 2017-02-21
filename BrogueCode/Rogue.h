@@ -369,6 +369,7 @@ enum directions {
     
     DIRECTION_COUNT = 8,
 };
+#define NEXT_DIR(dir) (dir) = ((directions)((int)(dir) + 1))
 
 enum textEntryTypes {
     TEXT_INPUT_NORMAL = 0,
@@ -1170,6 +1171,7 @@ enum dungeonLayers {
     SURFACE,            // surface-level tile   (e.g. grass)
     NUMBER_TERRAIN_LAYERS
 };
+#define NEXT_LAYER(dungeonLayer) (dungeonLayer) = ((dungeonLayers)((int)(dungeonLayer) + 1))
 
 // keeps track of graphics so we only redraw if the cell has changed:
 typedef struct cellDisplayBuffer {
@@ -2343,6 +2345,8 @@ typedef struct blueprint {
 } blueprint;
 
 enum machineTypes {
+	MT_NONE = -1,
+
     // Reward rooms:
     MT_REWARD_MULTI_LIBRARY = 1,
     MT_REWARD_MONO_LIBRARY,

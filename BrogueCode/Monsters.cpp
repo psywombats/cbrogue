@@ -1198,7 +1198,7 @@ unsigned long burnedTerrainFlagsAtLoc(short x, short y) {
     short layer;
     unsigned long flags = 0;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].flags & T_IS_FLAMMABLE) {
             flags |= successorTerrainFlags(pmap[x][y].layers[layer], SUBSEQ_BURN);
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_EXPLOSIVE_PROMOTE) {
@@ -1214,7 +1214,7 @@ unsigned long discoveredTerrainFlagsAtLoc(short x, short y) {
     short layer;
     unsigned long flags = 0;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_IS_SECRET) {
             flags |= successorTerrainFlags(pmap[x][y].layers[layer], SUBSEQ_DISCOVER);
         }
@@ -2124,7 +2124,7 @@ enum directions monsterSwarmDirection(creature *monst, creature *enemy) {
             // Found a prospective ally.
             // Check that there isn't already an open space from which to attack the enemy that is accessible to the ally.
             alternateDirectionExists = false;
-            for (dir=0; dir< DIRECTION_COUNT && !alternateDirectionExists; dir++) {
+            for (dir=0; dir< DIRECTION_COUNT && !alternateDirectionExists; NEXT_DIR(dir)) {
                 newX = ally->xLoc + nbDirs[dir][0];
                 newY = ally->yLoc + nbDirs[dir][1];
                 if (coordinatesAreInMap(newX, newY)
@@ -2621,7 +2621,7 @@ boolean isLocalScentMaximum(short x, short y) {
     
     const short baselineScent = scentMap[x][y];
     
-    for (dir=0; dir< DIRECTION_COUNT; dir++) {
+    for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -2648,7 +2648,7 @@ enum directions scentDirection(creature *monst) {
     
     for (;;) {
         
-        for (dir=0; dir< DIRECTION_COUNT; dir++) {
+        for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
             newX = x + nbDirs[dir][0];
             newY = y + nbDirs[dir][1];
             otherMonst = monsterAtLoc(newX, newY);
@@ -2674,10 +2674,10 @@ enum directions scentDirection(creature *monst) {
             // There's a possibility he's stuck for some other reason, though, so we'll only
             // try once per his move -- hence the failsafe.
             canTryAgain = false;
-            for (dir=0; dir<4; dir++) {
+            for (dir=0; dir<4; NEXT_DIR(dir)) {
                 newX = x + nbDirs[dir][0];
                 newY = y + nbDirs[dir][1];
-                for (dir2=0; dir2<4; dir2++) {
+                for (dir2=0; dir2<4; NEXT_DIR(dir2)) {
                     newestX = newX + nbDirs[dir2][0];
                     newestY = newY + nbDirs[dir2][1];
                     if (coordinatesAreInMap(newX, newY) && coordinatesAreInMap(newestX, newestY)) {
@@ -3602,7 +3602,7 @@ boolean moveMonster(creature *monst, short dx, short dy) {
                 }
                 return true;
             } else {
-                for (dir = 0; dir < DIRECTION_COUNT; dir++) {
+                for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
                     if (dx == nbDirs[dir][0]
                         && dy == nbDirs[dir][1]) {
                         

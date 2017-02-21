@@ -227,7 +227,7 @@ void updateLighting() {
     // Paint all glowing tiles.
     for (i = 0; i < DCOLS; i++) {
         for (j = 0; j < DROWS; j++) {
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 tile = pmap[i][j].layers[layer];
                 if (tileCatalog[tile].glowLight) {
                     paintLight(&(lightCatalog[tileCatalog[tile].glowLight]), i, j, false, false);

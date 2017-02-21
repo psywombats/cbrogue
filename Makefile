@@ -1,9 +1,16 @@
 LIBTCODDIR=libtcod-1.5.1
 SDLDIR=SDL-1.2.14
+CPPFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall -fpermissive
 CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
 
+# for release builds, change -g to -s -O2 to get things performant
+# ^ yes this is my ghetto build configurations strategy
+
+%.o : %.cpp
+	gcc $(CPPFLAGS) -g -o $@ -c $< 
+
 %.o : %.c
-	gcc $(CFLAGS) -O2 -s -o $@ -c $< 
+	gcc $(CFLAGS) -g -o $@ -c $< 
 
 OBJS=BrogueCode/Architect.o \
 	BrogueCode/Combat.o \
@@ -34,3 +41,7 @@ brogue-icon.o : brogue-icon.ico icon.rc
 
 brogue : ${OBJS} brogue-icon.o 
 	g++ -o brogue.exe ${OBJS} brogue-icon.o -L. -ltcod-mingw -lSDL -L$(LIBTCODDIR)/ -static-libgcc -static-libstdc++ -mwindows
+
+clean:
+	find . -type f -name '*.o' -delete
+	rm brogue.exe

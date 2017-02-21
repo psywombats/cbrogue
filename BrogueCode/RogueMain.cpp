@@ -696,7 +696,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
                 // Remember visible cells upon exiting.
                 storeMemories(i, j);
             }
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 levels[oldLevelNumber - 1].mapStorage[i][j].layers[layer] = pmap[i][j].layers[layer];
             }
             levels[oldLevelNumber - 1].mapStorage[i][j].volume = pmap[i][j].volume;
@@ -783,7 +783,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
         
         for (i=0; i<DCOLS; i++) {
             for (j=0; j<DROWS; j++) {
-                for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+                for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                     pmap[i][j].layers[layer] = levels[rogue.depthLevel - 1].mapStorage[i][j].layers[layer];
                 }
                 pmap[i][j].volume = levels[rogue.depthLevel - 1].mapStorage[i][j].volume;
@@ -868,7 +868,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
         }
         
         placedPlayer = false;
-        for (dir=0; dir<4 && !placedPlayer; dir++) {
+        for (dir=0; dir<4 && !placedPlayer; NEXT_DIR(dir)) {
             loc[0] = player.xLoc + nbDirs[dir][0];
             loc[1] = player.yLoc + nbDirs[dir][1];
             if (!cellHasTerrainFlag(loc[0], loc[1], T_PATHING_BLOCKER)

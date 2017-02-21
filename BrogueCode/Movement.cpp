@@ -31,7 +31,7 @@ void playerRuns(short direction) {
     
     rogue.disturbed = (player.status[STATUS_CONFUSED] ? true : false);
     
-    for (dir = 0; dir < 4; dir++) {
+    for (dir = 0; dir < 4; NEXT_DIR(dir)) {
         newX = player.xLoc + nbDirs[dir][0];
         newY = player.yLoc + nbDirs[dir][1];
         cardinalPassability[dir] = monsterAvoids(&player, newX, newY);
@@ -53,7 +53,7 @@ void playerRuns(short direction) {
         if (isDisturbed(player.xLoc, player.yLoc)) {
             rogue.disturbed = true;
         } else if (direction < 4) {
-            for (dir = 0; dir < 4; dir++) {
+            for (dir = 0; dir < 4; NEXT_DIR(dir)) {
                 newX = player.xLoc + nbDirs[dir][0];
                 newY = player.yLoc + nbDirs[dir][1];
                 if (cardinalPassability[dir] != monsterAvoids(&player, newX, newY)
@@ -72,7 +72,7 @@ enum dungeonLayers highestPriorityLayer(short x, short y, boolean skipGas) {
     short bestPriority = 10000;
     enum dungeonLayers tt, best;
     
-    for (tt = 0; tt < NUMBER_TERRAIN_LAYERS; tt++) {
+    for (tt = 0; tt < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(tt)) {
         if (tt == GAS && skipGas) {
             continue;
         }
@@ -87,7 +87,7 @@ enum dungeonLayers highestPriorityLayer(short x, short y, boolean skipGas) {
 enum dungeonLayers layerWithTMFlag(short x, short y, unsigned long flag) {
     enum dungeonLayers layer;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & flag) {
             return layer;
         }
@@ -98,7 +98,7 @@ enum dungeonLayers layerWithTMFlag(short x, short y, unsigned long flag) {
 enum dungeonLayers layerWithFlag(short x, short y, unsigned long flag) {
     enum dungeonLayers layer;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].flags & flag) {
             return layer;
         }
@@ -394,7 +394,7 @@ void useKeyAt(item *theItem, short x, short y) {
     boolean disposable;
     
     strcpy(terrainName, "unknown terrain"); // redundant failsafe
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_WITH_KEY) {
             if (tileCatalog[pmap[x][y].layers[layer]].description[0] == 'a'
                 && tileCatalog[pmap[x][y].layers[layer]].description[1] == ' ') {
@@ -1081,7 +1081,7 @@ boolean updateDistanceCell(short **distanceMap, short x, short y) {
     boolean somethingChanged = false;
     
     if (distanceMap[x][y] >= 0 && distanceMap[x][y] < 30000) {
-        for (dir=0; dir< DIRECTION_COUNT; dir++) {
+        for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
             newX = x + nbDirs[dir][0];
             newY = y + nbDirs[dir][1];
             if (coordinatesAreInMap(newX, newY)
@@ -1107,7 +1107,7 @@ void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allow
         for (i=1; i<DCOLS-1; i++) {
             for (j=1; j<DROWS-1; j++) {
                 if (!passMap || passMap[i][j]) {
-                    for (dir = 0; dir < maxDir; dir++) {
+                    for (dir = 0; dir < maxDir; NEXT_DIR(dir)) {
                         if (coordinatesAreInMap(i + nbDirs[dir][0], j + nbDirs[dir][1])
                             && (!passMap || passMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]])
                             && distanceMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]] >= distanceMap[i][j] + 2) {
@@ -1123,7 +1123,7 @@ void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allow
         for (i = DCOLS - 1; i >= 0; i--) {
             for (j = DROWS - 1; j >= 0; j--) {
                 if (!passMap || passMap[i][j]) {
-                    for (dir = 0; dir < maxDir; dir++) {
+                    for (dir = 0; dir < maxDir; NEXT_DIR(dir)) {
                         if (coordinatesAreInMap(i + nbDirs[dir][0], j + nbDirs[dir][1])
                             && (!passMap || passMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]])
                             && distanceMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]] >= distanceMap[i][j] + 2) {
@@ -1256,7 +1256,7 @@ void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allow
     while (dQ.qLen) {
         dequeue(&i, &j, &val, &dQ);
         if (distanceMap[i][j] == val) { // if it hasn't been improved since joining the queue
-            for (dir = 0; dir < maxDir; dir++) {
+            for (dir = 0; dir < maxDir; NEXT_DIR(dir)) {
                 if (coordinatesAreInMap(i + nbDirs[dir][0], j + nbDirs[dir][1])
                     && (!passMap || passMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]])
                     && distanceMap[i + nbDirs[dir][0]][j + nbDirs[dir][1]] >= distanceMap[i][j] + 2) {
@@ -1329,7 +1329,7 @@ short nextStep(short **distanceMap, short x, short y, creature *monst, boolean p
     
     for (dir = (preferDiagonals ? 7 : 0);
          (preferDiagonals ? dir >= 0 : dir < DIRECTION_COUNT);
-         (preferDiagonals ? dir-- : dir++)) {
+         (preferDiagonals ? ((directions)((int)dir - 1)) : NEXT_DIR(dir))) {
         
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
@@ -1420,7 +1420,7 @@ void travelRoute(short path[1000][2], short steps) {
                 break;
             }
         }
-        for (dir = 0; dir < DIRECTION_COUNT && !rogue.disturbed; dir++) {
+        for (dir = 0; dir < DIRECTION_COUNT && !rogue.disturbed; NEXT_DIR(dir)) {
             if (player.xLoc + nbDirs[dir][0] == path[i][0]
                 && player.yLoc + nbDirs[dir][1] == path[i][1]) {
                 
@@ -1708,7 +1708,7 @@ enum directions adjacentFightingDir() {
     enum directions dir;
     creature *monst;
     
-    for (dir = 0; dir < DIRECTION_COUNT; dir++) {
+    for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
         newX = player.xLoc + nbDirs[dir][0];
         newY = player.yLoc + nbDirs[dir][1];
         monst = monsterAtLoc(newX, newY);
@@ -1986,7 +1986,7 @@ void discover(short x, short y) {
     dungeonFeature *feat;
     if (cellHasTMFlag(x, y, TM_IS_SECRET)) {
         
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; layer++) {
+        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_IS_SECRET) {
                 feat = &dungeonFeatureCatalog[tileCatalog[pmap[x][y].layers[layer]].discoverType];
                 pmap[x][y].layers[layer] = (layer == DUNGEON ? FLOOR : NOTHING);

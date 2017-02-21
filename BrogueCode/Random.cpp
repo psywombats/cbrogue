@@ -112,7 +112,7 @@ void raninit( ranctx *x, u4 seed ) {
  
  */
 
-#define RAND_MAX_COMBO ((unsigned long) UINT32_MAX)
+#define RAND_MAX_COMBO ((unsigned long) 0xffffffff)
 
 int range(int n, short RNG) {
     unsigned long div;
