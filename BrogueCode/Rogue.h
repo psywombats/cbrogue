@@ -1304,7 +1304,9 @@ typedef struct itemTable {
 } itemTable;
 
 enum dungeonFeatureTypes {
-    DF_GRANITE_COLUMN = 1,
+	DF_NONE = 0,
+
+    DF_GRANITE_COLUMN,
     DF_CRYSTAL_WALL,
     DF_LUMINESCENT_FUNGUS,
     DF_GRASS,

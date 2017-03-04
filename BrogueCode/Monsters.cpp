@@ -822,7 +822,7 @@ creature *spawnHorde(short hordeID, short x, short y, unsigned long forbiddenFla
     
     if (theHorde->machine > 0) {
         // Build the accompanying machine (e.g. a goblin encampment)
-        buildAMachine(theHorde->machine, x, y, 0, NULL, NULL, NULL);
+        buildAMachine((enum machineTypes) theHorde->machine, x, y, 0, NULL, NULL, NULL);
     }
     
     leader = generateMonster(theHorde->leaderType, true, true);
@@ -2689,6 +2689,8 @@ enum directions scentDirection(creature *monst) {
             return NO_DIRECTION; // failure!
         }
     }
+
+    return NO_DIRECTION;
 }
 
 // returns true if the resurrection was successful.
@@ -3913,7 +3915,7 @@ boolean staffOrWandEffectOnMonsterDescription(char *newText, item *theItem, crea
     boolean successfulDescription = false;
     
     if ((theItem->category & (STAFF | WAND))
-        && tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+        && tableForItemCategory((enum itemCategory) theItem->category, NULL)[theItem->kind].identified) {
         
         monsterName(monstName, monst, true);
         itemName(theItem, theItemName, false, false, NULL);

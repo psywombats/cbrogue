@@ -6,13 +6,23 @@
  */
 
 #include "Body.h"
+#include "ChimeraMonster.h"
 
-Body::Body() {
-	// TODO Auto-generated constructor stub
+Body::Body() :
+	hp(0),
+	moveSpeed(MoveSpeedType::NORMAL),
+	attackSpeed(AttackSpeedType::NORMAL),
+	regenSpeed(RegenSpeedType::NORMAL),
+	maxDamage(0),
+	minDamage(0) {
 
 }
 
 Body::~Body() {
-	// TODO Auto-generated destructor stub
+
 }
 
+void Body::applyToMonster(ChimeraMonster &monster) const {
+	monster.hp = this->hp;
+	monster.damage = (randomRange) {minDamage, maxDamage, (maxDamage - minDamage) / 3};
+}

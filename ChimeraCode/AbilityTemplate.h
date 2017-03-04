@@ -10,7 +10,7 @@
 
 #include "Ability.h"
 
-virtual class AbilityTemplate {
+class AbilityTemplate {
 
 public:
 

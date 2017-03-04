@@ -12,6 +12,8 @@
 #include <list>
 #include "Rogue.h"
 
+class Body;
+
 enum class RegenSpeedType {
 	EXTREMELY_FAST,
 	VERY_FAST,
@@ -43,7 +45,7 @@ class ChimeraMonster {
 
 public:
 
-	ChimeraMonster();
+	ChimeraMonster(const Body &body);
 
 	/**
 	 * Convert to what the rest of Brogue uses. Caller is responsible for cleanup. The provided
@@ -54,20 +56,9 @@ public:
 
 	virtual ~ChimeraMonster();
 
-private:
-
-	static short regenSpeedToTurnsPerRegen(RegenSpeedType speed);
-	static short moveSpeedToTicksPerMove(MoveSpeedType speed);
-	static short attackSpeedToTicksPerAttack(AttackSpeedType speed);
-
-	std::string generateFlavor();
-	AbsorbFlavorType generateAbsorbFlavor();
-	std::list<std::string> generateAttackFlavor();
-	std::string generateSummonFlavor();
-
 	// flavor
 	std::string name;
-	color displayColor;
+	const color *displayColor;
 	uchar displayChar;
 	dungeonFeatureTypes bloodType;
 	lightType lightType;
@@ -80,6 +71,20 @@ private:
 	RegenSpeedType regenSpeed;
 	MoveSpeedType moveSpeed;
 	AttackSpeedType attackSpeed;
+
+private:
+
+	static short regenSpeedToTurnsPerRegen(RegenSpeedType speed);
+	static short moveSpeedToTicksPerMove(MoveSpeedType speed);
+	static short attackSpeedToTicksPerAttack(AttackSpeedType speed);
+
+	std::string generateFlavor();
+	AbsorbFlavorType generateAbsorbFlavor();
+	std::list<std::string> generateAttackFlavor();
+	std::string generateSummonFlavor();
+
+	// generation
+	const Body &body;
 
 };
 

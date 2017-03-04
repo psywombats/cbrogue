@@ -1,6 +1,6 @@
 LIBTCODDIR=libtcod-1.5.1
 SDLDIR=SDL-1.2.14
-CPPFLAGS=$(FLAGS) -std=c++11 -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall -Wno-write-strings -fpermissive
+CPPFLAGS=$(FLAGS) -std=c++11 -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall -Wno-write-strings -Wno-reorder -fpermissive
 CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
 
 # for release builds, change -g to -s -O2 to get things performant
@@ -33,6 +33,7 @@ OBJS=BrogueCode/Architect.o \
 	ChimeraCode/ChimeraMonster.o \
 	ChimeraCode/Ability.o \
 	ChimeraCode/AbilityTemplate.o \
+	ChimeraCode/Body.o \
 	PlatformCode/main.o \
 	PlatformCode/platformdependent.o \
 	PlatformCode/tcod-platform.o 

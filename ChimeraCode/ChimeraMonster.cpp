@@ -6,9 +6,24 @@
  */
 
 #include "ChimeraMonster.h"
+#include "Body.h"
+#include "IncludeGlobals.h"
 
-ChimeraMonster::ChimeraMonster() {
+ChimeraMonster::ChimeraMonster(const Body &body) :
+		hp(0),
+		displayChar('x'),
+		accuracy(100),
+		bloodType(DF_NONE),
+		damage({0, 0, 0}),
+		defense(0),
+		displayColor(&black),
+		lightType(NO_LIGHT),
+		body(body),
+		regenSpeed(RegenSpeedType::NORMAL),
+		moveSpeed(MoveSpeedType::NORMAL),
+		attackSpeed(AttackSpeedType::NORMAL) {
 
+	body.applyToMonster(*this);
 }
 
 creatureType *ChimeraMonster::convertToStruct() {
@@ -16,7 +31,7 @@ creatureType *ChimeraMonster::convertToStruct() {
 
 	memcpy(&creatureStruct->absorbStatus, this->name.c_str(), this->name.length()+1);
 	creatureStruct->displayChar = this->displayChar;
-	memcpy(&creatureStruct->foreColor, &this->displayColor, sizeof(color));
+	creatureStruct->foreColor = this->displayColor;
     creatureStruct->maxHP = this->hp;
     creatureStruct->defense = this->defense;
     creatureStruct->accuracy = this->accuracy;

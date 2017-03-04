@@ -10,7 +10,7 @@
 
 #include <list>
 
-virtual class Ability {
+class Ability {
 
 public:
 
