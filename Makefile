@@ -1,6 +1,6 @@
 LIBTCODDIR=libtcod-1.5.1
 SDLDIR=SDL-1.2.14
-CPPFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall -fpermissive
+CPPFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall -Wno-write-strings -fpermissive
 CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrogueCode -IPlatformCode -DBROGUE_TCOD -Wall
 
 # for release builds, change -g to -s -O2 to get things performant

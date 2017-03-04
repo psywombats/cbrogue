@@ -19,6 +19,10 @@ Thumbs.db
 *.xcuserstate
 *.xcbkptlist
 
+# Eclipse garbage #
+###################
+.settings/*
+
 # Brogue junk #
 ###############
 *.broguesave
