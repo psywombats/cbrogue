@@ -34,6 +34,7 @@ OBJS=BrogueCode/Architect.o \
 	ChimeraCode/Ability.o \
 	ChimeraCode/AbilityTemplate.o \
 	ChimeraCode/Body.o \
+	ChimeraCode/MonsterGenerator.o \
 	PlatformCode/main.o \
 	PlatformCode/platformdependent.o \
 	PlatformCode/tcod-platform.o 

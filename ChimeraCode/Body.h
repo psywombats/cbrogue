@@ -22,15 +22,18 @@ public:
 
 	void applyToMonster(ChimeraMonster &monster) const;
 
-private:
-
+	// rpg
 	short hp;
 	short minDamage;
 	short maxDamage;
-
+	AccuracyType accuracy;
+	DefenseType defense;
 	MoveSpeedType moveSpeed;
 	RegenSpeedType regenSpeed;
 	AttackSpeedType attackSpeed;
+
+	// flavor
+	std::string baseName;
 };
 
 #endif /* BODY_H_ */

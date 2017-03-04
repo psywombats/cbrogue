@@ -36,6 +36,19 @@ enum class AttackSpeedType {
 	TOTEM,
 };
 
+enum class AccuracyType {
+	ACCURATE,
+	NORMAL,
+	INACCURATE,
+};
+
+enum class DefenseType {
+	DEFENSELESS,
+	LOW,
+	NORMAL,
+	HIGH,
+};
+
 struct AbsorbFlavorType {
 	std::string message;
 	std::string status;
@@ -65,9 +78,9 @@ public:
 
 	// rpg
 	short hp;
-	short accuracy;
 	short defense;
 	randomRange damage;
+	AccuracyType accuracy;
 	RegenSpeedType regenSpeed;
 	MoveSpeedType moveSpeed;
 	AttackSpeedType attackSpeed;

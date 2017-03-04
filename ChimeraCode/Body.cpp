@@ -10,6 +10,8 @@
 
 Body::Body() :
 	hp(0),
+	accuracy(AccuracyType::NORMAL),
+	defense(DefenseType::NORMAL),
 	moveSpeed(MoveSpeedType::NORMAL),
 	attackSpeed(AttackSpeedType::NORMAL),
 	regenSpeed(RegenSpeedType::NORMAL),
@@ -25,4 +27,10 @@ Body::~Body() {
 void Body::applyToMonster(ChimeraMonster &monster) const {
 	monster.hp = this->hp;
 	monster.damage = (randomRange) {minDamage, maxDamage, (maxDamage - minDamage) / 3};
+	monster.accuracy = this->accuracy;
+	monster.defense = this->defense;
+
+	monster.moveSpeed = this->moveSpeed;
+	monster.attackSpeed = this->attackSpeed;
+	monster.regenSpeed = this->regenSpeed;
 }

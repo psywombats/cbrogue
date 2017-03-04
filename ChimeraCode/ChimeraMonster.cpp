@@ -12,7 +12,8 @@
 ChimeraMonster::ChimeraMonster(const Body &body) :
 		hp(0),
 		displayChar('x'),
-		accuracy(100),
+		accuracy(AccuracyType::NORMAL),
+		defense(DefenseType::NORMAL),
 		bloodType(DF_NONE),
 		damage({0, 0, 0}),
 		defense(0),
@@ -33,8 +34,6 @@ creatureType *ChimeraMonster::convertToStruct() {
 	creatureStruct->displayChar = this->displayChar;
 	creatureStruct->foreColor = this->displayColor;
     creatureStruct->maxHP = this->hp;
-    creatureStruct->defense = this->defense;
-    creatureStruct->accuracy = this->accuracy;
     memcpy(&creatureStruct->damage, &this->damage, sizeof(randomRange));
     creatureStruct->turnsBetweenRegen = regenSpeedToTurnsPerRegen(this->regenSpeed);
     creatureStruct->movementSpeed = moveSpeedToTicksPerMove(this->moveSpeed);
@@ -47,6 +46,47 @@ creatureType *ChimeraMonster::convertToStruct() {
     memcpy(&creatureStruct->absorbStatus, flavor.c_str(), flavor.length()+1);
     memcpy(&creatureStruct->absorbStatus, absorb.status.c_str(), absorb.status.length()+1);
     memcpy(&creatureStruct->absorbing, absorb.message.c_str(), absorb.message.length()+1);
+
+	if (this->hp < 10) {
+		creatureStruct->accuracy = 70;
+	} else if (this->hp < 19) {
+		creatureStruct->accuracy = 85;
+	} else if (this->hp < 50) {
+		creatureStruct->accuracy = 100;
+	} else if (this->hp < 75) {
+		creatureStruct->accuracy = 125;
+	} else if (this->hp < 95){
+		creatureStruct->accuracy = 150;
+	} else {
+		creatureStruct->accuracy = 225;
+	}
+	if (accuracy == AccuracyType::ACCURATE) {
+		creatureStruct->accuracy = (short)((float)creatureStruct->accuracy * 1.5f);
+	}
+	if (accuracy == AccuracyType::INACCURATE) {
+		creatureStruct->accuracy = (short)((float)creatureStruct->accuracy * 0.75f);
+	}
+
+	if (this->hp < 10) {
+		creatureStruct->defense = 0;
+	} else if (this->hp < 50) {
+		creatureStruct->defense = 20;
+	} else if (this->hp < 70) {
+		creatureStruct->defense = 55;
+	} else if (this->hp < 95) {
+		creatureStruct->defense = 70;
+	} else {
+		creatureStruct->defense = 90;
+	}
+	if (defense == DefenseType::DEFENSELESS) {
+		creatureStruct->defense = 0;
+	}
+	if (defense == DefenseType::HIGH) {
+		creatureStruct->defense += 50;
+	}
+	if (defense == DefenseType::LOW) {
+		creatureStruct->defense /= 2;
+	}
 
     // TODO
     //short DFChance;                     // percent chance to spawn the dungeon feature per awake turn
