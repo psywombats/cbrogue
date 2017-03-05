@@ -65,15 +65,16 @@ class ChimeraMonster {
 
 public:
 
-	ChimeraMonster(const Body &body);
+	ChimeraMonster(Body &body);
+	virtual ~ChimeraMonster();
 
 	/**
-	 * Convert to what the rest of Brogue uses. Caller is responsible for cleanup. The provided
-	 * struct will have its monsterID set, which needs to be respected.
+	 * Convert to what the rest of Brogue uses. The provided struct will have its monsterID set,
+	 * which needs to be respected.
 	 */
-	creatureType *convertToStruct();
+	creatureType convertToStruct();
 
-	virtual ~ChimeraMonster();
+	std::string debugReport();
 
 	// flavor
 	std::string name;

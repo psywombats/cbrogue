@@ -26,8 +26,8 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
 	this->members.push_back(member);
 }
 
-hordeType *Horde::convertToStruct() {
-	hordeType *hordeStruct = new hordeType();
+hordeType Horde::convertToStruct() {
+	hordeType hordeStruct = hordeType();
 
 	int dangerDelta;
 	if (this->danger <= 5) {
@@ -36,15 +36,15 @@ hordeType *Horde::convertToStruct() {
 		dangerDelta = 3;
 	} else if (this->danger <= 15) {
 		dangerDelta = 4;
-	} else if (this->danger <= 21){
+	} else if (this->danger <= 21) {
 		dangerDelta = 5;
 	} else {
 		dangerDelta = 6;
 	}
-	hordeStruct->minLevel = MAX(1, this->danger - dangerDelta);
-	hordeStruct->maxLevel = MIN(DEEPEST_LEVEL-1, this->danger + dangerDelta);
+	hordeStruct.minLevel = MAX(1, this->danger - dangerDelta);
+	hordeStruct.maxLevel = MIN(DEEPEST_LEVEL-1, this->danger + dangerDelta);
 	if (this->danger >= 28) {
-		hordeStruct->maxLevel = DEEPEST_LEVEL-1;
+		hordeStruct.maxLevel = DEEPEST_LEVEL-1;
 	}
 
 	short frequency;
@@ -62,16 +62,16 @@ hordeType *Horde::convertToStruct() {
 //	}
 	// TODO: immobile flag
 
-	hordeStruct->leaderType = leader.monsterId;
+	hordeStruct.leaderType = leader.monsterId;
 
 	// TODO: machine flag
 	//hordeStruct->machine = MT_CAMP_AREA;
 
-	hordeStruct->numberOfMemberTypes = this->members.size();
+	hordeStruct.numberOfMemberTypes = this->members.size();
 	int i = 0;
 	for (HordeMember *member : this->members) {
-		hordeStruct->memberType[i] = member->member.monsterId;
-		hordeStruct->memberCount[i] = {member->minCount, member->maxCount, 1};
+		hordeStruct.memberType[i] = member->member.monsterId;
+		hordeStruct.memberCount[i] = {member->minCount, member->maxCount, 1};
 		i += 1;
 	}
 

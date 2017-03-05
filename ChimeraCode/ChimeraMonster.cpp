@@ -8,8 +8,10 @@
 #include "ChimeraMonster.h"
 #include "Body.h"
 #include "IncludeGlobals.h"
+#include "MonsterGlobals.h"
+#include <stdlib.h>
 
-ChimeraMonster::ChimeraMonster(const Body &body) :
+ChimeraMonster::ChimeraMonster(Body &body) :
 		hp(0),
 		monsterId(0),
 		displayChar('x'),
@@ -31,74 +33,78 @@ ChimeraMonster::ChimeraMonster(const Body &body) :
 	body.applyToMonster(*this);
 }
 
-creatureType *ChimeraMonster::convertToStruct() {
-	creatureType *creatureStruct = (creatureType *) malloc(sizeof(creatureType));
+ChimeraMonster::~ChimeraMonster() {
 
-	creatureStruct->monsterID = this->monsterId;
-	memcpy(&creatureStruct->absorbStatus, this->name.c_str(), this->name.length()+1);
-	creatureStruct->displayChar = this->displayChar;
-	creatureStruct->foreColor = this->displayColor;
-    creatureStruct->maxHP = this->hp;
-    memcpy(&creatureStruct->damage, &this->damage, sizeof(randomRange));
-    creatureStruct->turnsBetweenRegen = regenSpeedToTurnsPerRegen(this->regenSpeed);
-    creatureStruct->movementSpeed = moveSpeedToTicksPerMove(this->moveSpeed);
-    creatureStruct->attackSpeed = attackSpeedToTicksPerAttack(this->attackSpeed);
-    creatureStruct->bloodType = this->bloodType;
-    creatureStruct->intrinsicLightType = this->lightType;
+}
+
+creatureType ChimeraMonster::convertToStruct() {
+	creatureType creatureStruct = creatureType();
+
+	creatureStruct.monsterID = this->monsterId;
+	memcpy(&creatureStruct.absorbStatus, this->name.c_str(), this->name.length()+1);
+	creatureStruct.displayChar = this->displayChar;
+	creatureStruct.foreColor = this->displayColor;
+    creatureStruct.maxHP = this->hp;
+    memcpy(&creatureStruct.damage, &this->damage, sizeof(randomRange));
+    creatureStruct.turnsBetweenRegen = regenSpeedToTurnsPerRegen(this->regenSpeed);
+    creatureStruct.movementSpeed = moveSpeedToTicksPerMove(this->moveSpeed);
+    creatureStruct.attackSpeed = attackSpeedToTicksPerAttack(this->attackSpeed);
+    creatureStruct.bloodType = this->bloodType;
+    creatureStruct.intrinsicLightType = this->lightType;
 
     AbsorbFlavorType absorb = this->generateAbsorbFlavor();
     std::string flavor = this->generateFlavor();
-    memcpy(&creatureStruct->absorbStatus, flavor.c_str(), flavor.length()+1);
-    memcpy(&creatureStruct->absorbStatus, absorb.status.c_str(), absorb.status.length()+1);
-    memcpy(&creatureStruct->absorbing, absorb.message.c_str(), absorb.message.length()+1);
+    memcpy(&creatureStruct.absorbStatus, flavor.c_str(), flavor.length()+1);
+    memcpy(&creatureStruct.absorbStatus, absorb.status.c_str(), absorb.status.length()+1);
+    memcpy(&creatureStruct.absorbing, absorb.message.c_str(), absorb.message.length()+1);
 
 	if (this->hp < 10) {
-		creatureStruct->accuracy = 70;
+		creatureStruct.accuracy = 70;
 	} else if (this->hp < 19) {
-		creatureStruct->accuracy = 85;
+		creatureStruct.accuracy = 85;
 	} else if (this->hp < 50) {
-		creatureStruct->accuracy = 100;
+		creatureStruct.accuracy = 100;
 	} else if (this->hp < 75) {
-		creatureStruct->accuracy = 125;
+		creatureStruct.accuracy = 125;
 	} else if (this->hp < 95){
-		creatureStruct->accuracy = 150;
+		creatureStruct.accuracy = 150;
 	} else {
-		creatureStruct->accuracy = 225;
+		creatureStruct.accuracy = 225;
 	}
 	if (accuracy == AccuracyType::ACCURATE) {
-		creatureStruct->accuracy = (short)((float)creatureStruct->accuracy * 1.5f);
+		creatureStruct.accuracy = (short)((float)creatureStruct.accuracy * 1.5f);
 	}
 	if (accuracy == AccuracyType::INACCURATE) {
-		creatureStruct->accuracy -= 30;
+		creatureStruct.accuracy -= 30;
 	}
 
 	if (this->hp < 10) {
-		creatureStruct->defense = 0;
+		creatureStruct.defense = 0;
 	} else if (this->hp < 50) {
-		creatureStruct->defense = 20;
+		creatureStruct.defense = 20;
 	} else if (this->hp < 70) {
-		creatureStruct->defense = 55;
+		creatureStruct.defense = 55;
 	} else if (this->hp < 95) {
-		creatureStruct->defense = 70;
+		creatureStruct.defense = 70;
 	} else {
-		creatureStruct->defense = 90;
+		creatureStruct.defense = 90;
 	}
 	if (defense == DefenseType::DEFENSELESS) {
-		creatureStruct->defense = 0;
+		creatureStruct.defense = 0;
 	}
 	if (defense == DefenseType::HIGH) {
-		creatureStruct->defense += 50;
+		creatureStruct.defense += 50;
 	}
 	if (defense == DefenseType::LOW) {
-		creatureStruct->defense /= 2;
+		creatureStruct.defense /= 2;
 	}
 
-	creatureStruct->flags = 0;
+	creatureStruct.flags = 0;
 	if (this->flies) {
-		creatureStruct->flags &= MONST_FLIES;
+		creatureStruct.flags &= MONST_FLIES;
 	}
 	if (this->flits) {
-		creatureStruct->flags &= MONST_FLITS;
+		creatureStruct.flags &= MONST_FLITS;
 	}
 
     // TODO
@@ -109,6 +115,29 @@ creatureType *ChimeraMonster::convertToStruct() {
     //char summonMessage[DCOLS * 2];
 
 	return creatureStruct;
+}
+
+std::string ChimeraMonster::debugReport() {
+	std::string report = "";
+
+	report += name + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
+	report += "HP: " + printInt(hp) + "  dmg: " + printInt(damage.lowerBound) + "-" + printInt(damage.upperBound) + "\n";
+	if (accuracy == AccuracyType::ACCURATE) report += "(accurate) ";
+	if (accuracy == AccuracyType::INACCURATE) report += "(inaccurate) ";
+	if (defense == DefenseType::DEFENSELESS) report += "(defenseless) ";
+	if (defense == DefenseType::LOW) report += "(low def) ";
+	if (defense == DefenseType::HIGH) report += "(hi def) ";
+	if (moveSpeed == MoveSpeedType::FAST) report += "(fast move) ";
+	if (moveSpeed == MoveSpeedType::SLOW) report += "(slow move) ";
+	if (moveSpeed == MoveSpeedType::VERY_SLOW) report += "(v.slow move) ";
+	if (attackSpeed == AttackSpeedType::SLOW) report += "(slow attack) ";
+	if (attackSpeed == AttackSpeedType::TURRET) report += "(turret attack) ";
+	if (attackSpeed == AttackSpeedType::TOTEM) report += "(totem attack) ";
+	if (regenSpeed == RegenSpeedType::EXTREMELY_FAST) report += "(e.fast regen) ";
+	if (regenSpeed == RegenSpeedType::FAST) report += "(fast regen) ";
+	if (regenSpeed == RegenSpeedType::VERY_FAST) report += "(v.fast regen) ";
+
+	return report;
 }
 
 short ChimeraMonster::regenSpeedToTurnsPerRegen(RegenSpeedType speed) {
@@ -161,9 +190,5 @@ std::list<std::string> ChimeraMonster::generateAttackFlavor() {
 
 std::string ChimeraMonster::generateSummonFlavor() {
 	return "summons allies.";
-}
-
-ChimeraMonster::~ChimeraMonster() {
-
 }
 

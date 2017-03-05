@@ -23,7 +23,7 @@ public:
 
 	static std::list<Body *> loadBodies();
 
-	void applyToMonster(ChimeraMonster &monster) const;
+	void applyToMonster(ChimeraMonster &monster);
 
 	// rpg
 	short hp;
@@ -40,6 +40,7 @@ public:
 
 	// generation
 	int dangerLevel;
+	bool inUse;
 	bool flier;
 	bool intelligent;
 	GenderType gender;

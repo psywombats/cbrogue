@@ -12,6 +12,7 @@
 #define CHIMERAS_ENABLED true
 
 #include <stdio.h>
+#include <string>
 #include "Rogue.h"
 
 // returns the array of monsters generated this game
@@ -19,8 +20,12 @@ creatureType *getMonsterCatalog();
 hordeType *getHordeCatalog();
 monsterClass *getMonsterClassCatalog();
 
+// utility
+std::string printInt(int n);
+
 int getMonsterCatalogCount();
 int getMonsterClassCount();
+int getHordeCatalogCount();
 
 // individual monsters needed for machines etc
 int getRatTrapMonsterId();

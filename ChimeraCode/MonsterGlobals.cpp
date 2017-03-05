@@ -8,9 +8,14 @@
 
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
+#include "ChimeraMonster.h"
+#include "Horde.h"
+#include "MonsterGenerator.h"
+#include <sstream>
 
 enum monsterTypes {
     MK_YOU,
+    MK_WARDEN_OF_YENDOR,
     MK_RAT,
     MK_KOBOLD,
     MK_JACKAL,
@@ -73,7 +78,6 @@ enum monsterTypes {
     MK_GUARDIAN,
     MK_WINGED_GUARDIAN,
     MK_CHARM_GUARDIAN,
-    MK_WARDEN_OF_YENDOR,
     MK_ELDRITCH_TOTEM,
     MK_MIRRORED_TOTEM,
     
@@ -93,6 +97,8 @@ enum monsterTypes {
 creatureType *catalog;
 hordeType *hordeCatalog;
 monsterClass *monsterClassCatalog;
+
+MonsterGenerator *generator;
 
 void ensureCatalogsInitialized();
 void initMonsterCatalog();
@@ -184,6 +190,11 @@ void ensureCatalogsInitialized() {
         return;
     }
     
+    if (CHIMERAS_ENABLED) {
+    	generator = new MonsterGenerator();
+    	generator->generate();
+    }
+
     initMonsterCatalog();
     initHordeCatalog();
     initMonsterClassCatalog();
@@ -192,22 +203,45 @@ void ensureCatalogsInitialized() {
 }
 
 int getMonsterCatalogCount() {
-    return NUMBER_MONSTER_KINDS;
+	if (CHIMERAS_ENABLED) {
+		return MONSTER_CLASS_COUNT;
+	} else {
+		return generator->getMonsters().size();
+	}
 }
 
 int getMonsterClassCount() {
-    return MONSTER_CLASS_COUNT;
+	return MONSTER_CLASS_COUNT;
+}
+
+int getHordeCatalogCount() {
+	if (CHIMERAS_ENABLED) {
+		return generator->getHordes().size();
+	} else {
+		return NUMBER_HORDES;
+	}
+}
+
+// why is this here again?
+std::string printInt(int n) {
+	std::stringstream stream;
+	stream << n;
+	std::string result;
+	stream >> result;
+	return result;
 }
 
 void initMonsterCatalog() {
-    
-    catalog = (creatureType *)malloc(sizeof(creatureType) * NUMBER_MONSTER_KINDS);
-    memset(catalog, 0, sizeof(creatureType) * NUMBER_MONSTER_KINDS);
+
+    catalog = (creatureType *)malloc(sizeof(creatureType) * getMonsterCatalogCount());
+    memset(catalog, 0, sizeof(creatureType) * getMonsterCatalogCount());
     
     if (CHIMERAS_ENABLED) {
-
+    	for (ChimeraMonster *monster : generator->getMonsters()) {
+    		catalog[monster->monsterId] = monster->convertToStruct();
+    	}
     }
-
+    
     unsigned int id;
     
     //   id                           name           ch      color           HP      def     acc     damage          reg move    attack  blood           light   DFChance DFType    bolts
@@ -219,6 +253,18 @@ void initMonsterCatalog() {
     strcpy(catalog[id].absorbStatus, "Studying");
     strcpy(catalog[id].attack[0], "hit");
     
+    id = MK_WARDEN_OF_YENDOR;
+    catalog[id] = (creatureType) {0, "Warden of Yendor",'Y', &yendorLightColor,1000,   0,    300,    {12, 17, 2},    0,  200,    200,    DF_RUBBLE,      YENDOR_LIGHT, 100, 0};
+    catalog[id].flags = (MONST_NEVER_SLEEPS | MONST_ALWAYS_HUNTING | MONST_INVULNERABLE | MONST_NO_POLYMORPH);
+    strcpy(catalog[id].flavorText, "An immortal presence stalks through the dungeon, implacably hunting that which was taken and the one who took it.");
+    strcpy(catalog[id].absorbing, "gazing at");
+    strcpy(catalog[id].absorbStatus, "Gazing");
+    strcpy(catalog[id].attack[0], "strikes");
+
+    if (CHIMERAS_ENABLED) {
+    	return;
+    }
+
     id = MK_RAT;
     catalog[id] = (creatureType) {0, "rat",          'r',    &gray,          6,      0,      80,     {1, 3, 1},      20, 100,    100,    DF_RED_BLOOD,   0,      1,      DF_URINE};
     strcpy(catalog[id].flavorText, "The rat is a scavenger of the shallows, perpetually in search of decaying animal matter.");
@@ -799,14 +845,6 @@ void initMonsterCatalog() {
     strcpy(catalog[id].absorbStatus, "Gazing");
     strcpy(catalog[id].attack[0], "strikes");
     
-    id = MK_WARDEN_OF_YENDOR;
-    catalog[id] = (creatureType) {0, "Warden of Yendor",'Y', &yendorLightColor,1000,   0,    300,    {12, 17, 2},    0,  200,    200,    DF_RUBBLE,      YENDOR_LIGHT, 100, 0};
-    catalog[id].flags = (MONST_NEVER_SLEEPS | MONST_ALWAYS_HUNTING | MONST_INVULNERABLE | MONST_NO_POLYMORPH);
-    strcpy(catalog[id].flavorText, "An immortal presence stalks through the dungeon, implacably hunting that which was taken and the one who took it.");
-    strcpy(catalog[id].absorbing, "gazing at");
-    strcpy(catalog[id].absorbStatus, "Gazing");
-    strcpy(catalog[id].attack[0], "strikes");
-    
     id = MK_ELDRITCH_TOTEM;
     catalog[id] = (creatureType) {0, "eldritch totem",TOTEM_CHAR, &glyphColor,80,    0,      0,      {0, 0, 0},      0,  100,    100,    DF_RUBBLE_BLOOD,0,      0,      0};
     catalog[id].flags = (MONST_IMMUNE_TO_WEBS | MONST_NEVER_SLEEPS | MONST_IMMOBILE | MONST_INANIMATE | MONST_ALWAYS_HUNTING | MONST_WILL_NOT_USE_STAIRS | MONST_GETS_TURN_ON_ACTIVATION | MONST_ALWAYS_USE_ABILITY);
@@ -880,11 +918,18 @@ void initMonsterCatalog() {
 }
 
 void initHordeCatalog() {
-    hordeCatalog = (hordeType *)malloc(sizeof(hordeType) * NUMBER_HORDES);
-    memset(hordeCatalog, 0, sizeof(hordeType) * NUMBER_HORDES);
+    hordeCatalog = (hordeType *)malloc(sizeof(hordeType) * getHordeCatalogCount());
+    memset(hordeCatalog, 0, sizeof(hordeType) * getHordeCatalogCount());
     
     unsigned int id = 0;
     
+    if (CHIMERAS_ENABLED) {
+    	for (Horde *horde : generator->getHordes()) {
+    		hordeCatalog[id] = horde->convertToStruct();
+    	}
+    	return;
+    }
+
     //                                 leader       #members    member list                             member numbers                  minL    maxL    freq    spawnsIn        machine         flags
     hordeCatalog[id++] = (hordeType) {MK_RAT,            0,      {0},                                    {{0}},                          1,      5,      15};
     hordeCatalog[id++] = (hordeType) {MK_KOBOLD,         0,      {0},                                    {{0}},                          1,      6,      15};

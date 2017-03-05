@@ -10,6 +10,7 @@
 
 Body::Body() :
 		hp(0),
+		inUse(false),
 		flier(false),
 		intelligent(false),
 		gender(GenderType::NONE),
@@ -28,7 +29,7 @@ Body::~Body() {
 
 }
 
-void Body::applyToMonster(ChimeraMonster &monster) const {
+void Body::applyToMonster(ChimeraMonster &monster) {
 	monster.hp = this->hp;
 	monster.damage = (randomRange) {minDamage, maxDamage, (maxDamage - minDamage) / 3};
 	monster.accuracy = this->accuracy;
@@ -47,6 +48,8 @@ void Body::applyToMonster(ChimeraMonster &monster) const {
 		monster.flies = true;
 		monster.flits = true;
 	}
+
+	this->inUse = true;
 }
 
 // ideally this thing would read its data from JSON

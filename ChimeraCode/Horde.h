@@ -35,9 +35,9 @@ public:
 	virtual ~Horde();
 
 	/**
-	 * Convert to what the rest of Brogue uses. Caller is responsible for cleanup.
+	 * Convert to what the rest of Brogue uses.
 	 */
-	hordeType *convertToStruct();
+	hordeType convertToStruct();
 
 	void addMember(const ChimeraMonster &member, short min, short max);
 
