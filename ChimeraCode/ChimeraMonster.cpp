@@ -21,6 +21,9 @@ ChimeraMonster::ChimeraMonster(const Body &body) :
 		lightType(NO_LIGHT),
 		body(body),
 		dangerLevel(0),
+		flies(false),
+		flits(false),
+		gender(GenderType::NONE),
 		regenSpeed(RegenSpeedType::NORMAL),
 		moveSpeed(MoveSpeedType::NORMAL),
 		attackSpeed(AttackSpeedType::NORMAL) {
@@ -89,11 +92,18 @@ creatureType *ChimeraMonster::convertToStruct() {
 		creatureStruct->defense /= 2;
 	}
 
+	creatureStruct->flags = 0;
+	if (this->flies) {
+		creatureStruct->flags &= MONST_FLIES;
+	}
+	if (this->flits) {
+		creatureStruct->flags &= MONST_FLITS;
+	}
+
     // TODO
     //short DFChance;                     // percent chance to spawn the dungeon feature per awake turn
     //enum dungeonFeatureTypes DFType;    // kind of dungeon feature
     //enum boltType bolts[20];
-    //unsigned long flags;
     //unsigned long abilityFlags;
     //char summonMessage[DCOLS * 2];
 

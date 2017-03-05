@@ -20,6 +20,8 @@ public:
 	Body();
 	virtual ~Body();
 
+	static std::list<Body *> loadBodies;
+
 	void applyToMonster(ChimeraMonster &monster) const;
 
 	// rpg
@@ -39,6 +41,7 @@ public:
 	int dangerLevel;
 	bool flier;
 	bool intelligent;
+	GenderType gender;
 };
 
 #endif /* BODY_H_ */

@@ -49,6 +49,13 @@ enum class DefenseType {
 	HIGH,
 };
 
+enum class GenderType {
+	NONE,
+	BOTH,
+	MALE_ONLY,
+	FEMALE_ONLY,
+};
+
 struct AbsorbFlavorType {
 	std::string message;
 	std::string status;
@@ -75,6 +82,7 @@ public:
 	uchar displayChar;
 	dungeonFeatureTypes bloodType;
 	lightType lightType;
+	GenderType gender;
 
 	// rpg
 	short hp;
@@ -84,6 +92,10 @@ public:
 	RegenSpeedType regenSpeed;
 	MoveSpeedType moveSpeed;
 	AttackSpeedType attackSpeed;
+
+	// flags
+	bool flies;
+	bool flits;
 
 	// generation
 	int dangerLevel;
