@@ -204,6 +204,10 @@ void initMonsterCatalog() {
     catalog = (creatureType *)malloc(sizeof(creatureType) * NUMBER_MONSTER_KINDS);
     memset(catalog, 0, sizeof(creatureType) * NUMBER_MONSTER_KINDS);
     
+    if (CHIMERAS_ENABLED) {
+
+    }
+
     unsigned int id;
     
     //   id                           name           ch      color           HP      def     acc     damage          reg move    attack  blood           light   DFChance DFType    bolts

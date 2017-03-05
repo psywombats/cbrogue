@@ -9,6 +9,8 @@
 #ifndef MonsterGlobals_h
 #define MonsterGlobals_h
 
+#define CHIMERAS_ENABLED true
+
 #include <stdio.h>
 #include "Rogue.h"
 

@@ -14,6 +14,19 @@
 class ChimeraMonster;
 class HordeMember;
 
+enum class HordePurposeType {
+	FODDER,
+	GENERAL,
+	SPECIAL,
+//	RESOURCE,
+//	WATER,
+//	GROUP,
+//	TOTEM,
+//	TURRET,
+//	STATUE,
+//	THIEF,
+};
+
 class Horde {
 
 public:
@@ -27,6 +40,9 @@ public:
 	hordeType *convertToStruct();
 
 	void addMember(const ChimeraMonster &member, short min, short max);
+
+	int danger;
+	HordePurposeType purpose;
 
 private:
 
