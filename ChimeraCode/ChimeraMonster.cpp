@@ -20,6 +20,7 @@ ChimeraMonster::ChimeraMonster(const Body &body) :
 		displayColor(&black),
 		lightType(NO_LIGHT),
 		body(body),
+		dangerLevel(0),
 		regenSpeed(RegenSpeedType::NORMAL),
 		moveSpeed(MoveSpeedType::NORMAL),
 		attackSpeed(AttackSpeedType::NORMAL) {
@@ -64,7 +65,7 @@ creatureType *ChimeraMonster::convertToStruct() {
 		creatureStruct->accuracy = (short)((float)creatureStruct->accuracy * 1.5f);
 	}
 	if (accuracy == AccuracyType::INACCURATE) {
-		creatureStruct->accuracy = (short)((float)creatureStruct->accuracy * 0.75f);
+		creatureStruct->accuracy -= 30;
 	}
 
 	if (this->hp < 10) {

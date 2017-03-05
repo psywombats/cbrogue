@@ -34,6 +34,11 @@ public:
 
 	// flavor
 	std::string baseName;
+
+	// generation
+	int dangerLevel;
+	bool flier;
+	bool intelligent;
 };
 
 #endif /* BODY_H_ */

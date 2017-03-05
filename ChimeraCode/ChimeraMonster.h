@@ -85,6 +85,9 @@ public:
 	MoveSpeedType moveSpeed;
 	AttackSpeedType attackSpeed;
 
+	// generation
+	int dangerLevel;
+
 private:
 
 	static short regenSpeedToTurnsPerRegen(RegenSpeedType speed);

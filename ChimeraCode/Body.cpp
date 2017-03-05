@@ -10,6 +10,7 @@
 
 Body::Body() :
 	hp(0),
+	dangerLevel(0),
 	accuracy(AccuracyType::NORMAL),
 	defense(DefenseType::NORMAL),
 	moveSpeed(MoveSpeedType::NORMAL),
@@ -33,4 +34,6 @@ void Body::applyToMonster(ChimeraMonster &monster) const {
 	monster.moveSpeed = this->moveSpeed;
 	monster.attackSpeed = this->attackSpeed;
 	monster.regenSpeed = this->regenSpeed;
+
+	monster.dangerLevel = this->dangerLevel;
 }
