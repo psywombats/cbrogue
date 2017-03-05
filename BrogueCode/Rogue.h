@@ -94,7 +94,7 @@
 #define ANNOTATION_SUFFIX       ".txt"
 #define RNG_LOG                 "RNGLog.txt"
 
-#define BROGUE_FILENAME_MAX     (min(1024*4, FILENAME_MAX))
+#define BROGUE_FILENAME_MAX     (MIN(1024*4, FILENAME_MAX))
 
 // Allows unicode characters:
 #define uchar                   unsigned short
@@ -1065,9 +1065,9 @@ enum tileFlags {
 
 #define UNKNOWN_KEY         (128+19)
 
-#define min(x, y)       (((x) < (y)) ? (x) : (y))
-#define max(x, y)       (((x) > (y)) ? (x) : (y))
-#define clamp(x, low, hi)   (min(hi, max(x, low))) // pins x to the [y, z] interval
+#define MIN(x, y)       (((x) < (y)) ? (x) : (y))
+#define MAX(x, y)       (((x) > (y)) ? (x) : (y))
+#define CLAMP(x, low, hi)   (MIN(hi, MAX(x, low))) // pins x to the [y, z] interval
 
 #define terrainFlags(x, y)                  (tileCatalog[pmap[x][y].layers[DUNGEON]].flags \
                                             | tileCatalog[pmap[x][y].layers[LIQUID]].flags \
@@ -1134,28 +1134,28 @@ boolean cellHasTerrainFlag(short x, short y, unsigned long flagMask);
 #define staffProtection(enchant)            ((int) (50 * pow(1.53, (double) (enchant) - 2) + FLOAT_FUDGE))
 #define staffEntrancementDuration(enchant)  ((int) ((enchant) * 3 + FLOAT_FUDGE))
 
-#define ringWisdomMultiplier(enchant)       (int) (10 * pow(1.3, min(27, (enchant))) + FLOAT_FUDGE)
+#define ringWisdomMultiplier(enchant)       (int) (10 * pow(1.3, MIN(27, (enchant))) + FLOAT_FUDGE)
 
-#define charmHealing(enchant)               ((int) (clamp(20 * (enchant), 0, 100) + FLOAT_FUDGE))
+#define charmHealing(enchant)               ((int) (CLAMP(20 * (enchant), 0, 100) + FLOAT_FUDGE))
 #define charmProtection(enchant)            ((int) (150 * pow(1.35, (double) (enchant) - 1) + FLOAT_FUDGE))
 #define charmShattering(enchant)            ((int) (4 + (enchant) + FLOAT_FUDGE))
 #define charmGuardianLifespan(enchant)      ((int) (4 + (2 * (enchant)) + FLOAT_FUDGE))
 #define charmNegationRadius(enchant)        ((int) (1 + (3 * (enchant)) + FLOAT_FUDGE))
 
 #define wandDominate(monst)                 (((monst)->currentHP * 5 < (monst)->info.maxHP) ? 100 : \
-                                            max(0, 100 * ((monst)->info.maxHP - (monst)->currentHP) / (monst)->info.maxHP))
+                                            MAX(0, 100 * ((monst)->info.maxHP - (monst)->currentHP) / (monst)->info.maxHP))
 
-#define weaponParalysisDuration(enchant)    (max(2, (int) (2 + ((enchant) / 2) + FLOAT_FUDGE)))
-#define weaponConfusionDuration(enchant)    (max(3, (int) (1.5 * (enchant) + FLOAT_FUDGE)))
-#define weaponForceDistance(enchant)        (max(4, (((int) (enchant + FLOAT_FUDGE)) * 2 + 2))) // Depends on definition of staffBlinkDistance() above.
-#define weaponSlowDuration(enchant)         (max(3, (int) (((enchant) + 2) * ((enchant) + 2) / 3 + FLOAT_FUDGE)))
-#define weaponImageCount(enchant)           (clamp((int) ((enchant) / 3 + FLOAT_FUDGE), 1, 7))
+#define weaponParalysisDuration(enchant)    (MAX(2, (int) (2 + ((enchant) / 2) + FLOAT_FUDGE)))
+#define weaponConfusionDuration(enchant)    (MAX(3, (int) (1.5 * (enchant) + FLOAT_FUDGE)))
+#define weaponForceDistance(enchant)        (MAX(4, (((int) (enchant + FLOAT_FUDGE)) * 2 + 2))) // Depends on definition of staffBlinkDistance() above.
+#define weaponSlowDuration(enchant)         (MAX(3, (int) (((enchant) + 2) * ((enchant) + 2) / 3 + FLOAT_FUDGE)))
+#define weaponImageCount(enchant)           (CLAMP((int) ((enchant) / 3 + FLOAT_FUDGE), 1, 7))
 #define weaponImageDuration(enchant)        3                                       //(max((int) (1 + (enchant) / 3), 2))
 
-#define armorReprisalPercent(enchant)       (max(5, (int) ((enchant) * 5 + FLOAT_FUDGE)))
-#define armorAbsorptionMax(enchant)         (max(1, (int) ((enchant) + FLOAT_FUDGE)))
-#define armorImageCount(enchant)            (clamp((int) ((enchant) / 3 + FLOAT_FUDGE), 1, 5))
-#define reflectionChance(enchant)           (clamp((100 - (int) (100 * pow(0.85, (enchant)) + FLOAT_FUDGE)), 1, 100))
+#define armorReprisalPercent(enchant)       (MAX(5, (int) ((enchant) * 5 + FLOAT_FUDGE)))
+#define armorAbsorptionMax(enchant)         (MAX(1, (int) ((enchant) + FLOAT_FUDGE)))
+#define armorImageCount(enchant)            (CLAMP((int) ((enchant) / 3 + FLOAT_FUDGE), 1, 5))
+#define reflectionChance(enchant)           (CLAMP((100 - (int) (100 * pow(0.85, (enchant)) + FLOAT_FUDGE)), 1, 100))
 
 #define turnsForFullRegen(bonus)            ((long) (1000 * TURNS_FOR_FULL_REGEN * pow(0.75, (bonus)) + 2000 + FLOAT_FUDGE))
                                             // This will max out at full regeneration in about two turns.

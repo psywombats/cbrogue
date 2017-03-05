@@ -407,7 +407,7 @@ void useKeyAt(item *theItem, short x, short y) {
             } else {
                 strcpy(preposition, "on");
             }
-            promoteTile(x, y, layer, false);
+            promoteTile(x, y, (dungeonLayers)layer, false);
         }
     }
     
@@ -1617,7 +1617,7 @@ void populateCreatureCostMap(short **costMap, creature *monst) {
     item *theItem;
     unsigned long tFlags, cFlags;
     
-    unexploredCellCost = 10 + (clamp(rogue.depthLevel, 5, 15) - 5) * 2;
+    unexploredCellCost = 10 + (CLAMP(rogue.depthLevel, 5, 15) - 5) * 2;
     
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
@@ -1638,7 +1638,7 @@ void populateCreatureCostMap(short **costMap, creature *monst) {
             if ((tFlags & T_LAVA_INSTA_DEATH)
                 && !(monst->info.flags & (MONST_IMMUNE_TO_FIRE | MONST_FLIES | MONST_INVULNERABLE))
                 && (monst->status[STATUS_LEVITATING] || monst->status[STATUS_IMMUNE_TO_FIRE])
-                && max(monst->status[STATUS_LEVITATING], monst->status[STATUS_IMMUNE_TO_FIRE]) < (rogue.mapToShore[i][j] + distanceBetween(i, j, monst->xLoc, monst->yLoc) * monst->movementSpeed / 100)) {
+                && MAX(monst->status[STATUS_LEVITATING], monst->status[STATUS_IMMUNE_TO_FIRE]) < (rogue.mapToShore[i][j] + distanceBetween(i, j, monst->xLoc, monst->yLoc) * monst->movementSpeed / 100)) {
                 // Only a temporary effect will permit the monster to survive the lava, and the remaining duration either isn't
                 // enough to get it to the spot, or it won't suffice to let it return to shore if it does get there.
                 // Treat these locations as obstacles.
@@ -2020,7 +2020,7 @@ boolean search(short searchStrength) {
                 if (cellHasTerrainFlag(i, j, T_OBSTRUCTS_PASSABILITY)) {
                     percent = percent * 2/3;
                 }
-                percent = min(percent, 100);
+                percent = MIN(percent, 100);
                 
                 if (rand_percent(percent)) {
                     discover(i, j);
@@ -2118,9 +2118,9 @@ void updateFieldOfViewDisplay(boolean updateDancingTerrain, boolean refreshDispl
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
             if (pmap[i][j].flags & IN_FIELD_OF_VIEW
-                && (max(0, tmap[i][j].light[0])
-                    + max(0, tmap[i][j].light[1])
-                    + max(0, tmap[i][j].light[2]) > VISIBILITY_THRESHOLD)
+                && (MAX(0, tmap[i][j].light[0])
+                    + MAX(0, tmap[i][j].light[1])
+                    + MAX(0, tmap[i][j].light[2]) > VISIBILITY_THRESHOLD)
                 && !(pmap[i][j].flags & CLAIRVOYANT_DARKENED)) {
                 
                 pmap[i][j].flags |= VISIBLE;
@@ -2283,8 +2283,8 @@ void scanOctantFOV(char grid[DCOLS][DROWS], short xLoc, short yLoc, short octant
     a = ((LOS_SLOPE_GRANULARITY / -2 + 1) + startSlope * columnsRightFromOrigin) / LOS_SLOPE_GRANULARITY;
     b = ((LOS_SLOPE_GRANULARITY / -2 + 1) + endSlope * columnsRightFromOrigin) / LOS_SLOPE_GRANULARITY;
     
-    iStart = min(a, b);
-    iEnd = max(a, b);
+    iStart = MIN(a, b);
+    iEnd = MAX(a, b);
     
     // restrict vision to a circle of radius maxRadius
     if ((columnsRightFromOrigin*columnsRightFromOrigin + iEnd*iEnd) >= maxRadius*maxRadius) {
@@ -2356,6 +2356,6 @@ void addScentToCell(short x, short y, short distance) {
     unsigned short value;
     if (!cellHasTerrainFlag(x, y, T_OBSTRUCTS_SCENT) || !cellHasTerrainFlag(x, y, T_OBSTRUCTS_PASSABILITY)) {
         value = rogue.scentTurnNumber - distance;
-        scentMap[x][y] = max(value, (unsigned short) scentMap[x][y]);
+        scentMap[x][y] = MAX(value, (unsigned short) scentMap[x][y]);
     }
 }

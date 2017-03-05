@@ -69,8 +69,7 @@ public:
 
 	/**
 	 * Convert to what the rest of Brogue uses. Caller is responsible for cleanup. The provided
-	 * struct won't have its monsterID set -- that should be fixed when it's actually added to the
-	 * monster catalog.
+	 * struct will have its monsterID set, which needs to be respected.
 	 */
 	creatureType *convertToStruct();
 
@@ -86,9 +85,9 @@ public:
 
 	// rpg
 	short hp;
-	short defense;
 	randomRange damage;
 	AccuracyType accuracy;
+	DefenseType defense;
 	RegenSpeedType regenSpeed;
 	MoveSpeedType moveSpeed;
 	AttackSpeedType attackSpeed;
@@ -98,6 +97,7 @@ public:
 	bool flits;
 
 	// generation
+	int monsterId;
 	int dangerLevel;
 
 private:

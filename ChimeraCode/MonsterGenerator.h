@@ -8,6 +8,8 @@
 #ifndef MONSTERGENERATOR_H_
 #define MONSTERGENERATOR_H_
 
+#include <list>
+
 class ChimeraMonster;
 class Body;
 
@@ -17,11 +19,10 @@ public:
 	MonsterGenerator();
 	virtual ~MonsterGenerator();
 
-	std::list<ChimeraMonster *> &generateMonsters();
+	void generate();
+	std::list<ChimeraMonster *> &getMonsters();
 
 private:
-
-	void loadBodies();
 
 	std::list<ChimeraMonster *> monsters;
 	std::list<Body *> bodies;

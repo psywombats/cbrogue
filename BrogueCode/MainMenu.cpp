@@ -134,7 +134,7 @@ void updateMenuFlames(const color *colors[COLS][(ROWS + MENU_FLAME_ROW_PADDING)]
                 // First, cause the color to drift a little.
                 for (k=0; k<4; k++) {
                     colorSources[colorSourceNumber][k] += rand_range(-MENU_FLAME_COLOR_DRIFT_SPEED, MENU_FLAME_COLOR_DRIFT_SPEED);
-                    colorSources[colorSourceNumber][k] = clamp(colorSources[colorSourceNumber][k], 0, 1000);
+                    colorSources[colorSourceNumber][k] = CLAMP(colorSources[colorSourceNumber][k], 0, 1000);
                 }
                 
                 // Then, add the color to this tile's flames.
@@ -411,7 +411,7 @@ boolean stringsExactlyMatch(const char *string1, const char *string2) {
     return string1[i] == string2[i];
 }
 
-#define FILES_ON_PAGE_MAX               (min(26, ROWS - 7)) // Two rows (top and bottom) for flames, two rows for border, one for prompt, one for heading.
+#define FILES_ON_PAGE_MAX               (MIN(26, ROWS - 7)) // Two rows (top and bottom) for flames, two rows for border, one for prompt, one for heading.
 #define MAX_FILENAME_DISPLAY_LENGTH     53
 boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
     short i, j, count, x, y, width, height, suffixLength, pathLength, maxPathLength, currentPageStart;
@@ -432,7 +432,7 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
     for (i=0, j=0; i<count; i++) {
         pathLength = strlen(files[i].path);
         //printf("\nString 1: %s", &(files[i].path[(max(0, pathLength - suffixLength))]));
-        if (stringsExactlyMatch(&(files[i].path[(max(0, pathLength - suffixLength))]), suffix)) {
+        if (stringsExactlyMatch(&(files[i].path[(MAX(0, pathLength - suffixLength))]), suffix)) {
             
             // This file counts!
             if (i > j) {
@@ -442,8 +442,8 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
             j++;
             
             // Keep track of the longest length.
-            if (min(pathLength, MAX_FILENAME_DISPLAY_LENGTH) + 10 > maxPathLength) {
-                maxPathLength = min(pathLength, MAX_FILENAME_DISPLAY_LENGTH) + 10;
+            if (MIN(pathLength, MAX_FILENAME_DISPLAY_LENGTH) + 10 > maxPathLength) {
+                maxPathLength = MIN(pathLength, MAX_FILENAME_DISPLAY_LENGTH) + 10;
             }
         }
     }
@@ -454,7 +454,7 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
     do { // Repeat to permit scrolling.
         again = false;
         
-        for (i=0; i<min(count - currentPageStart, FILES_ON_PAGE_MAX); i++) {
+        for (i=0; i<MIN(count - currentPageStart, FILES_ON_PAGE_MAX); i++) {
             initializeButton(&(buttons[i]));
             buttons[i].flags &= ~(B_WIDE_CLICK_AREA | B_GRADIENT);
             buttons[i].buttonColor = *dialogColor;
@@ -480,10 +480,10 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
         
         x = (COLS - maxPathLength) / 2;
         width = maxPathLength;
-        height = min(count - currentPageStart, FILES_ON_PAGE_MAX) + 2;
-        y = max(4, (ROWS - height) / 2);
+        height = MIN(count - currentPageStart, FILES_ON_PAGE_MAX) + 2;
+        y = MAX(4, (ROWS - height) / 2);
         
-        for (i=0; i<min(count - currentPageStart, FILES_ON_PAGE_MAX); i++) {
+        for (i=0; i<MIN(count - currentPageStart, FILES_ON_PAGE_MAX); i++) {
             pathLength = strlen(buttons[i].text);
             for (j=pathLength; j<(width - 8); j++) {
                 buttons[i].text[j] = ' ';
@@ -536,7 +536,7 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
 //          }
             
             i = buttonInputLoop(buttons,
-                                min(count - currentPageStart, FILES_ON_PAGE_MAX) + (count > FILES_ON_PAGE_MAX ? 2 : 0),
+                                MIN(count - currentPageStart, FILES_ON_PAGE_MAX) + (count > FILES_ON_PAGE_MAX ? 2 : 0),
                                 x,
                                 y,
                                 width,
@@ -550,17 +550,17 @@ boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
             
             overlayDisplayBuffer(rbuf, NULL);
             
-            if (i < min(count - currentPageStart, FILES_ON_PAGE_MAX)) {
+            if (i < MIN(count - currentPageStart, FILES_ON_PAGE_MAX)) {
                 if (i >= 0) {
                     retval = true;
                     strcpy(path, files[currentPageStart+i].path);
                 } else { // i is -1
                     retval = false;
                 }
-            } else if (i == min(count - currentPageStart, FILES_ON_PAGE_MAX)) { // Up arrow
+            } else if (i == MIN(count - currentPageStart, FILES_ON_PAGE_MAX)) { // Up arrow
                 again = true;
                 currentPageStart -= FILES_ON_PAGE_MAX;
-            } else if (i == min(count - currentPageStart, FILES_ON_PAGE_MAX) + 1) { // Down arrow
+            } else if (i == MIN(count - currentPageStart, FILES_ON_PAGE_MAX) + 1) { // Down arrow
                 again = true;
                 currentPageStart += FILES_ON_PAGE_MAX;
             }

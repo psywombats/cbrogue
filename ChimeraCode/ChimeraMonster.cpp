@@ -11,12 +11,12 @@
 
 ChimeraMonster::ChimeraMonster(const Body &body) :
 		hp(0),
+		monsterId(0),
 		displayChar('x'),
 		accuracy(AccuracyType::NORMAL),
 		defense(DefenseType::NORMAL),
 		bloodType(DF_NONE),
 		damage({0, 0, 0}),
-		defense(0),
 		displayColor(&black),
 		lightType(NO_LIGHT),
 		body(body),
@@ -34,6 +34,7 @@ ChimeraMonster::ChimeraMonster(const Body &body) :
 creatureType *ChimeraMonster::convertToStruct() {
 	creatureType *creatureStruct = (creatureType *) malloc(sizeof(creatureType));
 
+	creatureStruct->monsterID = this->monsterId;
 	memcpy(&creatureStruct->absorbStatus, this->name.c_str(), this->name.length()+1);
 	creatureStruct->displayChar = this->displayChar;
 	creatureStruct->foreColor = this->displayColor;

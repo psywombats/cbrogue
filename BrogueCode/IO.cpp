@@ -358,7 +358,7 @@ short actionMenu(short x, boolean playingBack) {
         buttonCount++;
         
         for (i=0; i<buttonCount; i++) {
-            longestName = max(longestName, strLenWithoutEscapes(buttons[i].text));
+            longestName = MAX(longestName, strLenWithoutEscapes(buttons[i].text));
         }
         y = ROWS - buttonCount;
         for (i=0; i<buttonCount; i++) {
@@ -846,9 +846,9 @@ void displayLevel() {
 // converts colors into components
 void storeColorComponents(char components[3], const color *theColor) {
     short rand = rand_range(0, theColor->rand);
-    components[0] = max(0, min(100, theColor->red + rand_range(0, theColor->redRand) + rand));
-    components[1] = max(0, min(100, theColor->green + rand_range(0, theColor->greenRand) + rand));
-    components[2] = max(0, min(100, theColor->blue + rand_range(0, theColor->blueRand) + rand));
+    components[0] = MAX(0, MIN(100, theColor->red + rand_range(0, theColor->redRand) + rand));
+    components[1] = MAX(0, MIN(100, theColor->green + rand_range(0, theColor->greenRand) + rand));
+    components[2] = MAX(0, MIN(100, theColor->blue + rand_range(0, theColor->blueRand) + rand));
 }
 
 void bakeTerrainColors(color *foreColor, color *backColor, short x, short y) {
@@ -908,7 +908,7 @@ void shuffleTerrainColors(short percentOfCells, boolean refreshCells) {
                     
                     for (dir=0; dir<DIRECTION_COUNT; NEXT_DIR(dir)) {
                         terrainRandomValues[i][j][dir] += rand_range(-600, 600);
-                        terrainRandomValues[i][j][dir] = clamp(terrainRandomValues[i][j][dir], 0, 1000);
+                        terrainRandomValues[i][j][dir] = CLAMP(terrainRandomValues[i][j][dir], 0, 1000);
                     }
                     
                     if (refreshCells) {
@@ -929,12 +929,12 @@ boolean separateColors(color *fore, color *back) {
     
     f = *fore;
     b = *back;
-    f.red       = clamp(f.red, 0, 100);
-    f.green     = clamp(f.green, 0, 100);
-    f.blue      = clamp(f.blue, 0, 100);
-    b.red       = clamp(b.red, 0, 100);
-    b.green     = clamp(b.green, 0, 100);
-    b.blue      = clamp(b.blue, 0, 100);
+    f.red       = CLAMP(f.red, 0, 100);
+    f.green     = CLAMP(f.green, 0, 100);
+    f.blue      = CLAMP(f.blue, 0, 100);
+    b.red       = CLAMP(b.red, 0, 100);
+    b.green     = CLAMP(b.green, 0, 100);
+    b.blue      = CLAMP(b.blue, 0, 100);
     
     if (f.red + f.blue + f.green > 50 * 3) {
         modifier = &black;
@@ -1086,7 +1086,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
             if (rogue.trueColorMode) {
                 gasAugmentWeight = 30;
             } else {
-                gasAugmentWeight = min(90, 30 + pmap[x][y].volume);
+                gasAugmentWeight = MIN(90, 30 + pmap[x][y].volume);
             }
         }
         
@@ -1340,7 +1340,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
     bakeTerrainColors(&cellForeColor, &cellBackColor, x, y);
     
     if (rogue.displayAggroRangeMode && (pmap[x][y].flags & IN_FIELD_OF_VIEW)) {
-        distance = min(rogue.scentTurnNumber - scentMap[x][y], scentDistance(x, y, player.xLoc, player.yLoc));
+        distance = MIN(rogue.scentTurnNumber - scentMap[x][y], scentDistance(x, y, player.xLoc, player.yLoc));
         if (distance > rogue.aggroRange * 2) {
             applyColorAverage(&cellForeColor, &orange, 12);
             applyColorAverage(&cellBackColor, &orange, 12);
@@ -1377,10 +1377,10 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
     if (D_SCENT_VISION) {
         if (rogue.scentTurnNumber > (unsigned short) scentMap[x][y]) {
             cellBackColor.red = rogue.scentTurnNumber - (unsigned short) scentMap[x][y];
-            cellBackColor.red = clamp(cellBackColor.red, 0, 100);
+            cellBackColor.red = CLAMP(cellBackColor.red, 0, 100);
         } else {
             cellBackColor.green = abs(rogue.scentTurnNumber - (unsigned short) scentMap[x][y]);
-            cellBackColor.green = clamp(cellBackColor.green, 0, 100);
+            cellBackColor.green = CLAMP(cellBackColor.green, 0, 100);
         }
     }
     
@@ -1447,13 +1447,13 @@ void applyColorScalar(color *baseColor, short scalar) {
 }
 
 void applyColorBounds(color *baseColor, short lowerBound, short upperBound) {
-    baseColor->red          = clamp(baseColor->red, lowerBound, upperBound);
-    baseColor->redRand      = clamp(baseColor->redRand, lowerBound, upperBound);
-    baseColor->green        = clamp(baseColor->green, lowerBound, upperBound);
-    baseColor->greenRand    = clamp(baseColor->greenRand, lowerBound, upperBound);
-    baseColor->blue         = clamp(baseColor->blue, lowerBound, upperBound);
-    baseColor->blueRand     = clamp(baseColor->blueRand, lowerBound, upperBound);
-    baseColor->rand         = clamp(baseColor->rand, lowerBound, upperBound);
+    baseColor->red          = CLAMP(baseColor->red, lowerBound, upperBound);
+    baseColor->redRand      = CLAMP(baseColor->redRand, lowerBound, upperBound);
+    baseColor->green        = CLAMP(baseColor->green, lowerBound, upperBound);
+    baseColor->greenRand    = CLAMP(baseColor->greenRand, lowerBound, upperBound);
+    baseColor->blue         = CLAMP(baseColor->blue, lowerBound, upperBound);
+    baseColor->blueRand     = CLAMP(baseColor->blueRand, lowerBound, upperBound);
+    baseColor->rand         = CLAMP(baseColor->rand, lowerBound, upperBound);
 }
 
 void desaturate(color *baseColor, short weight) {
@@ -1575,7 +1575,7 @@ void irisFadeBetweenBuffers(cellDisplayBuffer fromBuf[COLS][ROWS],
                 toForeColor = colorFromComponents(toBuf[i][j].foreColorComponents);
                 toChar = toBuf[i][j].character;
                 
-                blendAppearances(&fromForeColor, &fromBackColor, fromChar, &toForeColor, &toBackColor, toChar, &currentForeColor, &currentBackColor, &currentChar, clamp(thisCellPercent, 0, 100));
+                blendAppearances(&fromForeColor, &fromBackColor, fromChar, &toForeColor, &toBackColor, toChar, &currentForeColor, &currentBackColor, &currentChar, CLAMP(thisCellPercent, 0, 100));
                 plotCharWithColor(currentChar, i, j, &currentForeColor, &currentBackColor);
             }
         }
@@ -1625,11 +1625,11 @@ short adjustedLightValue(short x) {
 
 void colorMultiplierFromDungeonLight(short x, short y, color *editColor) {
     
-    editColor->red      = editColor->redRand    = adjustedLightValue(max(0, tmap[x][y].light[0]));
-    editColor->green    = editColor->greenRand  = adjustedLightValue(max(0, tmap[x][y].light[1]));
-    editColor->blue     = editColor->blueRand   = adjustedLightValue(max(0, tmap[x][y].light[2]));
+    editColor->red      = editColor->redRand    = adjustedLightValue(MAX(0, tmap[x][y].light[0]));
+    editColor->green    = editColor->greenRand  = adjustedLightValue(MAX(0, tmap[x][y].light[1]));
+    editColor->blue     = editColor->blueRand   = adjustedLightValue(MAX(0, tmap[x][y].light[2]));
     
-    editColor->rand = adjustedLightValue(max(0, tmap[x][y].light[0] + tmap[x][y].light[1] + tmap[x][y].light[2]) / 3);
+    editColor->rand = adjustedLightValue(MAX(0, tmap[x][y].light[0] + tmap[x][y].light[1] + tmap[x][y].light[2]) / 3);
     editColor->colorDances = false;
 }
 
@@ -1665,12 +1665,12 @@ void plotCharWithColor(uchar inputChar, short xLoc, short yLoc, const color *cel
     backGreen += rand_range(0, cellBackColor->greenRand) + backRand;
     backBlue += rand_range(0, cellBackColor->blueRand) + backRand;
     
-    foreRed =       min(100, max(0, foreRed));
-    foreGreen =     min(100, max(0, foreGreen));
-    foreBlue =      min(100, max(0, foreBlue));
-    backRed =       min(100, max(0, backRed));
-    backGreen =     min(100, max(0, backGreen));
-    backBlue =      min(100, max(0, backBlue));
+    foreRed =       MIN(100, MAX(0, foreRed));
+    foreGreen =     MIN(100, MAX(0, foreGreen));
+    foreBlue =      MIN(100, MAX(0, foreBlue));
+    backRed =       MIN(100, MAX(0, backRed));
+    backGreen =     MIN(100, MAX(0, backGreen));
+    backBlue =      MIN(100, MAX(0, backBlue));
     
     if (inputChar != ' '
         && foreRed      == backRed
@@ -1801,12 +1801,12 @@ void hiliteCharGrid(char hiliteCharGrid[DCOLS][DROWS], color *hiliteColor, short
                 y = mapToWindowY(j);
                 
                 displayBuffer[x][y].needsUpdate = true;
-                displayBuffer[x][y].backColorComponents[0] = clamp(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].backColorComponents[1] = clamp(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].backColorComponents[2] = clamp(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[0] = clamp(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[1] = clamp(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[2] = clamp(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[0] = CLAMP(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[1] = CLAMP(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[2] = CLAMP(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[0] = CLAMP(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[1] = CLAMP(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[2] = CLAMP(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
             }
         }
     }
@@ -1972,8 +1972,8 @@ void colorFlash(const color *theColor, unsigned long reqTerrainFlags,
     aTileQualified = false;
     fastForward = false;
     
-    for (i = max(x - maxRadius, 0); i <= min(x + maxRadius, DCOLS - 1); i++) {
-        for (j = max(y - maxRadius, 0); j <= min(y + maxRadius, DROWS - 1); j++) {
+    for (i = MAX(x - maxRadius, 0); i <= MIN(x + maxRadius, DCOLS - 1); i++) {
+        for (j = MAX(y - maxRadius, 0); j <= MIN(y + maxRadius, DROWS - 1); j++) {
             if ((!reqTerrainFlags || cellHasTerrainFlag(reqTerrainFlags, i, j))
                 && (!reqTileFlags || (pmap[i][j].flags & reqTileFlags))
                 && (i-x) * (i-x) + (j-y) * (j-y) <= maxRadius * maxRadius) {
@@ -1992,10 +1992,10 @@ void colorFlash(const color *theColor, unsigned long reqTerrainFlags,
     }
     
     for (k = 1; k <= frames; k++) {
-        currentRadius = max(1, maxRadius * k / frames);
-        fadeOut = min(100, (frames - k) * 100 * 5 / frames);
-        for (i = max(x - maxRadius, 0); i <= min(x + maxRadius, DCOLS - 1); i++) {
-            for (j = max(y - maxRadius, 0); j <= min(y + maxRadius, DROWS - 1); j++) {
+        currentRadius = MAX(1, maxRadius * k / frames);
+        fadeOut = MIN(100, (frames - k) * 100 * 5 / frames);
+        for (i = MAX(x - maxRadius, 0); i <= MIN(x + maxRadius, DCOLS - 1); i++) {
+            for (j = MAX(y - maxRadius, 0); j <= MIN(y + maxRadius, DROWS - 1); j++) {
                 if (tileQualifies[i][j] && (localRadius[i][j] <= currentRadius)) {
                     
                     intensity = 100 - 100 * (currentRadius - localRadius[i][j] - 2) / currentRadius;
@@ -2060,21 +2060,21 @@ void funkyFade(cellDisplayBuffer displayBuf[COLS][ROWS], const color *colorStart
                 // the fade color floods the reachable dungeon tiles faster
                 if (!invert && coordinatesAreInMap(windowToMapX(i), windowToMapY(j))
                     && distanceMap[windowToMapX(i)][windowToMapY(j)] >= 0 && distanceMap[windowToMapX(i)][windowToMapY(j)] < 30000) {
-                    percentComplete *= 1.0 + (100.0 - min(100, distanceMap[windowToMapX(i)][windowToMapY(j)])) / 100.;
+                    percentComplete *= 1.0 + (100.0 - MIN(100, distanceMap[windowToMapX(i)][windowToMapY(j)])) / 100.;
                 }
                 
                 weight = (short) percentComplete + weightGrid[i][j][2] * percentComplete * 10;
-                weight = min(100, weight);
+                weight = MIN(100, weight);
                 tempColor = black;
                 
                 tempColor.red = ((short) percentComplete + weightGrid[i][j][0] * percentComplete * 10) * colorMid.red / 100;
-                tempColor.red = min(colorMid.red, tempColor.red);
+                tempColor.red = MIN(colorMid.red, tempColor.red);
                 
                 tempColor.green = ((short) percentComplete + weightGrid[i][j][1] * percentComplete * 10) * colorMid.green / 100;
-                tempColor.green = min(colorMid.green, tempColor.green);
+                tempColor.green = MIN(colorMid.green, tempColor.green);
                 
                 tempColor.blue = ((short) percentComplete + weightGrid[i][j][2] * percentComplete * 10) * colorMid.blue / 100;
-                tempColor.blue = min(colorMid.blue, tempColor.blue);
+                tempColor.blue = MIN(colorMid.blue, tempColor.blue);
                 
                 backColor = black;
                 
@@ -2124,7 +2124,7 @@ void displayWaypoints() {
                 }
             }
             if (lowestDistance < 10) {
-                hiliteCell(i, j, &white, clamp(100 - lowestDistance*15, 0, 100), true);
+                hiliteCell(i, j, &white, CLAMP(100 - lowestDistance*15, 0, 100), true);
             }
         }
     }
@@ -2610,10 +2610,10 @@ boolean getInputTextString(char *inputText,
     
     // x and y mark the origin for text entry.
     if (useDialogBox) {
-        x = (COLS - max(maxLength, strLenWithoutEscapes(prompt))) / 2;
+        x = (COLS - MAX(maxLength, strLenWithoutEscapes(prompt))) / 2;
         y = ROWS / 2 - 1;
         clearDisplayBuffer(dbuf);
-        rectangularShading(x - 1, y - 2, max(maxLength, strLenWithoutEscapes(prompt)) + 2,
+        rectangularShading(x - 1, y - 2, MAX(maxLength, strLenWithoutEscapes(prompt)) + 2,
                            4, &interfaceBoxColor, INTERFACE_OPACITY, dbuf);
         overlayDisplayBuffer(dbuf, rbuf);
         printString(prompt, x, y - 1, &white, &interfaceBoxColor, NULL);
@@ -2629,7 +2629,7 @@ boolean getInputTextString(char *inputText,
         printString(defaultEntry, x, y, &white, &black, 0);
     }
     
-    maxLength = min(maxLength, COLS - x);
+    maxLength = MIN(maxLength, COLS - x);
     
     
     strcpy(inputText, defaultEntry);
@@ -3107,9 +3107,9 @@ short encodeMessageColor(char *msg, short i, const color *theColor) {
     
     bakeColor(&col);
     
-    col.red     = clamp(col.red, 0, 100);
-    col.green   = clamp(col.green, 0, 100);
-    col.blue    = clamp(col.blue, 0, 100);
+    col.red     = CLAMP(col.red, 0, 100);
+    col.green   = CLAMP(col.green, 0, 100);
+    col.blue    = CLAMP(col.blue, 0, 100);
     
     needTerminator = !msg[i] || !msg[i + 1] || !msg[i + 2] || !msg[i + 3];
     
@@ -3141,9 +3141,9 @@ short decodeMessageColor(const char *msg, short i, color *returnColor) {
         returnColor->green  = (short) (msg[i++] - COLOR_VALUE_INTERCEPT);
         returnColor->blue   = (short) (msg[i++] - COLOR_VALUE_INTERCEPT);
         
-        returnColor->red    = clamp(returnColor->red, 0, 100);
-        returnColor->green  = clamp(returnColor->green, 0, 100);
-        returnColor->blue   = clamp(returnColor->blue, 0, 100);
+        returnColor->red    = CLAMP(returnColor->red, 0, 100);
+        returnColor->green  = CLAMP(returnColor->green, 0, 100);
+        returnColor->blue   = CLAMP(returnColor->blue, 0, 100);
     }
     return i;
 }
@@ -3387,7 +3387,7 @@ void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst
         // Non-focused terrain.
         
         // count up the number of candidate locations
-        for (k=0; k<max(DROWS, DCOLS); k++) {
+        for (k=0; k<MAX(DROWS, DCOLS); k++) {
             for (i = px-k; i <= px+k; i++) {
                 for (j = py-k; j <= py+k; j++) {
                     if (coordinatesAreInMap(i, j)
@@ -3699,7 +3699,7 @@ void printDiscoveries(short category, short count, unsigned short itemCharacter,
     color *theColor, goodColor, badColor;
     char buf[COLS], buf2[COLS];
     short i, magic, totalFrequency;
-    itemTable *theTable = tableForItemCategory(category, NULL);
+    itemTable *theTable = tableForItemCategory((itemCategory)category, NULL);
     
     goodColor = goodMessageColor;
     applyColorAverage(&goodColor, &black, 50);
@@ -3882,7 +3882,7 @@ void printHighScores(boolean hiliteMostRecent) {
         }
     }
     
-    leftOffset = min(COLS - maxLength - 21 - 1, COLS/5);
+    leftOffset = MIN(COLS - maxLength - 21 - 1, COLS/5);
     
     scoreColor = black;
     applyColorAverage(&scoreColor, &itemMessageColor, 100);
@@ -3960,12 +3960,12 @@ void displayGrid(short **map) {
                 || (i == player.xLoc && j == player.yLoc)) {
                 continue;
             }
-            score = 300 - (map[i][j] - bottomRange) * 300 / max(1, (topRange - bottomRange));
-            tempColor.blue = max(min(score, 100), 0);
+            score = 300 - (map[i][j] - bottomRange) * 300 / MAX(1, (topRange - bottomRange));
+            tempColor.blue = MAX(MIN(score, 100), 0);
             score -= 100;
-            tempColor.red = max(min(score, 100), 0);
+            tempColor.red = MAX(MIN(score, 100), 0);
             score -= 100;
-            tempColor.green = max(min(score, 100), 0);
+            tempColor.green = MAX(MIN(score, 100), 0);
             getCellAppearance(i, j, &dchar, &foreColor, &backColor);
             plotCharWithColor(dchar, mapToWindowX(i), mapToWindowY(j), &foreColor, &tempColor);
             //colorBlendCell(i, j, &tempColor, 100);//hiliteCell(i, j, &tempColor, 100, false);
@@ -4013,7 +4013,7 @@ void printProgressBar(short x, short y, const char barLabel[COLS], long amtFille
         barText[i + labelOffset] = barLabel[i];
     }
     
-    amtFilled = max(0, min(amtFilled, amtMax));
+    amtFilled = MAX(0, MIN(amtFilled, amtMax));
     
     if (amtMax < 10000000) {
         amtFilled *= 100;
@@ -4053,7 +4053,7 @@ short estimatedArmorValue() {
     retVal += strengthModifier(rogue.armor);
     retVal -= player.status[STATUS_DONNING];
     
-    return max(0, retVal);
+    return MAX(0, retVal);
 }
 
 // returns the y-coordinate after the last line printed
@@ -4194,7 +4194,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
         
         if (monst == &player) {
             healthBarColor = redBar;
-            applyColorAverage(&healthBarColor, &blueBar, min(100, 100 * player.currentHP / player.info.maxHP));
+            applyColorAverage(&healthBarColor, &blueBar, MIN(100, 100 * player.currentHP / player.info.maxHP));
         } else {
             healthBarColor = blueBar;
         }
@@ -4278,7 +4278,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
                     } else {
                         printString("    (Wandering)     ", 0, y++, (dim ? &darkGray : &gray), &black, 0);
                     }
-                } else if (monst->ticksUntilTurn > max(0, player.ticksUntilTurn) + player.movementSpeed) {
+                } else if (monst->ticksUntilTurn > MAX(0, player.ticksUntilTurn) + player.movementSpeed) {
                     printString("   (Off balance)    ", 0, y++, (dim ? &darkGray : &gray), &black, 0);
                 } else if ((monst->creatureState == MONSTER_TRACKING_SCENT) && y < ROWS - 1) {
                     printString("     (Hunting)      ", 0, y++, (dim ? &darkGray : &gray), &black, 0);
@@ -4351,7 +4351,7 @@ short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight)
     if (highlight) {
         for (i=0; i<20; i++) {
             highlightStrength = smoothHiliteGradient(i, 20-1) / 10;
-            for (j=initialY; j < (y == ROWS - 1 ? y : min(y - 1, ROWS - 1)); j++) {
+            for (j=initialY; j < (y == ROWS - 1 ? y : MIN(y - 1, ROWS - 1)); j++) {
                 highlightScreenCell(i, j, &white, highlightStrength);
             }
         }
@@ -4366,7 +4366,7 @@ void describeHallucinatedItem(char *buf) {
     short cat, kind, maxKinds;
     assureCosmeticRNG;
     cat = itemCats[rand_range(0, 9)];
-    tableForItemCategory(cat, &maxKinds);
+    tableForItemCategory((itemCategory)cat, &maxKinds);
     kind = rand_range(0, maxKinds - 1);
     describedItemBasedOnParameters(cat, kind, 1, buf);
     restoreRNG;
@@ -4508,12 +4508,12 @@ void rectangularShading(short x, short y, short width, short height,
             
             if (i >= x && i < x + width
                 && j >= y && j < y + height) {
-                dbuf[i][j].opacity = min(100, opacity);
+                dbuf[i][j].opacity = MIN(100, opacity);
             } else {
                 dist = 0;
-                dist += max(0, max(x - i, i - x - width + 1));
-                dist += max(0, max(y - j, j - y - height + 1));
-                dbuf[i][j].opacity = (int) ((opacity - 10) / max(1, dist));
+                dist += MAX(0, MAX(x - i, i - x - width + 1));
+                dist += MAX(0, MAX(y - j, j - y - height + 1));
+                dbuf[i][j].opacity = (int) ((opacity - 10) / MAX(1, dist));
                 if (dbuf[i][j].opacity < 3) {
                     dbuf[i][j].opacity = 0;
                 }

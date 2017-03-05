@@ -37,11 +37,11 @@ void mutateMonster(creature *monst, short mutationIndex) {
     monst->info.defense = monst->info.defense * theMut->defenseFactor / 100;
     if (monst->info.damage.lowerBound > 0) {
         monst->info.damage.lowerBound = monst->info.damage.lowerBound * theMut->damageFactor / 100;
-        monst->info.damage.lowerBound = max(monst->info.damage.lowerBound, 1);
+        monst->info.damage.lowerBound = MAX(monst->info.damage.lowerBound, 1);
     }
     if (monst->info.damage.upperBound > 0) {
         monst->info.damage.upperBound = monst->info.damage.upperBound * theMut->damageFactor / 100;
-        monst->info.damage.upperBound = max(monst->info.damage.upperBound, (monst->info.abilityFlags & MA_POISONS) ? 2 : 1);
+        monst->info.damage.upperBound = MAX(monst->info.damage.upperBound, (monst->info.abilityFlags & MA_POISONS) ? 2 : 1);
     }
     if (theMut->DFChance >= 0) {
         monst->info.DFChance = theMut->DFChance;
@@ -71,10 +71,10 @@ creature *generateMonster(short monsterID, boolean itemPossible, boolean mutatio
         
         
         if (rogue.depthLevel <= AMULET_LEVEL) {
-            mutationChance = clamp(rogue.depthLevel - 10, 1, 10);
+            mutationChance = CLAMP(rogue.depthLevel - 10, 1, 10);
         } else {
             mutationChance = 10 * (pow(1.17, rogue.depthLevel - AMULET_LEVEL) + FLOAT_FUDGE);
-            mutationChance = min(mutationChance, 75);
+            mutationChance = MIN(mutationChance, 75);
         }
         
         if (rand_percent(mutationChance)) {
@@ -504,8 +504,8 @@ void empowerMonster(creature *monst) {
     monst->currentHP += (15 * monst->currentHP / (monst->info.maxHP - 15));
     monst->info.defense += 15;
     monst->info.accuracy += 15;
-    monst->info.damage.lowerBound += max(1, monst->info.damage.lowerBound / 7);
-    monst->info.damage.upperBound += max(1, monst->info.damage.upperBound / 7);
+    monst->info.damage.lowerBound += MAX(1, monst->info.damage.lowerBound / 7);
+    monst->info.damage.upperBound += MAX(1, monst->info.damage.upperBound / 7);
     monst->newPowerCount++;
     monst->totalPowerCount++;
     heal(monst, 100, true);
@@ -756,9 +756,9 @@ creature *spawnHorde(short hordeID, short x, short y, unsigned long forbiddenFla
     hordeType *hordeCatalog = getHordeCatalog();
     
     if (rogue.depthLevel > 1 && rand_percent(10)) {
-        depth = rogue.depthLevel + rand_range(1, min(5, rogue.depthLevel / 2));
+        depth = rogue.depthLevel + rand_range(1, MIN(5, rogue.depthLevel / 2));
         if (depth > AMULET_LEVEL) {
-            depth = max(rogue.depthLevel, AMULET_LEVEL);
+            depth = MAX(rogue.depthLevel, AMULET_LEVEL);
         }
         forbiddenFlags |= HORDE_NEVER_OOD;
     } else {
@@ -989,7 +989,7 @@ void populateMonsters() {
         return;
     }
     
-    short i, numberOfMonsters = min(20, 6 + 3 * max(0, rogue.depthLevel - AMULET_LEVEL)); // almost always 6.
+    short i, numberOfMonsters = MIN(20, 6 + 3 * MAX(0, rogue.depthLevel - AMULET_LEVEL)); // almost always 6.
     
     while (rand_percent(60)) {
         numberOfMonsters++;
@@ -1391,7 +1391,7 @@ boolean monsterAvoids(creature *monst, short x, short y) {
     // lava
     if ((tFlags & T_LAVA_INSTA_DEATH & ~terrainImmunities)
         && (!(tFlags & T_ENTANGLES) || !(monst->info.flags & MONST_IMMUNE_TO_WEBS))
-        && (monst != &player || rogue.mapToShore[x][y] >= max(player.status[STATUS_IMMUNE_TO_FIRE], player.status[STATUS_LEVITATING]))) {
+        && (monst != &player || rogue.mapToShore[x][y] >= MAX(player.status[STATUS_IMMUNE_TO_FIRE], player.status[STATUS_LEVITATING]))) {
         return true;
     }
     
@@ -1470,7 +1470,7 @@ boolean moveMonsterPassivelyTowards(creature *monst, short targetLoc[2], boolean
             return false; // destination is blocked
         }
         //abs(targetLoc[0] - x) < abs(targetLoc[1] - y)
-        if ((max(targetLoc[0], x) - min(targetLoc[0], x)) < (max(targetLoc[1], y) - min(targetLoc[1], y))) {
+        if ((MAX(targetLoc[0], x) - MIN(targetLoc[0], x)) < (MAX(targetLoc[1], y) - MIN(targetLoc[1], y))) {
             if (monsterAvoids(monst, x, newY) || (!willingToAttackPlayer && pmap[x][newY].flags & HAS_PLAYER) || !moveMonster(monst, 0, dy)) {
                 if (monsterAvoids(monst, newX, y) || (!willingToAttackPlayer &&  pmap[newX][y].flags & HAS_PLAYER) || !moveMonster(monst, dx, 0)) {
                     if (monsterAvoids(monst, x-1, newY) || (!willingToAttackPlayer && pmap[x-1][newY].flags & HAS_PLAYER) || !moveMonster(monst, -1, dy)) {
@@ -1496,7 +1496,7 @@ boolean moveMonsterPassivelyTowards(creature *monst, short targetLoc[2], boolean
 }
 
 short distanceBetween(short x1, short y1, short x2, short y2) {
-    return max(abs(x1 - x2), abs(y1 - y2));
+    return MAX(abs(x1 - x2), abs(y1 - y2));
 }
 
 void alertMonster(creature *monst) {
@@ -1516,7 +1516,7 @@ void wakeUp(creature *monst) {
         if (monst != teammate && monstersAreTeammates(monst, teammate) && teammate->creatureMode == MODE_NORMAL) {
             if (teammate->creatureState == MONSTER_SLEEPING
                 || teammate->creatureState == MONSTER_WANDERING) {
-                teammate->ticksUntilTurn = max(100, teammate->ticksUntilTurn);
+                teammate->ticksUntilTurn = MAX(100, teammate->ticksUntilTurn);
             }
             if (monst->creatureState != MONSTER_ALLY) {
                 teammate->creatureState =
@@ -1558,7 +1558,7 @@ short awarenessDistance(creature *observer, creature *target) {
             perceivedDistance = (rogue.scentTurnNumber - scentMap[observer->xLoc][observer->yLoc]); // this value is double the apparent distance
         }
     
-    perceivedDistance = min(perceivedDistance, 1000);
+    perceivedDistance = MIN(perceivedDistance, 1000);
     
     if (perceivedDistance < 0) {
         perceivedDistance = 1000;
@@ -2681,7 +2681,7 @@ enum directions scentDirection(creature *monst) {
                     newestX = newX + nbDirs[dir2][0];
                     newestY = newY + nbDirs[dir2][1];
                     if (coordinatesAreInMap(newX, newY) && coordinatesAreInMap(newestX, newestY)) {
-                        scentMap[newX][newY] = max(scentMap[newX][newY], scentMap[newestX][newestY] - 1);
+                        scentMap[newX][newY] = MAX(scentMap[newX][newY], scentMap[newestX][newestY] - 1);
                     }
                 }
             }
@@ -2851,7 +2851,7 @@ void moveAlly(creature *monst) {
     }
     
     // Look around for enemies; shortestDistance will be the distance to the nearest.
-    shortestDistance = max(DROWS, DCOLS);
+    shortestDistance = MAX(DROWS, DCOLS);
     for (target = monsters->nextCreature; target != NULL; target = target->nextCreature) {
         if (target != monst
             && (!(target->bookkeepingFlags & MB_SUBMERGED) || (monst->bookkeepingFlags & MB_SUBMERGED))
@@ -3139,7 +3139,7 @@ void monstersTurn(creature *monst) {
     
     // discordant monsters
     if (monst->status[STATUS_DISCORDANT] && monst->creatureState != MONSTER_FLEEING) {
-        shortestDistance = max(DROWS, DCOLS);
+        shortestDistance = MAX(DROWS, DCOLS);
         closestMonster = NULL;
         CYCLE_MONSTERS_AND_PLAYERS(target) {
             if (target != monst
@@ -3643,7 +3643,7 @@ void findAlternativeHomeFor(creature *monst, short *x, short *y, boolean chooseR
         shuffleList(sRows, DROWS);
     }
     
-    for (maxPermissibleDifference = 1; maxPermissibleDifference < max(DCOLS, DROWS); maxPermissibleDifference++) {
+    for (maxPermissibleDifference = 1; maxPermissibleDifference < MAX(DCOLS, DROWS); maxPermissibleDifference++) {
         for (i=0; i < DCOLS; i++) {
             for (j=0; j<DROWS; j++) {
                 dist = abs(sCols[i] - monst->xLoc) + abs(sRows[j] - monst->yLoc);
@@ -3679,7 +3679,7 @@ boolean getQualifyingLocNear(short loc[2],
     candidateLocs = 0;
     
     // count up the number of candidate locations
-    for (k=0; k<max(DROWS, DCOLS) && !candidateLocs; k++) {
+    for (k=0; k<MAX(DROWS, DCOLS) && !candidateLocs; k++) {
         for (i = x-k; i <= x+k; i++) {
             for (j = y-k; j <= y+k; j++) {
                 if (coordinatesAreInMap(i, j)
@@ -3706,7 +3706,7 @@ boolean getQualifyingLocNear(short loc[2],
         randIndex = rand_range(1, candidateLocs);
     }
     
-    for (k=0; k<max(DROWS, DCOLS); k++) {
+    for (k=0; k<MAX(DROWS, DCOLS); k++) {
         for (i = x-k; i <= x+k; i++) {
             for (j = y-k; j <= y+k; j++) {
                 if (coordinatesAreInMap(i, j)
@@ -3739,7 +3739,7 @@ boolean getQualifyingGridLocNear(short loc[2],
     candidateLocs = 0;
     
     // count up the number of candidate locations
-    for (k=0; k<max(DROWS, DCOLS) && !candidateLocs; k++) {
+    for (k=0; k<MAX(DROWS, DCOLS) && !candidateLocs; k++) {
         for (i = x-k; i <= x+k; i++) {
             for (j = y-k; j <= y+k; j++) {
                 if (coordinatesAreInMap(i, j)
@@ -3763,7 +3763,7 @@ boolean getQualifyingGridLocNear(short loc[2],
         randIndex = rand_range(1, candidateLocs);
     }
     
-    for (k=0; k<max(DROWS, DCOLS); k++) {
+    for (k=0; k<MAX(DROWS, DCOLS); k++) {
         for (i = x-k; i <= x+k; i++) {
             for (j = y-k; j <= y+k; j++) {
                 if (coordinatesAreInMap(i, j)

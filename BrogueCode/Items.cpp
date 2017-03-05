@@ -345,11 +345,11 @@ item *makeItemInto(item *theItem, unsigned long itemCategory, short itemKind) {
 short chooseKind(itemTable *theTable, short numKinds) {
     short i, totalFrequencies = 0, randomFrequency;
     for (i=0; i<numKinds; i++) {
-        totalFrequencies += max(0, theTable[i].frequency);
+        totalFrequencies += MAX(0, theTable[i].frequency);
     }
     randomFrequency = rand_range(1, totalFrequencies);
     for (i=0; randomFrequency > theTable[i].frequency; i++) {
-        randomFrequency -= max(0, theTable[i].frequency);
+        randomFrequency -= MAX(0, theTable[i].frequency);
     }
     return i;
 }
@@ -434,7 +434,7 @@ void coolHeatMapAt(unsigned short heatMap[DCOLS][DROWS], short x, short y, unsig
     for (k = -5; k <= 5; k++) {
         for (l = -5; l <= 5; l++) {
             if (coordinatesAreInMap(x+k, y+l) && heatMap[x+k][y+l] == currentHeat) {
-                heatMap[x+k][y+l] = max(1, heatMap[x+k][y+l]/10);
+                heatMap[x+k][y+l] = MAX(1, heatMap[x+k][y+l]/10);
                 *totalHeat -= (currentHeat - heatMap[x+k][y+l]);
             }
         }
@@ -511,7 +511,7 @@ void populateItems(short upstairsX, short upstairsY) {
             numberOfItems++; // and 2 more here
         }
         
-        numberOfGoldPiles = min(5, (int) (rogue.depthLevel / 4 + FLOAT_FUDGE));
+        numberOfGoldPiles = MIN(5, (int) (rogue.depthLevel / 4 + FLOAT_FUDGE));
         for (goldBonusProbability = 60;
              rand_percent(goldBonusProbability) && numberOfGoldPiles <= 10;
              goldBonusProbability -= 15) {
@@ -1150,7 +1150,7 @@ boolean inscribeItem(item *theItem) {
     strcpy(theItem->inscription, oldInscription);
     
     sprintf(buf, "inscribe: %s \"", nameOfItem);
-    if (getInputTextString(itemText, buf, min(29, DCOLS - strLenWithoutEscapes(buf) - 1), "", "\"", TEXT_INPUT_NORMAL, false)) {
+    if (getInputTextString(itemText, buf, MIN(29, DCOLS - strLenWithoutEscapes(buf) - 1), "", "\"", TEXT_INPUT_NORMAL, false)) {
         strcpy(theItem->inscription, itemText);
         confirmMessages();
         itemName(theItem, nameOfItem, true, true, NULL);
@@ -2015,7 +2015,7 @@ void itemDetails(char *buf, item *theItem) {
                     } else {
                     	temp += 10 * strengthModifier(theItem);
                     }
-                    temp = max(0, temp);
+                    temp = MAX(0, temp);
                     temp /= 10;
                     sprintf(buf2, "Wearing the %s%s will result in an armor rating of %s%i%s. ",
                             theName,
@@ -2478,8 +2478,8 @@ void itemDetails(char *buf, item *theItem) {
                             break;
                         case RING_WISDOM:
                             sprintf(buf2, "\n\nWhen worn, your staffs will recharge at %i%% of their normal rate. (If the ring is enchanted, the rate will increase to %i%% of the normal rate.)",
-                                    (int) (100 * pow(1.3, min(27, theItem->enchant1)) + FLOAT_FUDGE),
-                                    (int) (100 * pow(1.3, min(27, (theItem->enchant1 + 1))) + FLOAT_FUDGE));
+                                    (int) (100 * pow(1.3, MIN(27, theItem->enchant1)) + FLOAT_FUDGE),
+                                    (int) (100 * pow(1.3, MIN(27, (theItem->enchant1 + 1))) + FLOAT_FUDGE));
                             strcat(buf, buf2);
                             break;
                         case RING_REAPING:
@@ -2722,7 +2722,7 @@ char displayInventory(unsigned short categoryMask,
     }
     
     // Initialize the buttons:
-    for (i=0; i < max(MAX_PACK_ITEMS, ROWS); i++) {
+    for (i=0; i < MAX(MAX_PACK_ITEMS, ROWS); i++) {
         buttons[i].y = mapToWindowY(i + (equippedItemCount && i >= equippedItemCount ? 1 : 0));
         buttons[i].buttonColor = black;
         buttons[i].opacity = INTERFACE_OPACITY;
@@ -2790,7 +2790,7 @@ char displayInventory(unsigned short categoryMask,
         }
         
         // Keep track of the maximum width needed:
-        maxLength = max(maxLength, strLenWithoutEscapes(buttons[i].text));
+        maxLength = MAX(maxLength, strLenWithoutEscapes(buttons[i].text));
         
         //      itemList[itemNumber] = theItem;
         //
@@ -2818,14 +2818,14 @@ char displayInventory(unsigned short categoryMask,
                     grayColorEscapeSequence,
                     (magicDetected ? "  " : ""));
         }
-        maxLength = max(maxLength, (strLenWithoutEscapes(buttons[itemNumber + extraLineCount].text)));
+        maxLength = MAX(maxLength, (strLenWithoutEscapes(buttons[itemNumber + extraLineCount].text)));
         extraLineCount++;
         
         sprintf(buttons[itemNumber + extraLineCount].text,
                 KEYBOARD_LABELS ? "%s%s -- press (a-z) for more info -- " : "%s%s -- touch an item for more info -- ",
                 grayColorEscapeSequence,
                 (magicDetected ? "  " : ""));
-        maxLength = max(maxLength, (strLenWithoutEscapes(buttons[itemNumber + extraLineCount].text)));
+        maxLength = MAX(maxLength, (strLenWithoutEscapes(buttons[itemNumber + extraLineCount].text)));
         extraLineCount++;
     }
     if (equippedItemCount) {
@@ -2913,7 +2913,7 @@ char displayInventory(unsigned short categoryMask,
                 
                 if (theEvent.shiftKey || theEvent.controlKey || waitForAcknowledge) {
                     // Display an information window about the item.
-                    actionKey = printCarriedItemDetails(theItem, max(2, mapToWindowX(DCOLS - maxLength - 42)), mapToWindowY(2), 40, includeButtons, NULL);
+                    actionKey = printCarriedItemDetails(theItem, MAX(2, mapToWindowX(DCOLS - maxLength - 42)), mapToWindowY(2), 40, includeButtons, NULL);
                     
                     overlayDisplayBuffer(rbuf, NULL); // remove the item info window
                     
@@ -3053,7 +3053,7 @@ void strengthCheck(item *theItem) {
     updateEncumbrance();
     if (theItem) {
         if (theItem->category & WEAPON && theItem->strengthRequired > rogue.strength - player.weaknessAmount) {
-            strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
+            strengthDeficiency = theItem->strengthRequired - MAX(0, rogue.strength - player.weaknessAmount);
             strcpy(buf1, "");
             itemName(theItem, buf1, false, false, NULL);
             sprintf(buf2, "You can barely lift the %s; %i more strength would be ideal.", buf1, strengthDeficiency);
@@ -3061,7 +3061,7 @@ void strengthCheck(item *theItem) {
         }
         
         if (theItem->category & ARMOR && theItem->strengthRequired > rogue.strength - player.weaknessAmount) {
-            strengthDeficiency = theItem->strengthRequired - max(0, rogue.strength - player.weaknessAmount);
+            strengthDeficiency = theItem->strengthRequired - MAX(0, rogue.strength - player.weaknessAmount);
             strcpy(buf1, "");
             itemName(theItem, buf1, false, false, NULL);
             sprintf(buf2, "You stagger under the weight of the %s; %i more strength would be ideal.",
@@ -3337,7 +3337,7 @@ short getLineCoordinates(short listOfCoordinates[][2], const short originLoc[2],
     }
     
     // normalize target vector such that one dimension equals 1 and the other is in [0, 1].
-    largerTargetComponent = max(targetVector[0], targetVector[1]);
+    largerTargetComponent = MAX(targetVector[0], targetVector[1]);
     targetVector[0] /= largerTargetComponent;
     targetVector[1] /= largerTargetComponent;
     
@@ -3382,7 +3382,7 @@ void getImpactLoc(short returnLoc[2], const short originLoc[2], const short targ
     creature *monst;
     
     n = getLineCoordinates(coords, originLoc, targetLoc);
-    n = min(n, maxDistance);
+    n = MIN(n, maxDistance);
     for (i=0; i<n; i++) {
         monst = monsterAtLoc(coords[i][0], coords[i][1]);
         if (monst
@@ -3524,9 +3524,9 @@ void negate(creature *monst) {
         monst->status[STATUS_SHIELDED] = 0;
         monst->status[STATUS_INVISIBLE] = 0;
         if (monst == &player) {
-            monst->status[STATUS_TELEPATHIC] = min(monst->status[STATUS_TELEPATHIC], 1);
-            monst->status[STATUS_MAGICAL_FEAR] = min(monst->status[STATUS_MAGICAL_FEAR], 1);
-            monst->status[STATUS_LEVITATING] = min(monst->status[STATUS_LEVITATING], 1);
+            monst->status[STATUS_TELEPATHIC] = MIN(monst->status[STATUS_TELEPATHIC], 1);
+            monst->status[STATUS_MAGICAL_FEAR] = MIN(monst->status[STATUS_MAGICAL_FEAR], 1);
+            monst->status[STATUS_LEVITATING] = MIN(monst->status[STATUS_LEVITATING], 1);
             if (monst->status[STATUS_DARKNESS]) {
                 monst->status[STATUS_DARKNESS] = 0;
                 updateMinersLightRadius();
@@ -3565,7 +3565,7 @@ void negate(creature *monst) {
 
 short monsterAccuracyAdjusted(const creature *monst) {
     short retval = monst->info.accuracy * (pow(WEAPON_ENCHANT_ACCURACY_FACTOR, -2.5 * (float) monst->weaknessAmount) + FLOAT_FUDGE);
-    return max(retval, 0);
+    return MAX(retval, 0);
 }
 
 float monsterDamageAdjustmentAmount(const creature *monst) {
@@ -3585,7 +3585,7 @@ short monsterDefenseAdjusted(const creature *monst) {
     } else {
         retval = monst->info.defense - 25 * monst->weaknessAmount;
     }
-    return max(retval, 0);
+    return MAX(retval, 0);
 }
 
 // Adds one to the creature's weakness, sets the weakness status duration to maxDuration.
@@ -3593,8 +3593,8 @@ void weaken(creature *monst, short maxDuration) {
     if (monst->weaknessAmount < 10) {
         monst->weaknessAmount++;
     }
-    monst->status[STATUS_WEAKENED] = max(monst->status[STATUS_WEAKENED], maxDuration);
-    monst->maxStatus[STATUS_WEAKENED] = max(monst->maxStatus[STATUS_WEAKENED], maxDuration);
+    monst->status[STATUS_WEAKENED] = MAX(monst->status[STATUS_WEAKENED], maxDuration);
+    monst->maxStatus[STATUS_WEAKENED] = MAX(monst->maxStatus[STATUS_WEAKENED], maxDuration);
     if (monst == &player) {
         messageWithColor("your muscles weaken as an enervating toxin fills your veins.", &badMessageColor, false);
         strengthCheck(rogue.weapon);
@@ -3630,7 +3630,7 @@ boolean polymorph(creature *monst) {
     monst->info = monsterCatalog[newMonsterIndex]; // Presto change-o!
     
     monst->info.turnsBetweenRegen *= 1000;
-    monst->currentHP = max(1, max(healthFraction * monst->info.maxHP / 1000, monst->info.maxHP - previousDamageTaken));
+    monst->currentHP = MAX(1, MAX(healthFraction * monst->info.maxHP / 1000, monst->info.maxHP - previousDamageTaken));
     
     monst->movementSpeed = monst->info.movementSpeed;
     monst->attackSpeed = monst->info.attackSpeed;
@@ -3666,7 +3666,7 @@ boolean polymorph(creature *monst) {
     }
     monst->bookkeepingFlags &= ~(MB_SEIZING | MB_SEIZED);
     
-    monst->ticksUntilTurn = max(monst->ticksUntilTurn, 101);
+    monst->ticksUntilTurn = MAX(monst->ticksUntilTurn, 101);
     
     refreshDungeonCell(monst->xLoc, monst->yLoc);
     if (boltCatalog[BOLT_POLYMORPH].backColor) {
@@ -3705,7 +3705,7 @@ void haste(creature *monst, short turns) {
 
 void heal(creature *monst, short percent, boolean panacea) {
     char buf[COLS], monstName[COLS];
-    monst->currentHP = min(monst->info.maxHP, monst->currentHP + percent * monst->info.maxHP / 100);
+    monst->currentHP = MIN(monst->info.maxHP, monst->currentHP + percent * monst->info.maxHP / 100);
     if (panacea) {
         if (monst->status[STATUS_HALLUCINATING] > 1) {
             monst->status[STATUS_HALLUCINATING] = 1;
@@ -4100,7 +4100,7 @@ void beckonMonster(creature *monst, short x, short y) {
     from[1] = monst->yLoc;
     to[0] = x;
     to[1] = y;
-    theBolt.magnitude = max(1, (distanceBetween(x, y, monst->xLoc, monst->yLoc) - 2) / 2);
+    theBolt.magnitude = MAX(1, (distanceBetween(x, y, monst->xLoc, monst->yLoc) - 2) / 2);
     zap(from, to, &theBolt, false);
     if (monst->ticksUntilTurn < player.attackSpeed+1) {
         monst->ticksUntilTurn = player.attackSpeed+1;
@@ -4347,7 +4347,7 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
                 if (monst == &player) {
                     flashMonster(monst, &confusionGasColor, 100);
                     monst->status[STATUS_CONFUSED] = staffEntrancementDuration(theBolt->magnitude);
-                    monst->maxStatus[STATUS_CONFUSED] = max(monst->status[STATUS_CONFUSED], monst->maxStatus[STATUS_CONFUSED]);
+                    monst->maxStatus[STATUS_CONFUSED] = MAX(monst->status[STATUS_CONFUSED], monst->maxStatus[STATUS_CONFUSED]);
                     message("the bolt hits you and you suddently feel disoriented.", true);
                     if (autoID) {
                         *autoID = true;
@@ -4393,7 +4393,7 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
                 break;
             case BE_DISCORD:
                 if (!(monst->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
-                    monst->status[STATUS_DISCORDANT] = monst->maxStatus[STATUS_DISCORDANT] = max(staffDiscordDuration(theBolt->magnitude), monst->status[STATUS_DISCORDANT]);
+                    monst->status[STATUS_DISCORDANT] = monst->maxStatus[STATUS_DISCORDANT] = MAX(staffDiscordDuration(theBolt->magnitude), monst->status[STATUS_DISCORDANT]);
                     if (canSeeMonster(monst)) {
                         if (boltCatalog[BOLT_DISCORD].backColor) {
                             flashMonster(monst, boltCatalog[BOLT_DISCORD].backColor, 100);
@@ -4482,7 +4482,7 @@ void detonateBolt(bolt *theBolt, creature *caster, short x, short y, boolean *au
     switch(theBolt->boltEffect) {
         case BE_OBSTRUCTION:
             feat = dungeonFeatureCatalog[DF_FORCEFIELD];
-            feat.probabilityDecrement = max(1, 75 * pow(0.8, theBolt->magnitude));
+            feat.probabilityDecrement = MAX(1, 75 * pow(0.8, theBolt->magnitude));
             spawnDungeonFeature(x, y, &feat, true, false);
             if (autoID) {
                 *autoID = true;
@@ -4641,7 +4641,7 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
         if (monst
             && !(theBolt->flags & BF_NEVER_REFLECTS)
             && projectileReflects(shootingMonst, monst)
-            && i < MAX_BOLT_LENGTH - max(DCOLS, DROWS)) {
+            && i < MAX_BOLT_LENGTH - MAX(DCOLS, DROWS)) {
             
             if (projectileReflects(shootingMonst, monst)) { // if it scores another reflection roll, reflect at caster
                 numCells = reflectBolt(originLoc[0], originLoc[1], listOfCoordinates, i, !alreadyReflected);
@@ -4683,7 +4683,7 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
         if (boltInView && boltColor) {
             demoteVisibility();
             restoreLighting(lights);
-            for (k = min(i, boltLength + 2); k >= 0; k--) {
+            for (k = MIN(i, boltLength + 2); k >= 0; k--) {
                 if (k < initialBoltLength) {
                     paintLight(&boltLights[k], listOfCoordinates[i-k][0], listOfCoordinates[i-k][1], false, false);
                 }
@@ -4692,15 +4692,15 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
         boltInView = false;
         updateFieldOfViewDisplay(false, true);
         // Now draw the bolt itself.
-        for (k = min(i, boltLength + 2); k >= 0; k--) {
+        for (k = MIN(i, boltLength + 2); k >= 0; k--) {
             x2 = listOfCoordinates[i-k][0];
             y2 = listOfCoordinates[i-k][1];
             if (playerCanSeeOrSense(x2, y2)) {
                 if (!fastForward) {
                     getCellAppearance(x2, y2, &theChar, &foreColor, &backColor);
                     if (boltColor) {
-                        applyColorAugment(&foreColor, boltColor, max(0, 100 - k * 100 / (boltLength)));
-                        applyColorAugment(&backColor, boltColor, max(0, 100 - k * 100 / (boltLength)));
+                        applyColorAugment(&foreColor, boltColor, MAX(0, 100 - k * 100 / (boltLength)));
+                        applyColorAugment(&backColor, boltColor, MAX(0, 100 - k * 100 / (boltLength)));
                     }
                     const boolean displayChar = (k == 0 || (theBolt->flags & BF_DISPLAY_CHAR_ALONG_LENGTH));
                     if (displayChar) {
@@ -4803,7 +4803,7 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
                 && (projectileReflects(shootingMonst, NULL)
                     || cellHasTMFlag(x2, y2, TM_REFLECTS_BOLTS)
                     || (theBolt->boltEffect == BE_TUNNELING && (pmap[x2][y2].flags & IMPREGNABLE)))
-                && i < MAX_BOLT_LENGTH - max(DCOLS, DROWS)) {
+                && i < MAX_BOLT_LENGTH - MAX(DCOLS, DROWS)) {
                 
                 sprintf(buf, "the bolt reflects off of %s", tileText(x2, y2));
                 if (projectileReflects(shootingMonst, NULL)) {
@@ -4855,7 +4855,7 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
                     // boltLights[k].lightRadius.upperBound *= 2;
                     // boltLights[k].lightColor = &boltImpactColor;
                     
-                    for (k = min(j, boltLength + 2); k >= j-i; k--) {
+                    for (k = MIN(j, boltLength + 2); k >= j-i; k--) {
                         if (k < initialBoltLength) {
                             paintLight(&boltLights[k], listOfCoordinates[j-k][0], listOfCoordinates[j-k][1], false, false);
                         }
@@ -4867,10 +4867,10 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
                 
                 // beam graphic
                 // k iterates from the tail tip of the visible portion of the bolt to the head
-                for (k = min(j, boltLength + 2); k >= j-i; k--) {
+                for (k = MIN(j, boltLength + 2); k >= j-i; k--) {
                     if (playerCanSee(listOfCoordinates[j-k][0], listOfCoordinates[j-k][1])) {
                         if (boltColor) {
-                            hiliteCell(listOfCoordinates[j-k][0], listOfCoordinates[j-k][1], boltColor, max(0, 100 - k * 100 / (boltLength)), false);
+                            hiliteCell(listOfCoordinates[j-k][0], listOfCoordinates[j-k][1], boltColor, MAX(0, 100 - k * 100 / (boltLength)), false);
                         }
                         boltInView = true;
                     }
@@ -5198,11 +5198,11 @@ boolean moveCursor(boolean *targetConfirmed,
         
         if (targetCanLeaveMap && !movementKeystroke) {
             // permit it to leave the map by up to 1 space in any direction if mouse controlled.
-            cursor[0] = clamp(cursor[0], -1, DCOLS);
-            cursor[1] = clamp(cursor[1], -1, DROWS);
+            cursor[0] = CLAMP(cursor[0], -1, DCOLS);
+            cursor[1] = CLAMP(cursor[1], -1, DROWS);
         } else {
-            cursor[0] = clamp(cursor[0], 0, DCOLS - 1);
-            cursor[1] = clamp(cursor[1], 0, DROWS - 1);
+            cursor[0] = CLAMP(cursor[0], 0, DCOLS - 1);
+            cursor[1] = CLAMP(cursor[1], 0, DROWS - 1);
         }
     } while (again && (!event || !cursorMovementCommand));
     
@@ -5292,10 +5292,10 @@ boolean chooseTarget(short returnLoc[2],
     
     numCells = getLineCoordinates(coordinates, originLoc, targetLoc);
     if (maxDistance > 0) {
-        numCells = min(numCells, maxDistance);
+        numCells = MIN(numCells, maxDistance);
     }
     if (stopAtTarget) {
-        numCells = min(numCells, distanceBetween(player.xLoc, player.yLoc, targetLoc[0], targetLoc[1]));
+        numCells = MIN(numCells, distanceBetween(player.xLoc, player.yLoc, targetLoc[0], targetLoc[1]));
     }
     
     targetConfirmed = canceled = tabKey = false;
@@ -5339,11 +5339,11 @@ boolean chooseTarget(short returnLoc[2],
         if (!targetConfirmed) {
             numCells = getLineCoordinates(coordinates, originLoc, targetLoc);
             if (maxDistance > 0) {
-                numCells = min(numCells, maxDistance);
+                numCells = MIN(numCells, maxDistance);
             }
             
             if (stopAtTarget) {
-                numCells = min(numCells, distanceBetween(player.xLoc, player.yLoc, targetLoc[0], targetLoc[1]));
+                numCells = MIN(numCells, distanceBetween(player.xLoc, player.yLoc, targetLoc[0], targetLoc[1]));
             }
             distance = hiliteTrajectory(coordinates, numCells, false, passThroughCreatures, &trajColor);
             cursorInTrajectory = false;
@@ -5364,7 +5364,7 @@ boolean chooseTarget(short returnLoc[2],
         }
     } while (!targetConfirmed);
     if (maxDistance > 0) {
-        numCells = min(numCells, maxDistance);
+        numCells = MIN(numCells, maxDistance);
     }
     hiliteTrajectory(coordinates, numCells, true, passThroughCreatures, trajectoryColor);
     refreshDungeonCell(oldTargetLoc[0], oldTargetLoc[1]);
@@ -5786,7 +5786,7 @@ void throwCommand(item *theItem) {
             (theItem->quantity > 1 ? "a" : "your"),
             theName);
     temporaryMessage(buf, false);
-    maxDistance = (12 + 2 * max(rogue.strength - player.weaknessAmount - 12, 2));
+    maxDistance = (12 + 2 * MAX(rogue.strength - player.weaknessAmount - 12, 2));
     autoTarget = (theItem->category & (WEAPON | POTION)) ? true : false;
     if (chooseTarget(zapTarget, maxDistance, true, autoTarget, false, false, &red)) {
         if ((theItem->flags & ITEM_EQUIPPED) && theItem->quantity <= 1) {
@@ -6192,7 +6192,7 @@ void apply(item *theItem, boolean recordCommands) {
                     return;
                 }
             }
-            player.status[STATUS_NUTRITION] = min(foodTable[theItem->kind].strengthRequired + player.status[STATUS_NUTRITION], STOMACH_SIZE);
+            player.status[STATUS_NUTRITION] = MIN(foodTable[theItem->kind].strengthRequired + player.status[STATUS_NUTRITION], STOMACH_SIZE);
             if (theItem->kind == RATION) {
                 messageWithColor("That food tasted delicious!", &itemMessageColor, false);
             } else {
@@ -6506,14 +6506,14 @@ void readScroll(item *theItem) {
             confirmMessages();
             switch (theItem->category) {
                 case WEAPON:
-                    theItem->strengthRequired = max(0, theItem->strengthRequired - 1);
+                    theItem->strengthRequired = MAX(0, theItem->strengthRequired - 1);
                     theItem->enchant1++;
                     if (theItem->quiverNumber) {
                         theItem->quiverNumber = rand_range(1, 60000);
                     }
                     break;
                 case ARMOR:
-                    theItem->strengthRequired = max(0, theItem->strengthRequired - 1);
+                    theItem->strengthRequired = MAX(0, theItem->strengthRequired - 1);
                     theItem->enchant1++;
                     break;
                 case RING:
@@ -6534,7 +6534,7 @@ void readScroll(item *theItem) {
                     break;
                 case CHARM:
                     theItem->enchant1++;
-                    theItem->charges = min(0, theItem->charges); // Enchanting instantly recharges charms.
+                    theItem->charges = MIN(0, theItem->charges); // Enchanting instantly recharges charms.
                                                                  //                    theItem->charges = theItem->charges
                                                                  //                    * charmRechargeDelay(theItem->kind, theItem->enchant1)
                                                                  //                    / charmRechargeDelay(theItem->kind, theItem->enchant1 - 1);
@@ -6714,8 +6714,8 @@ void drinkPotion(item *theItem) {
             exposeCreatureToFire(&player);
             break;
         case POTION_DARKNESS:
-            player.status[STATUS_DARKNESS] = max(400, player.status[STATUS_DARKNESS]);
-            player.maxStatus[STATUS_DARKNESS] = max(400, player.maxStatus[STATUS_DARKNESS]);
+            player.status[STATUS_DARKNESS] = MAX(400, player.status[STATUS_DARKNESS]);
+            player.maxStatus[STATUS_DARKNESS] = MAX(400, player.maxStatus[STATUS_DARKNESS]);
             updateMinersLightRadius();
             updateVision(true);
             message("your vision flickers as a cloak of darkness settles around you!", false);

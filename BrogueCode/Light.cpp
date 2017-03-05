@@ -43,7 +43,7 @@ void logLights() {
             if (tmap[i][j].light[0] == 0) {
                 printf(" ");
             } else {
-                printf("%i", max(0, tmap[i][j].light[0] / 10 - 1));
+                printf("%i", MAX(0, tmap[i][j].light[0] / 10 - 1));
             }
         }
         printf("\n");
@@ -77,8 +77,8 @@ boolean paintLight(lightSource *theLight, short x, short y, boolean isMinersLigh
     fadeToPercent = theLight->radialFadeToPercent;
     
     // zero out only the relevant rectangle of the grid
-    for (i = max(0, x - (radius + FLOAT_FUDGE)); i < DCOLS && i < x + radius + FLOAT_FUDGE; i++) {
-        for (j = max(0, y - (radius + FLOAT_FUDGE)); j < DROWS && j < y + radius + FLOAT_FUDGE; j++) {
+    for (i = MAX(0, x - (radius + FLOAT_FUDGE)); i < DCOLS && i < x + radius + FLOAT_FUDGE; i++) {
+        for (j = MAX(0, y - (radius + FLOAT_FUDGE)); j < DROWS && j < y + radius + FLOAT_FUDGE; j++) {
             grid[i][j] = 0;
         }
     }
@@ -88,8 +88,8 @@ boolean paintLight(lightSource *theLight, short x, short y, boolean isMinersLigh
     
     overlappedFieldOfView = false;
     
-    for (i = max(0, x - (radius + FLOAT_FUDGE)); i < DCOLS && i < x + radius; i++) {
-        for (j = max(0, y - (radius + FLOAT_FUDGE)); j < DROWS && j < y + radius; j++) {
+    for (i = MAX(0, x - (radius + FLOAT_FUDGE)); i < DCOLS && i < x + radius; i++) {
+        for (j = MAX(0, y - (radius + FLOAT_FUDGE)); j < DROWS && j < y + radius; j++) {
             if (grid[i][j]) {
                 lightMultiplier = 100 - (100 - fadeToPercent) * (sqrt((i-x) * (i-x) + (j-y) * (j-y)) / radius + FLOAT_FUDGE);
                 for (k=0; k<3; k++) {
@@ -128,7 +128,7 @@ void updateMinersLightRadius() {
         lightRadius /= (-1 * rogue.lightMultiplier + 1);
     } else {
         lightRadius *= (rogue.lightMultiplier);
-        lightRadius = max(lightRadius, (rogue.lightMultiplier * 2 + 2));
+        lightRadius = MAX(lightRadius, (rogue.lightMultiplier * 2 + 2));
     }
     
     if (player.status[STATUS_DARKNESS]) {
@@ -146,11 +146,11 @@ void updateMinersLightRadius() {
     }
     
     if (rogue.inWater && lightRadius > 3) {
-        lightRadius = max(lightRadius / 2, 3);
+        lightRadius = MAX(lightRadius / 2, 3);
     }
     
-    rogue.minersLight.radialFadeToPercent = 35 + max(0, min(65, rogue.lightMultiplier * 5)) * (fraction + FLOAT_FUDGE);
-    rogue.minersLight.lightRadius.upperBound = rogue.minersLight.lightRadius.lowerBound = clamp(lightRadius + FLOAT_FUDGE, -30000, 30000);
+    rogue.minersLight.radialFadeToPercent = 35 + MAX(0, MIN(65, rogue.lightMultiplier * 5)) * (fraction + FLOAT_FUDGE);
+    rogue.minersLight.lightRadius.upperBound = rogue.minersLight.lightRadius.lowerBound = CLAMP(lightRadius + FLOAT_FUDGE, -30000, 30000);
 }
 
 void updateDisplayDetail() {

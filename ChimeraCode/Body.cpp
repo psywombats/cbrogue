@@ -9,18 +9,18 @@
 #include "ChimeraMonster.h"
 
 Body::Body() :
-	hp(0),
-	flier(false),
-	intelligent(false),
-	gender(GenderType::NONE),
-	dangerLevel(0),
-	accuracy(AccuracyType::NORMAL),
-	defense(DefenseType::NORMAL),
-	moveSpeed(MoveSpeedType::NORMAL),
-	attackSpeed(AttackSpeedType::NORMAL),
-	regenSpeed(RegenSpeedType::NORMAL),
-	maxDamage(0),
-	minDamage(0) {
+		hp(0),
+		flier(false),
+		intelligent(false),
+		gender(GenderType::NONE),
+		dangerLevel(0),
+		accuracy(AccuracyType::NORMAL),
+		defense(DefenseType::NORMAL),
+		moveSpeed(MoveSpeedType::NORMAL),
+		attackSpeed(AttackSpeedType::NORMAL),
+		regenSpeed(RegenSpeedType::NORMAL),
+		maxDamage(0),
+		minDamage(0) {
 
 }
 

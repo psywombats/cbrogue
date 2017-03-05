@@ -46,7 +46,7 @@ void exposeCreatureToFire(creature *monst) {
             message(buf2, false);
         }
     }
-    monst->status[STATUS_BURNING] = monst->maxStatus[STATUS_BURNING] = max(monst->status[STATUS_BURNING], 7);
+    monst->status[STATUS_BURNING] = monst->maxStatus[STATUS_BURNING] = MAX(monst->status[STATUS_BURNING], 7);
 }
 
 void updateFlavorText() {
@@ -276,7 +276,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
     if (cellHasTerrainFlag(*x, *y, T_CAUSES_EXPLOSIVE_DAMAGE) && !monst->status[STATUS_EXPLOSION_IMMUNITY]
         && !(monst->bookkeepingFlags & MB_SUBMERGED)) {
         damage = rand_range(15, 20);
-        damage = max(damage, monst->info.maxHP / 2);
+        damage = MAX(damage, monst->info.maxHP / 2);
         monst->status[STATUS_EXPLOSION_IMMUNITY] = 5;
         if (monst == &player) {
             rogue.disturbed = true;
@@ -345,7 +345,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
                         (monst == &player ? "": "s"), (monst == &player ? "": "s"));
                 message(buf2, false);
             }
-            monst->status[STATUS_NAUSEOUS] = monst->maxStatus[STATUS_NAUSEOUS] = max(monst->status[STATUS_NAUSEOUS], 20);
+            monst->status[STATUS_NAUSEOUS] = monst->maxStatus[STATUS_NAUSEOUS] = MAX(monst->status[STATUS_NAUSEOUS], 20);
         }
         
         // confusion gas
@@ -362,7 +362,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
                 sprintf(buf2, "%s %s very confused!", buf, (monst == &player ? "feel": "looks"));
                 message(buf2, false);
             }
-            monst->status[STATUS_CONFUSED] = monst->maxStatus[STATUS_CONFUSED] = max(monst->status[STATUS_CONFUSED], 25);
+            monst->status[STATUS_CONFUSED] = monst->maxStatus[STATUS_CONFUSED] = MAX(monst->status[STATUS_CONFUSED], 25);
         }
         
         // paralysis gas
@@ -376,7 +376,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
                 sprintf(buf2, "%s %s paralyzed!", buf, (monst == &player ? "are": "is"));
                 message(buf2, (monst == &player));
             }
-            monst->status[STATUS_PARALYZED] = monst->maxStatus[STATUS_PARALYZED] = max(monst->status[STATUS_PARALYZED], 20);
+            monst->status[STATUS_PARALYZED] = monst->maxStatus[STATUS_PARALYZED] = MAX(monst->status[STATUS_PARALYZED], 20);
             if (monst == &player) {
                 rogue.disturbed = true;
             }
@@ -400,7 +400,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
             sprintf(buf2, "the lichen's grasping tendrils poison %s.", buf);
             messageWithColor(buf2, messageColorFromVictim(monst), false);
         }
-        damage = max(0, 5 - monst->status[STATUS_POISONED]);
+        damage = MAX(0, 5 - monst->status[STATUS_POISONED]);
         addPoison(monst, damage, 0); // Lichen doesn't increase poison concentration above 1.
     }
     
@@ -465,7 +465,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
         && !(monst->bookkeepingFlags & MB_SUBMERGED)) {
         
         damage = (monst->info.maxHP / 15) * ticks / 100;
-        damage = max(1, damage);
+        damage = MAX(1, damage);
         for (layer = 0; layer < NUMBER_TERRAIN_LAYERS && !(tileCatalog[pmap[x][y].layers[layer]].flags & T_CAUSES_DAMAGE); NEXT_LAYER(layer));
         if (monst == &player) {
             if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_RESPIRATION) {
@@ -503,9 +503,9 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
         && !(monst->bookkeepingFlags & MB_SUBMERGED)) {
         
         damage = (monst->info.maxHP / 15) * ticks / 100;
-        damage = max(1, damage);
+        damage = MAX(1, damage);
         if (monst->currentHP < monst->info.maxHP) {
-            monst->currentHP = min(monst->currentHP + damage, monst->info.maxHP);
+            monst->currentHP = MIN(monst->currentHP + damage, monst->info.maxHP);
             if (monst == &player) {
                 messageWithColor("you feel much better.", &goodMessageColor, false);
             }
@@ -540,8 +540,8 @@ void updateClairvoyance() {
         cFlags = CLAIRVOYANT_VISIBLE | DISCOVERED;
     }
     
-    for (i = max(0, player.xLoc - clairvoyanceRadius); i < min(DCOLS, player.xLoc + clairvoyanceRadius + 1); i++) {
-        for (j = max(0, player.yLoc - clairvoyanceRadius); j < min(DROWS, player.yLoc + clairvoyanceRadius + 1); j++) {
+    for (i = MAX(0, player.xLoc - clairvoyanceRadius); i < MIN(DCOLS, player.xLoc + clairvoyanceRadius + 1); i++) {
+        for (j = MAX(0, player.yLoc - clairvoyanceRadius); j < MIN(DROWS, player.yLoc + clairvoyanceRadius + 1); j++) {
             
             dx = (player.xLoc - i);
             dy = (player.yLoc - j);
@@ -633,7 +633,7 @@ short armorAggroAdjustment(item *theArmor) {
         
         return 0;
     }
-    return max(0, armorTable[theArmor->kind].strengthRequired - 12);
+    return MAX(0, armorTable[theArmor->kind].strengthRequired - 12);
 }
 
 short currentAggroValue() {
@@ -1199,13 +1199,13 @@ void updateVolumetricMedia() {
                 if (cellHasTerrainFlag(i, j, T_AUTO_DESCENT)) { // if it's a chasm tile or trap door,
                     numSpaces++; // this will allow gas to escape from the level entirely
                 }
-                newGasVolume[i][j] += sum / max(1, numSpaces);
+                newGasVolume[i][j] += sum / MAX(1, numSpaces);
                 if ((unsigned) rand_range(0, numSpaces - 1) < (sum % numSpaces)) {
                     newGasVolume[i][j]++; // stochastic rounding
                 }
                 if (pmap[i][j].layers[GAS] != gasType && newGasVolume[i][j] > 3) {
                     if (pmap[i][j].layers[GAS] != NOTHING) {
-                        newGasVolume[i][j] = min(3, newGasVolume[i][j]); // otherwise interactions between gases are crazy
+                        newGasVolume[i][j] = MIN(3, newGasVolume[i][j]); // otherwise interactions between gases are crazy
                     }
                     pmap[i][j].layers[GAS] = gasType;
                 } else if (pmap[i][j].layers[GAS] && newGasVolume[i][j] < 1) {
@@ -1767,7 +1767,7 @@ void rechargeItemsIncrementally(short multiplier) {
                 if (theItem->charges < theItem->enchant1) {
                     theItem->charges++;
                 }
-                theItem->enchant2 += randClumpedRange(max(staffRechargeDuration / 3, 1), staffRechargeDuration * 5 / 3, 3);
+                theItem->enchant2 += randClumpedRange(MAX(staffRechargeDuration / 3, 1), staffRechargeDuration * 5 / 3, 3);
             }
             while (theItem->enchant2 > staffRechargeDuration * 5 / 3) {
                 // if it's time to drain a staff charge
@@ -1777,7 +1777,7 @@ void rechargeItemsIncrementally(short multiplier) {
                 theItem->enchant2 -= staffRechargeDuration;
             }
         } else if ((theItem->category & CHARM) && (theItem->charges > 0)) {
-            theItem->charges = clamp(theItem->charges - multiplier, 0, charmRechargeDelay(theItem->kind, theItem->enchant1));
+            theItem->charges = CLAMP(theItem->charges - multiplier, 0, charmRechargeDelay(theItem->kind, theItem->enchant1));
             if (theItem->charges == 0) {
                 itemName(theItem, theItemName, false, false, NULL);
                 sprintf(buf, "your %s has recharged.", theItemName);
@@ -2229,10 +2229,10 @@ void playerTurnEnded() {
         while (player.ticksUntilTurn > 0) {
             soonestTurn = 10000;
             for(monst = monsters->nextCreature; monst != NULL; monst = monst->nextCreature) {
-                soonestTurn = min(soonestTurn, monst->ticksUntilTurn);
+                soonestTurn = MIN(soonestTurn, monst->ticksUntilTurn);
             }
-            soonestTurn = min(soonestTurn, player.ticksUntilTurn);
-            soonestTurn = min(soonestTurn, rogue.ticksTillUpdateEnvironment);
+            soonestTurn = MIN(soonestTurn, player.ticksUntilTurn);
+            soonestTurn = MIN(soonestTurn, rogue.ticksTillUpdateEnvironment);
             for(monst = monsters->nextCreature; monst != NULL; monst = monst->nextCreature) {
                 monst->ticksUntilTurn -= soonestTurn;
             }
@@ -2431,7 +2431,7 @@ void playerTurnEnded() {
         if (!rogue.receivedLevitationWarning) {
             turnsRequiredToShore = rogue.mapToShore[player.xLoc][player.yLoc] * player.movementSpeed / 100;
             if (cellHasTerrainFlag(player.xLoc, player.yLoc, T_LAVA_INSTA_DEATH)) {
-                turnsToShore = max(player.status[STATUS_LEVITATING], player.status[STATUS_IMMUNE_TO_FIRE]) * 100 / player.movementSpeed;
+                turnsToShore = MAX(player.status[STATUS_LEVITATING], player.status[STATUS_IMMUNE_TO_FIRE]) * 100 / player.movementSpeed;
             } else {
                 turnsToShore = player.status[STATUS_LEVITATING] * 100 / player.movementSpeed;
             }

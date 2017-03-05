@@ -60,7 +60,7 @@ boolean chooseFile(char *path, char *prompt, char *defaultName, char *suffix) {
     
     if (getInputTextString(path,
                            prompt,
-                           min(DCOLS-25, BROGUE_FILENAME_MAX - strlen(suffix)),
+                           MIN(DCOLS-25, BROGUE_FILENAME_MAX - strlen(suffix)),
                            defaultName,
                            suffix,
                            TEXT_INPUT_FILENAME,
@@ -453,7 +453,7 @@ void initializeRogue(unsigned long seed) {
     
     DEBUG {
         theItem = generateItem(RING, RING_CLAIRVOYANCE);
-        theItem->enchant1 = max(DROWS, DCOLS);
+        theItem->enchant1 = MAX(DROWS, DCOLS);
         theItem->flags &= ~ITEM_CURSED;
         identify(theItem);
         theItem = addItemToPack(theItem);
@@ -587,7 +587,7 @@ void updateColors() {
     
     for (i=0; i<NUMBER_DYNAMIC_COLORS; i++) {
         *(dynamicColors[i][0]) = *(dynamicColors[i][1]);
-        applyColorAverage(dynamicColors[i][0], dynamicColors[i][2], min(100, max(0, rogue.depthLevel * 100 / AMULET_LEVEL)));
+        applyColorAverage(dynamicColors[i][0], dynamicColors[i][2], MIN(100, MAX(0, rogue.depthLevel * 100 / AMULET_LEVEL)));
     }
 }
 
@@ -656,7 +656,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
                     && !monst->status[STATUS_PARALYZED]
                     && (mapToStairs[monst->xLoc][monst->yLoc] < 30000 || monst->creatureState == MONSTER_ALLY || monst == rogue.yendorWarden)) {
                     
-                    monst->status[STATUS_ENTERS_LEVEL_IN] = clamp(mapToStairs[monst->xLoc][monst->yLoc] * monst->movementSpeed / 100 + 1, 1, 150);
+                    monst->status[STATUS_ENTERS_LEVEL_IN] = CLAMP(mapToStairs[monst->xLoc][monst->yLoc] * monst->movementSpeed / 100 + 1, 1, 150);
                     switch (stairDirection) {
                         case 1:
                             monst->bookkeepingFlags |= MB_APPROACHING_DOWNSTAIRS;
@@ -779,7 +779,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
         
         // restore level
         scentMap = levels[rogue.depthLevel - 1].scentMap;
-        timeAway = clamp(0, rogue.absoluteTurnNumber - levels[rogue.depthLevel - 1].awaySince, 30000);
+        timeAway = CLAMP(0, rogue.absoluteTurnNumber - levels[rogue.depthLevel - 1].awaySince, 30000);
         
         for (i=0; i<DCOLS; i++) {
             for (j=0; j<DROWS; j++) {
@@ -1229,26 +1229,26 @@ void victory(boolean superVictory) {
             gemCount += theItem->quantity;
         }
         if (theItem->category == AMULET && superVictory) {
-            printString("The Birthright of Yendor", mapToWindowX(2), min(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
-            sprintf(buf, "%li", max(0, itemValue(theItem) * 2));
-            printString(buf, mapToWindowX(60), min(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
-            totalValue += max(0, itemValue(theItem) * 2);
+            printString("The Birthright of Yendor", mapToWindowX(2), MIN(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
+            sprintf(buf, "%li", MAX(0, itemValue(theItem) * 2));
+            printString(buf, mapToWindowX(60), MIN(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
+            totalValue += MAX(0, itemValue(theItem) * 2);
             i++;
         } else if (theItem->category & COUNTS_TOWARD_SCORE) {
             identify(theItem);
             itemName(theItem, buf, true, true, &white);
             upperCase(buf);
-            printString(buf, mapToWindowX(2), min(ROWS-1, i + 1), &white, &black, dbuf);
-            sprintf(buf, "%li", max(0, itemValue(theItem)));
-            printString(buf, mapToWindowX(60), min(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
-            totalValue += max(0, itemValue(theItem));
+            printString(buf, mapToWindowX(2), MIN(ROWS-1, i + 1), &white, &black, dbuf);
+            sprintf(buf, "%li", MAX(0, itemValue(theItem)));
+            printString(buf, mapToWindowX(60), MIN(ROWS-1, i + 1), &itemMessageColor, &black, dbuf);
+            totalValue += MAX(0, itemValue(theItem));
             i++;
         }
     }
     i++;
-    printString("TOTAL:", mapToWindowX(2), min(ROWS-1, i + 1), &lightBlue, &black, dbuf);
+    printString("TOTAL:", mapToWindowX(2), MIN(ROWS-1, i + 1), &lightBlue, &black, dbuf);
     sprintf(buf, "%li", totalValue);
-    printString(buf, mapToWindowX(60), min(ROWS-1, i + 1), &lightBlue, &black, dbuf);
+    printString(buf, mapToWindowX(60), MIN(ROWS-1, i + 1), &lightBlue, &black, dbuf);
     
     i += 4;
     for (j = 0; i < ROWS && j < FEAT_COUNT; j++) {

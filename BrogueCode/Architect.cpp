@@ -140,7 +140,7 @@ short floodFillCount(char results[DCOLS][DROWS], char passMap[DCOLS][DROWS], sho
             count += floodFillCount(results, passMap, newX, newY);
         }
     }
-    return min(count, 10000);
+    return MIN(count, 10000);
 }
 
 // Rotates around the cell, counting up the number of distinct strings of passable neighbors in a single revolution.
@@ -1290,9 +1290,9 @@ boolean buildAMachine(enum machineTypes bp,
         if (feature->flags & (MF_IN_VIEW_OF_ORIGIN | MF_IN_PASSABLE_VIEW_OF_ORIGIN)) {
             zeroOutGrid(viewMap);
             if (feature->flags & MF_IN_PASSABLE_VIEW_OF_ORIGIN) {
-                getFOVMask(viewMap, originX, originY, max(DCOLS, DROWS), T_PATHING_BLOCKER, 0, false);
+                getFOVMask(viewMap, originX, originY, MAX(DCOLS, DROWS), T_PATHING_BLOCKER, 0, false);
             } else {
-                getFOVMask(viewMap, originX, originY, max(DCOLS, DROWS), (T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION), 0, false);
+                getFOVMask(viewMap, originX, originY, MAX(DCOLS, DROWS), (T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION), 0, false);
             }
             viewMap[originX][originY] = true;
             
@@ -1694,7 +1694,7 @@ void addMachines() {
         machineCount++;
     }
     randomMachineFactor = (rogue.depthLevel < 3 && (rogue.rewardRoomsGenerated + machineCount) == 0 ? 40 : 15);
-    while (rand_percent(max(randomMachineFactor, 15 * MACHINES_FACTOR)) && machineCount < 100) {
+    while (rand_percent(MAX(randomMachineFactor, 15 * MACHINES_FACTOR)) && machineCount < 100) {
         randomMachineFactor = 15;
         machineCount++;
     }
@@ -1729,7 +1729,7 @@ void runAutogenerators(boolean buildAreaMachines) {
             }
             
             // Decide how many of this AG to build.
-            count = min((gen->minNumberIntercept + rogue.depthLevel * gen->minNumberSlope) / 100, gen->maxNumber);
+            count = MIN((gen->minNumberIntercept + rogue.depthLevel * gen->minNumberSlope) / 100, gen->maxNumber);
             while (rand_percent(gen->frequency) && count < gen->maxNumber) {
                 count++;
             }
@@ -1959,7 +1959,7 @@ void designCrossRoom(short **grid) {
     fillGrid(grid, 0);
     
     roomWidth = rand_range(3, 12);
-    roomX = rand_range(max(0, DCOLS/2 - (roomWidth - 1)), min(DCOLS, DCOLS/2));
+    roomX = rand_range(MAX(0, DCOLS/2 - (roomWidth - 1)), MIN(DCOLS, DCOLS/2));
     roomWidth2 = rand_range(4, 20);
     roomX2 = (roomX + (roomWidth / 2) + rand_range(0, 2) + rand_range(0, 2) - 3) - (roomWidth2 / 2);
     
@@ -2042,10 +2042,10 @@ void designChunkyRoom(short **grid) {
             
             drawCircleOnGrid(grid, x, y, 2, 1);
             i++;
-            minX = max(1, min(x - 3, minX));
-            maxX = min(DCOLS - 2, max(x + 3, maxX));
-            minY = max(1, min(y - 3, minY));
-            maxY = min(DROWS - 2, max(y + 3, maxY));
+            minX = MAX(1, MIN(x - 3, minX));
+            maxX = MIN(DCOLS - 2, MAX(x + 3, maxX));
+            minY = MAX(1, MIN(y - 3, minY));
+            maxY = MIN(DROWS - 2, MAX(y + 3, maxY));
             
 //            hiliteGrid(grid, &green, 50);
 //            temporaryMessage("Added a chunk:", true);
@@ -2172,8 +2172,8 @@ void attachHallwayTo(short **grid, short doorSites[4][2]) {
         x += nbDirs[dir][0];
         y += nbDirs[dir][1];
     }
-    x = clamp(x - nbDirs[dir][0], 0, DCOLS - 1);
-    y = clamp(y - nbDirs[dir][1], 0, DROWS - 1); // Now (x, y) points at the last interior cell of the hallway.
+    x = CLAMP(x - nbDirs[dir][0], 0, DCOLS - 1);
+    y = CLAMP(y - nbDirs[dir][1], 0, DROWS - 1); // Now (x, y) points at the last interior cell of the hallway.
     allowObliqueHallwayExit = rand_percent(15);
     for (dir2 = 0; dir2 < 4; NEXT_DIR(dir2)) {
         newX = x + nbDirs[dir2][0];
@@ -2358,7 +2358,7 @@ void attachRooms(short **grid, const dungeonProfile *theDP, short attempts, shor
 }
 
 void adjustDungeonProfileForDepth(dungeonProfile *theProfile) {
-    const short descentPercent = clamp(100 * (rogue.depthLevel - 1) / (AMULET_LEVEL - 1), 0, 100);
+    const short descentPercent = CLAMP(100 * (rogue.depthLevel - 1) / (AMULET_LEVEL - 1), 0, 100);
     
     theProfile->roomFrequencies[0] += 20 * (100 - descentPercent) / 100;
     theProfile->roomFrequencies[1] += 10 * (100 - descentPercent) / 100;
@@ -2370,7 +2370,7 @@ void adjustDungeonProfileForDepth(dungeonProfile *theProfile) {
 
 void adjustDungeonFirstRoomProfileForDepth(dungeonProfile *theProfile) {
     short i;
-    const short descentPercent = clamp(100 * (rogue.depthLevel - 1) / (AMULET_LEVEL - 1), 0, 100);
+    const short descentPercent = CLAMP(100 * (rogue.depthLevel - 1) / (AMULET_LEVEL - 1), 0, 100);
     
     if (rogue.depthLevel == 1) {
         // All dungeons start with the entrance room on depth 1.
@@ -2667,7 +2667,7 @@ void fillLakes(short **lakeMap) {
 
 void finishDoors() {
     short i, j;
-    const short secretDoorChance = clamp((rogue.depthLevel - 1) * 67 / 25, 0, 67);
+    const short secretDoorChance = CLAMP((rogue.depthLevel - 1) * 67 / 25, 0, 67);
     for (i=1; i<DCOLS-1; i++) {
         for (j=1; j<DROWS-1; j++) {
             if (pmap[i][j].layers[DUNGEON] == DOOR
@@ -3121,8 +3121,8 @@ short levelIsDisconnectedWithBlockingMap(char blockingMap[DCOLS][DROWS], boolean
                         if (!countRegionSize) {
                             return true;
                         }
-                        smallestQualifyingZoneSize = min(smallestQualifyingZoneSize, zoneSizes[zoneMap[i][j] - 1]);
-                        smallestQualifyingZoneSize = min(smallestQualifyingZoneSize, zoneSizes[borderingZone - 1]);
+                        smallestQualifyingZoneSize = MIN(smallestQualifyingZoneSize, zoneSizes[zoneMap[i][j] - 1]);
+                        smallestQualifyingZoneSize = MIN(smallestQualifyingZoneSize, zoneSizes[borderingZone - 1]);
                         break;
                     }
                 }
@@ -3592,8 +3592,8 @@ void prepareForStairs(short x, short y, char grid[DCOLS][DROWS]) {
         }
     }
     // Zero out grid in the vicinity.
-    for (newX = max(0, x - 5); newX < min(DCOLS, x + 5); newX++) {
-        for (newY = max(0, y - 5); newY < min(DROWS, y + 5); newY++) {
+    for (newX = MAX(0, x - 5); newX < MIN(DCOLS, x + 5); newX++) {
+        for (newY = MAX(0, y - 5); newY < MIN(DROWS, y + 5); newY++) {
             grid[newX][newY] = false;
         }
     }
@@ -3684,7 +3684,7 @@ void initializeLevel() {
             }
         }
         zeroOutGrid(grid);
-        getFOVMask(grid, upLoc[0], upLoc[1], max(DCOLS, DROWS), (T_OBSTRUCTS_VISION), 0, false);
+        getFOVMask(grid, upLoc[0], upLoc[1], MAX(DCOLS, DROWS), (T_OBSTRUCTS_VISION), 0, false);
         for (i=0; i<DCOLS; i++) {
             for (j=0; j<DROWS; j++) {
                 if (grid[i][j]) {

@@ -88,12 +88,12 @@ void hiliteGrid(short **grid, color *hiliteColor, short hiliteStrength) {
                 y = mapToWindowY(j);
                 
                 displayBuffer[x][y].needsUpdate = true;
-                displayBuffer[x][y].backColorComponents[0] = clamp(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].backColorComponents[1] = clamp(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].backColorComponents[2] = clamp(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[0] = clamp(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[1] = clamp(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
-                displayBuffer[x][y].foreColorComponents[2] = clamp(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[0] = CLAMP(displayBuffer[x][y].backColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[1] = CLAMP(displayBuffer[x][y].backColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].backColorComponents[2] = CLAMP(displayBuffer[x][y].backColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[0] = CLAMP(displayBuffer[x][y].foreColorComponents[0] + hCol.red * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[1] = CLAMP(displayBuffer[x][y].foreColorComponents[1] + hCol.green * hiliteStrength / 100, 0, 100);
+                displayBuffer[x][y].foreColorComponents[2] = CLAMP(displayBuffer[x][y].foreColorComponents[2] + hCol.blue * hiliteStrength / 100, 0, 100);
             }
         }
     }
@@ -146,8 +146,8 @@ void drawRectangleOnGrid(short **grid, short x, short y, short width, short heig
 void drawCircleOnGrid(short **grid, short x, short y, short radius, short value) {
     short i, j;
     
-    for (i=max(0, x - radius - 1); i < max(DCOLS, x + radius); i++) {
-        for (j=max(0, y - radius - 1); j < max(DROWS, y + radius); j++) {
+    for (i=MAX(0, x - radius - 1); i < MAX(DCOLS, x + radius); i++) {
+        for (j=MAX(0, y - radius - 1); j < MAX(DROWS, y + radius); j++) {
             if ((i-x)*(i-x) + (j-y)*(j-y) < radius * radius + radius) {
                 grid[i][j] = value;
             }

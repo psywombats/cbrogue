@@ -656,7 +656,7 @@ void advanceToLocation(unsigned long destinationFrame) {
     displayMoreSign();
     
     rogue.playbackFastForward = true;
-    progressBarInterval = max(1, (destinationFrame - rogue.playerTurnNumber) / 500);
+    progressBarInterval = MAX(1, (destinationFrame - rogue.playerTurnNumber) / 500);
     initialFrameNumber = rogue.playerTurnNumber;
     
     while (rogue.playerTurnNumber < destinationFrame && !rogue.gameHasEnded && !rogue.playbackOOS) {
@@ -689,7 +689,7 @@ void advanceToLocation(unsigned long destinationFrame) {
 }
 
 void promptToAdvanceToLocation(short keystroke) {
-    char entryText[30], buf[max(30, DCOLS)];
+    char entryText[30], buf[MAX(30, DCOLS)];
     unsigned long destinationFrame;
     boolean enteredText;
     
@@ -756,7 +756,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
         switch (key) {
             case UP_ARROW:
             case UP_KEY:
-                newDelay = max(1, min(rogue.playbackDelayPerTurn / 1.5, rogue.playbackDelayPerTurn - 1));
+                newDelay = MAX(1, MIN(rogue.playbackDelayPerTurn / 1.5, rogue.playbackDelayPerTurn - 1));
                 if (newDelay != rogue.playbackDelayPerTurn) {
                     flashTemporaryAlert(" Faster ", 300);
                 }
@@ -764,7 +764,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
                 break;
             case DOWN_ARROW:
             case DOWN_KEY:
-                newDelay = min(3000, max(rogue.playbackDelayPerTurn * 1.5, rogue.playbackDelayPerTurn + 1));
+                newDelay = MIN(3000, MAX(rogue.playbackDelayPerTurn * 1.5, rogue.playbackDelayPerTurn + 1));
                 if (newDelay != rogue.playbackDelayPerTurn) {
                     flashTemporaryAlert(" Slower ", 300);
                 }
@@ -843,7 +843,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
                         destinationFrame = rogue.playerTurnNumber + frameCount;
                     }
                 } else {
-                    destinationFrame = min(rogue.playerTurnNumber + frameCount, rogue.howManyTurns - 1);    
+                    destinationFrame = MIN(rogue.playerTurnNumber + frameCount, rogue.howManyTurns - 1);
                 }
                 
                 if (destinationFrame == rogue.playerTurnNumber) {
@@ -1085,7 +1085,7 @@ void copyFile(char *fromFilePath, char *toFilePath, unsigned long fromFileLength
     toFile      = fopen(toFilePath, "wb");
     
     for (n = 0; n < fromFileLength; n += m) {
-        m = min(INPUT_RECORD_BUFFER, fromFileLength - n);
+        m = MIN(INPUT_RECORD_BUFFER, fromFileLength - n);
         fread((void *) fileBuffer, 1, m, fromFile);
         fwrite((void *) fileBuffer, 1, m, toFile);
     }
@@ -1136,7 +1136,7 @@ void loadSavedGame() {
     
     if (rogue.howManyTurns > 0) {
         
-        progressBarInterval = max(1, lengthOfPlaybackFile / 100);
+        progressBarInterval = MAX(1, lengthOfPlaybackFile / 100);
         
         clearDisplayBuffer(dbuf);
         rectangularShading((COLS - 20) / 2, ROWS / 2, 20, 1, &black, INTERFACE_OPACITY, dbuf);

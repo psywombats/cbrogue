@@ -10,8 +10,8 @@
 #include "Body.h"
 
 MonsterGenerator::MonsterGenerator() {
-	this->monsters = std::list<ChimeraMonster*>();
-	this->bodies = std::list<Body*>();
+	this->monsters = std::list<ChimeraMonster *>();
+	this->bodies = std::list<Body *>();
 }
 
 MonsterGenerator::~MonsterGenerator() {
@@ -23,8 +23,10 @@ MonsterGenerator::~MonsterGenerator() {
 	}
 }
 
-std::list<ChimeraMonster *> &MonsterGenerator::generateMonsters() {
-	std::list<Body *> bodies = Body::loadBodies();
+std::list<ChimeraMonster *> &MonsterGenerator::getMonsters() {
+	return this->monsters;
+}
 
-	return monsters;
+void MonsterGenerator::generate() {
+	//this->bodies = Body::loadBodies();
 }

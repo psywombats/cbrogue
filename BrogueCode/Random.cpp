@@ -58,7 +58,7 @@ short randClumpedRange(short lowerBound, short upperBound, short clumpFactor) {
 
 // Get a random int between lowerBound and upperBound, inclusive
 boolean rand_percent(short percent) {
-    return (rand_range(0, 99) < clamp(percent, 0, 100));
+    return (rand_range(0, 99) < CLAMP(percent, 0, 100));
 }
 
 void shuffleList(short *list, short listLength) {

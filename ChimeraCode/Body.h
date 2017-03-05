@@ -8,6 +8,7 @@
 #ifndef BODY_H_
 #define BODY_H_
 
+#include <list>
 #include "ChimeraMonster.h"
 
 /**
@@ -20,7 +21,7 @@ public:
 	Body();
 	virtual ~Body();
 
-	static std::list<Body *> loadBodies;
+	static std::list<Body *> loadBodies();
 
 	void applyToMonster(ChimeraMonster &monster) const;
 

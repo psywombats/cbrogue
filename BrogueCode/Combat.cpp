@@ -232,7 +232,7 @@ void splitMonster(creature *monst, short x, short y) {
                     clone->xLoc = i;
                     clone->yLoc = j;
                     pmap[i][j].flags |= HAS_MONSTER;
-                    clone->ticksUntilTurn = max(clone->ticksUntilTurn, 101);
+                    clone->ticksUntilTurn = MAX(clone->ticksUntilTurn, 101);
                     fadeInMonster(clone);
                     refreshSideBar(-1, -1, false);
                     
@@ -301,7 +301,7 @@ void moralAttack(creature *attacker, creature *defender) {
         if (defender->status[STATUS_PARALYZED]) {
             defender->status[STATUS_PARALYZED] = 0;
              // Paralyzed creature gets a turn to react before the attacker moves again.
-            defender->ticksUntilTurn = min(attacker->attackSpeed, 100) - 1;
+            defender->ticksUntilTurn = MIN(attacker->attackSpeed, 100) - 1;
         }
         if (defender->status[STATUS_MAGICAL_FEAR]) {
             defender->status[STATUS_MAGICAL_FEAR] = 1;
@@ -382,7 +382,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
                 player.maxStatus[STATUS_HALLUCINATING] = 0;
             }
             player.status[STATUS_HALLUCINATING] += 20;
-            player.maxStatus[STATUS_HALLUCINATING] = max(player.maxStatus[STATUS_HALLUCINATING], player.status[STATUS_HALLUCINATING]);
+            player.maxStatus[STATUS_HALLUCINATING] = MAX(player.maxStatus[STATUS_HALLUCINATING], player.status[STATUS_HALLUCINATING]);
         }
         
         if ((attacker->info.abilityFlags & MA_HIT_STEAL_FLEE)
@@ -487,7 +487,7 @@ short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchant
 //      adjustedBaseDamage *= 2; // Normalize as though they attacked once per turn instead of twice per turn.
 //  } // Testing disabling this for balance reasons...
     
-    modifier = 1.0 - min(0.99, ((float) adjustedBaseDamage) / 18.0);
+    modifier = 1.0 - MIN(0.99, ((float) adjustedBaseDamage) / 18.0);
     rootChance *= modifier;
     
     chance = 100 - (short) (100 * pow(1.0 - rootChance, enchantLevel) + FLOAT_FUDGE); // good runic
@@ -503,7 +503,7 @@ short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchant
     
     // The lowest percent change that a weapon will ever have is its enchantment level (if greater than 0).
     // That is so that even really heavy weapons will improve at least 1% per enchantment.
-    chance = clamp(chance, max(1, (short) enchantLevel), 100);
+    chance = CLAMP(chance, MAX(1, (short) enchantLevel), 100);
     
     return chance;
 }
@@ -519,8 +519,8 @@ boolean forceWeaponHit(creature *defender, item *theItem) {
     
     oldLoc[0] = defender->xLoc;
     oldLoc[1] = defender->yLoc;
-    newLoc[0] = defender->xLoc + clamp(defender->xLoc - player.xLoc, -1, 1);
-    newLoc[1] = defender->yLoc + clamp(defender->yLoc - player.yLoc, -1, 1);
+    newLoc[0] = defender->xLoc + CLAMP(defender->xLoc - player.xLoc, -1, 1);
+    newLoc[1] = defender->yLoc + CLAMP(defender->yLoc - player.yLoc, -1, 1);
     if (canDirectlySeeMonster(defender)
         && !cellHasTerrainFlag(newLoc[0], newLoc[1], T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION)
         && !(pmap[newLoc[0]][newLoc[1]].flags & (HAS_MONSTER | HAS_PLAYER))) {
@@ -530,7 +530,7 @@ boolean forceWeaponHit(creature *defender, item *theItem) {
         autoID = true;
     }
     theBolt = boltCatalog[BOLT_BLINKING];
-    theBolt.magnitude = max(1, netEnchant(theItem) + FLOAT_FUDGE);
+    theBolt.magnitude = MAX(1, netEnchant(theItem) + FLOAT_FUDGE);
     zap(oldLoc, newLoc, &theBolt, false);
     if (!(defender->bookkeepingFlags & MB_IS_DYING)
         && distanceBetween(oldLoc[0], oldLoc[1], defender->xLoc, defender->yLoc) > 0
@@ -625,7 +625,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
     } else {
         chance = runicWeaponChance(theItem, false, 0);
         if (backstabbed && chance < 100) {
-            chance = min(chance * 2, (chance + 100) / 2);
+            chance = MIN(chance * 2, (chance + 100) / 2);
         }
     }
     if (chance > 0 && rand_percent(chance)) {
@@ -671,7 +671,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
                 autoID = true;
                 break;
             case W_PARALYSIS:
-                defender->status[STATUS_PARALYZED] = max(defender->status[STATUS_PARALYZED], weaponParalysisDuration(enchant));
+                defender->status[STATUS_PARALYZED] = MAX(defender->status[STATUS_PARALYZED], weaponParalysisDuration(enchant));
                 defender->maxStatus[STATUS_PARALYZED] = defender->status[STATUS_PARALYZED];
                 if (canDirectlySeeMonster(defender)) {
                     sprintf(buf, "%s is frozen in place", monstName);
@@ -755,7 +755,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
                 }
                 break;
             case W_CONFUSION:
-                defender->status[STATUS_CONFUSED] = max(defender->status[STATUS_CONFUSED], weaponConfusionDuration(enchant));
+                defender->status[STATUS_CONFUSED] = MAX(defender->status[STATUS_CONFUSED], weaponConfusionDuration(enchant));
                 defender->maxStatus[STATUS_CONFUSED] = defender->status[STATUS_CONFUSED];
                 if (canDirectlySeeMonster(defender)) {
                     sprintf(buf, "%s looks very confused", monstName);
@@ -808,7 +808,7 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
     
     for (verbCount = 0; verbCount < 4 && catalog[attacker->info.monsterID].attack[verbCount + 1][0] != '\0'; verbCount++);
     increment = (100 / (verbCount + 1));
-    hitPercentile = max(0, min(hitPercentile, increment * (verbCount + 1) - 1));
+    hitPercentile = MAX(0, MIN(hitPercentile, increment * (verbCount + 1) - 1));
     strcpy(returnString, catalog[attacker->info.monsterID].attack[hitPercentile / increment]);
     resolvePronounEscapes(returnString, attacker);
 }
@@ -933,7 +933,7 @@ void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *
             break;
         case A_REPRISAL:
             if (melee && !(attacker->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
-                newDamage = max(1, armorReprisalPercent(enchant) * (*damage) / 100); // 5% reprisal per armor level
+                newDamage = MAX(1, armorReprisalPercent(enchant) * (*damage) / 100); // 5% reprisal per armor level
                 if (inflictDamage(&player, attacker, newDamage, &blue, true)) {
                     if (canSeeMonster(attacker)) {
                         sprintf(returnString, "your %s pulses and %s drops dead!", armorName, attackerName);
@@ -1081,7 +1081,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
         if (sneakAttack || defenderWasAsleep || defenderWasParalyzed) {
             if (defender != &player) {
                 // The non-player defender doesn't hit back this turn because it's still flat-footed.
-                defender->ticksUntilTurn += max(defender->movementSpeed, defender->attackSpeed);
+                defender->ticksUntilTurn += MAX(defender->movementSpeed, defender->attackSpeed);
                 if (defender->creatureState != MONSTER_ALLY) {
                     defender->creatureState = MONSTER_TRACKING_SCENT; // Wake up!
                 }
@@ -1106,7 +1106,7 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
             && rogue.reaping
             && !(defender->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
             
-            specialDamage = min(damage, defender->currentHP) * rogue.reaping; // Maximum reaped damage can't exceed the victim's remaining health.
+            specialDamage = MIN(damage, defender->currentHP) * rogue.reaping; // Maximum reaped damage can't exceed the victim's remaining health.
             if (rogue.reaping > 0) {
                 specialDamage = rand_range(0, specialDamage);
             } else {
@@ -1174,8 +1174,8 @@ boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
 //            }
         } else { // if the defender survived
             if (!rogue.blockCombatText && (canSeeMonster(attacker) || canSeeMonster(defender))) {
-                attackVerb(verb, attacker, max(damage - attacker->info.damage.lowerBound * monsterDamageAdjustmentAmount(attacker), 0) * 100
-                           / max(1, (attacker->info.damage.upperBound - attacker->info.damage.lowerBound) * monsterDamageAdjustmentAmount(attacker)));
+                attackVerb(verb, attacker, MAX(damage - attacker->info.damage.lowerBound * monsterDamageAdjustmentAmount(attacker), 0) * 100
+                           / MAX(1, (attacker->info.damage.upperBound - attacker->info.damage.lowerBound) * monsterDamageAdjustmentAmount(attacker)));
                 sprintf(buf, "%s %s %s%s", attackerName, verb, defenderName, explicationClause);
                 if (sightUnseen) {
                     if (!rogue.heardCombatThisTurn) {
@@ -1483,7 +1483,7 @@ boolean inflictDamage(creature *attacker, creature *defender,
     // bleed all over the place, proportionately to damage inflicted:
     if (damage > 0 && defender->info.bloodType) {
         theBlood = dungeonFeatureCatalog[defender->info.bloodType];
-        theBlood.startProbability = (theBlood.startProbability * (15 + min(damage, defender->currentHP) * 3 / 2) / 100);
+        theBlood.startProbability = (theBlood.startProbability * (15 + MIN(damage, defender->currentHP) * 3 / 2) / 100);
         if (theBlood.layer == GAS) {
             theBlood.startProbability *= 100;
         }
@@ -1497,13 +1497,13 @@ boolean inflictDamage(creature *attacker, creature *defender,
     if (defender == &player
         && rogue.easyMode
         && damage > 0) {
-        damage = max(1, damage/5);
+        damage = MAX(1, damage/5);
     }
     
     if (((attacker == &player && rogue.transference) || (attacker && attacker != &player && (attacker->info.abilityFlags & MA_TRANSFERENCE)))
         && !(defender->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
         
-        transferenceAmount = min(damage, defender->currentHP); // Maximum transferred damage can't exceed the victim's remaining health.
+        transferenceAmount = MIN(damage, defender->currentHP); // Maximum transferred damage can't exceed the victim's remaining health.
         
         if (attacker == &player) {
             transferenceAmount = transferenceAmount * rogue.transference / 20;
@@ -1530,7 +1530,7 @@ boolean inflictDamage(creature *attacker, creature *defender,
         killed = true;
     } else { // survived
         if (damage < 0 && defender->currentHP - damage > defender->info.maxHP) {
-            defender->currentHP = max(defender->currentHP, defender->info.maxHP);
+            defender->currentHP = MAX(defender->currentHP, defender->info.maxHP);
         } else {
             defender->currentHP -= damage; // inflict the damage!
             if (defender == &player && damage > 0) {
