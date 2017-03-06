@@ -10,7 +10,8 @@
 
 #include <string>
 #include <list>
-#include "Rogue.h"
+#include "MonsterGlobals.h"
+#include "IncludeGlobals.h"
 
 class Body;
 
@@ -111,6 +112,8 @@ private:
 	AbsorbFlavorType generateAbsorbFlavor();
 	std::list<std::string> generateAttackFlavor();
 	std::string generateSummonFlavor();
+
+	static int nextChimeraId;
 
 	// generation
 	const Body &body;

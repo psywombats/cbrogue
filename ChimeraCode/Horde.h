@@ -41,7 +41,6 @@ public:
 
 	void addMember(const ChimeraMonster &member, short min, short max);
 
-	int danger;
 	HordePurposeType purpose;
 
 private:

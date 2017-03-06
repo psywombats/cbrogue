@@ -9,7 +9,6 @@
 #include "ChimeraMonster.h"
 
 Horde::Horde(const ChimeraMonster &leader) :
-		danger(0),
 		purpose(HordePurposeType::GENERAL),
 		leader(leader) {
 	this->members = std::list<HordeMember *>();
@@ -29,21 +28,36 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
 hordeType Horde::convertToStruct() {
 	hordeType hordeStruct = hordeType();
 
+	int danger = leader.dangerLevel;
+	if (this->members.size() == 1) {
+		if (this->members.front()->maxCount > 2) {
+			danger *= 2;
+		} else {
+			danger += 2;
+		}
+	}
+	if (this->members.size() == 2) {
+		danger += 5;
+	}
+	if (this->members.size() == 3) {
+		danger *= 2;
+	}
+
 	int dangerDelta;
-	if (this->danger <= 5) {
+	if (danger <= 5) {
 		dangerDelta = 2;
-	} else if (this->danger <= 10) {
+	} else if (danger <= 10) {
 		dangerDelta = 3;
-	} else if (this->danger <= 15) {
+	} else if (danger <= 15) {
 		dangerDelta = 4;
-	} else if (this->danger <= 21) {
+	} else if (danger <= 21) {
 		dangerDelta = 5;
 	} else {
 		dangerDelta = 6;
 	}
-	hordeStruct.minLevel = MAX(1, this->danger - dangerDelta);
-	hordeStruct.maxLevel = MIN(DEEPEST_LEVEL-1, this->danger + dangerDelta);
-	if (this->danger >= 28) {
+	hordeStruct.minLevel = MAX(1, danger - dangerDelta);
+	hordeStruct.maxLevel = MIN(DEEPEST_LEVEL-1, danger + dangerDelta);
+	if (danger >= 28) {
 		hordeStruct.maxLevel = DEEPEST_LEVEL-1;
 	}
 
@@ -53,7 +67,7 @@ hordeType Horde::convertToStruct() {
 		case HordePurposeType::SPECIAL: 		frequency = 6;				break;
 		default: 								frequency = 10;				break;
 	}
-	if (this->purpose == HordePurposeType::SPECIAL && this->danger < 5) {
+	if (this->purpose == HordePurposeType::SPECIAL && danger < 5) {
 		frequency /= 2;
 	}
 

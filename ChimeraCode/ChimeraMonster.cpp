@@ -11,9 +11,10 @@
 #include "MonsterGlobals.h"
 #include <stdlib.h>
 
+int ChimeraMonster::nextChimeraId = 0;
+
 ChimeraMonster::ChimeraMonster(Body &body) :
 		hp(0),
-		monsterId(0),
 		displayChar('x'),
 		accuracy(AccuracyType::NORMAL),
 		defense(DefenseType::NORMAL),
@@ -31,6 +32,12 @@ ChimeraMonster::ChimeraMonster(Body &body) :
 		attackSpeed(AttackSpeedType::NORMAL) {
 
 	body.applyToMonster(*this);
+
+	if (ChimeraMonster::nextChimeraId == 0) {
+		ChimeraMonster::nextChimeraId = getWardenMonsterId() + 1;
+	}
+	this->monsterId = ChimeraMonster::nextChimeraId;
+	ChimeraMonster::nextChimeraId += 1;
 }
 
 ChimeraMonster::~ChimeraMonster() {
@@ -136,6 +143,7 @@ std::string ChimeraMonster::debugReport() {
 	if (regenSpeed == RegenSpeedType::EXTREMELY_FAST) report += "(e.fast regen) ";
 	if (regenSpeed == RegenSpeedType::FAST) report += "(fast regen) ";
 	if (regenSpeed == RegenSpeedType::VERY_FAST) report += "(v.fast regen) ";
+	report += "\n";
 
 	return report;
 }

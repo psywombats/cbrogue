@@ -6,6 +6,8 @@
  *  Copyright 2016. All rights reserved.
  */
 
+#pragma GCC diagnostic ignored "-fpermissive"
+
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 #include "ChimeraMonster.h"

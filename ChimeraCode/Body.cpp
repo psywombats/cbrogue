@@ -39,6 +39,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
 	monster.attackSpeed = this->attackSpeed;
 	monster.regenSpeed = this->regenSpeed;
 
+	monster.name = this->baseName;
 	monster.gender = this->gender;
 
 	monster.dangerLevel = this->dangerLevel;

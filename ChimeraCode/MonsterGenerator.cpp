@@ -45,6 +45,8 @@ void MonsterGenerator::generate() {
 	int fodderCount = 3;
 	int mookCount = rand_range(6, 7);
 	int maxMookDL = AMULET_LEVEL + 5;
+	int fodderGroupHordes = 1;
+	int mookGroupHordes = 3;
 
 	// Step 2: Generate the fodder
 	for (int i = 0; i < fodderCount; i += 1) {
@@ -72,6 +74,44 @@ void MonsterGenerator::generate() {
 		this->monsters.push_back(monster);
 		this->fodderMonsters.push_back(*monster);
 	}
+
+	// Step 4: Fodder hordes
+	for (ChimeraMonster &monster : this->fodderMonsters) {
+		Horde *horde = new Horde(monster);
+		this->hordes.push_back(horde);
+	}
+
+	// Step 5: Fodder group hordes
+	int j = 0;
+	for (ChimeraMonster &monster : this->fodderMonsters) {
+		if (j >= fodderGroupHordes) {
+			break;
+		}
+		j += 1;
+		Horde *horde = new Horde(monster);
+		horde->addMember(monster, 1, 2);
+	}
+
+	// Step 6: Mook hordes
+	for (ChimeraMonster &monster : this->mookMonsters) {
+		Horde *horde = new Horde(monster);
+		this->hordes.push_back(horde);
+	}
+
+	// Step 7: Mook group hordes
+	j = 0;
+	for (ChimeraMonster &monster : this->mookMonsters) {
+		if (j >= mookGroupHordes) {
+			break;
+		}
+		j += 1;
+		Horde *horde = new Horde(monster);
+		horde->addMember(monster, 2, 2);
+	}
+
+	std::string report = debugReport();
+	printf(report.c_str());
+	return;
 }
 
 Body *MonsterGenerator::matchingBody(const std::function<bool(const Body *)>& filter) {
