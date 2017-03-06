@@ -72,7 +72,7 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
-	if (this->requiredFlags & monster.flags != this->requiredFlags) {
+	if ((this->requiredFlags & monster.flags) != this->requiredFlags) {
 		return false;
 	}
 	if (monster.flies && this->flies) {

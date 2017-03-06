@@ -205,6 +205,7 @@ void MonsterGenerator::generate() {
 
 	std::string report = debugReport();
 	printf(report.c_str());
+	printf("\n");
 	return;
 }
 
