@@ -41,8 +41,8 @@ public:
 	hordeType convertToStruct();
 
 	void addMember(const ChimeraMonster &member, short min, short max);
-
 	std::string debugReport() const;
+	int memberCount() const;
 
 	HordePurposeType purpose;
 

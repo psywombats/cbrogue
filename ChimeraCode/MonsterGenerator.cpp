@@ -52,7 +52,8 @@ void MonsterGenerator::generate() {
 	int mookGroupHordes = 3;
 
 	int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
-	ChimeraMonster *specialistMook;
+	int specialistMookClasses = rand_range(2, 4);
+	Body *specialistMookBody;
 
 	// Step 2: Generate the fodder
 	for (int i = 0; i < fodderCount; i += 1) {
@@ -79,10 +80,10 @@ void MonsterGenerator::generate() {
 		if (body == NULL) {
 			continue;
 		}
-		ChimeraMonster *monster = new ChimeraMonster(*body);
 		if (i == specialistOnlyMook) {
-			specialistMook = monster;
+			specialistMookBody = body;
 		} else {
+			ChimeraMonster *monster = new ChimeraMonster(*body);
 			this->monsters.push_back(monster);
 			this->mookMonsters.push_back(*monster);
 		}
@@ -126,6 +127,31 @@ void MonsterGenerator::generate() {
 	}
 
 	// Step 8: Turn the "specialist" mook into its classes
+	std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
+	for (int i = 0; i < specialistMookClasses; i += 1) {
+		Ability *abil = matchingAbility([](const Ability *ability) {
+			return true;
+		});
+		if (abil != NULL) {
+			ChimeraMonster *monster = new ChimeraMonster(*specialistMookBody);
+			this->monsters.push_back(monster);
+			monster->applyAbility(*abil);
+			specialistMooks.push_back(*monster);
+		}
+	}
+	j = 0;
+	for (ChimeraMonster &monster : specialistMooks) {
+		Horde *horde = new Horde(monster);
+		this->hordes.push_back(horde);
+		j += 1;
+		for (unsigned int k = j; k < specialistMooks.size(); k += 1) {
+			ChimeraMonster &additional = specialistMooks[k];
+			horde->addMember(additional, 1, rand_range(1, 2));
+		}
+		if (horde->memberCount() == 1 && rand_percent(50)) {
+			horde->addMember(monster, 0, rand_range(1, 2));
+		}
+	}
 
 	std::string report = debugReport();
 	printf(report.c_str());
@@ -138,6 +164,23 @@ Body *MonsterGenerator::matchingBody(const std::function<bool(const Body *)>& fi
 	for (Body *body : this->bodies) {
 		if (filter(body) && !body->inUse) {
 			passing.push_back(body);
+		}
+	}
+
+	if (passing.size() == 0) {
+		return NULL;
+	}
+
+	int index = rand_range(0, passing.size() - 1);
+	return passing[index];
+}
+
+Ability *MonsterGenerator::matchingAbility(const std::function<bool(const Ability *)>& filter) {
+	// TODO: same garbage
+	std::vector<Ability *> passing = std::vector<Ability *>();
+	for (Ability *ability : this->abilities) {
+		if (filter(ability) && !ability->inUse) {
+			passing.push_back(ability);
 		}
 	}
 

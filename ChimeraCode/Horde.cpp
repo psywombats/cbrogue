@@ -37,6 +37,10 @@ std::string Horde::debugReport() const {
 	return report;
 }
 
+int Horde::memberCount() const {
+	return this->members.size() + 1;
+}
+
 hordeType Horde::convertToStruct() {
 	hordeType hordeStruct = hordeType();
 

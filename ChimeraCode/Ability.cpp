@@ -59,7 +59,7 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 		monster.name = this->namePrefix + " " + monster.name;
 	}
 	if (this->nameSuffix.size() > 0) {
-		monster.name += this->nameSuffix;
+		monster.name += " " + this->nameSuffix;
 	}
 
 	monster.displayColor = this->blendColor(monster.displayColor);

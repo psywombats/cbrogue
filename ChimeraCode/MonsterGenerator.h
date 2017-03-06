@@ -37,6 +37,7 @@ private:
 	std::list<std::reference_wrapper<ChimeraMonster>> mookMonsters;
 
 	Body *matchingBody(const std::function<bool(const Body *)>& filter);
+	Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
 
 	std::string debugReport() const;
 };
