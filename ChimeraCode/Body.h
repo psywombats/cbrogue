@@ -9,7 +9,10 @@
 #define BODY_H_
 
 #include <list>
+#include <set>
+#include <functional>
 #include "ChimeraMonster.h"
+#include "Rogue.h"
 
 /**
  * Bodies are the first thing applied to monsters and serve as a template for physical stats.
@@ -37,6 +40,8 @@ public:
 
 	// flavor
 	std::string baseName;
+	char baseChar;
+	color *baseColor;
 
 	// generation
 	int dangerLevel;
@@ -44,6 +49,10 @@ public:
 	bool flier;
 	bool intelligent;
 	GenderType gender;
+
+private:
+
+	static std::set<std::reference_wrapper<char>> usedChars;
 };
 
 #endif /* BODY_H_ */

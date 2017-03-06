@@ -48,6 +48,9 @@ void MonsterGenerator::generate() {
 	int fodderGroupHordes = 1;
 	int mookGroupHordes = 3;
 
+	int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
+	ChimeraMonster *specialistMook;
+
 	// Step 2: Generate the fodder
 	for (int i = 0; i < fodderCount; i += 1) {
 		Body *body = matchingBody([](const Body *body) {
@@ -65,14 +68,21 @@ void MonsterGenerator::generate() {
 	for (int i = 0; i < mookCount; i += 1) {
 		Body *body = matchingBody([maxMookDL, mookCount, i](const Body *body) {
 			int dl = body->dangerLevel;
+			if (i == specialistOnlyMook && !body->intelligent) {
+				return false;
+			}
 			return dl >= i * (maxMookDL / mookCount) && dl <= (i + 1) * (maxMookDL / mookCount);
 		});
 		if (body == NULL) {
 			continue;
 		}
 		ChimeraMonster *monster = new ChimeraMonster(*body);
-		this->monsters.push_back(monster);
-		this->mookMonsters.push_back(*monster);
+		if (i == specialistOnlyMook) {
+			specialistMook = monster;
+		} else {
+			this->monsters.push_back(monster);
+			this->mookMonsters.push_back(*monster);
+		}
 	}
 
 	// Step 4: Fodder hordes
@@ -111,6 +121,8 @@ void MonsterGenerator::generate() {
 		horde->addMember(monster, 2, 2);
 		this->hordes.push_back(horde);
 	}
+
+	// Step 8: Turn the "specialist" mook into its classes
 
 	std::string report = debugReport();
 	printf(report.c_str());

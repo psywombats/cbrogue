@@ -7,9 +7,14 @@
 
 #include "Body.h"
 #include "ChimeraMonster.h"
+#include "IncludeGlobals.h"
+
+static std::set<std::reference_wrapper<char>> Body::usedChars = std::set<std::reference_wrapper<char>>();
 
 Body::Body() :
 		hp(0),
+		baseChar('?'),
+		baseColor(&brown),
 		inUse(false),
 		flier(false),
 		intelligent(false),
@@ -41,8 +46,18 @@ void Body::applyToMonster(ChimeraMonster &monster) {
 
 	monster.name = this->baseName;
 	monster.gender = this->gender;
+	monster.displayColor = this->baseColor;
 
 	monster.dangerLevel = this->dangerLevel;
+
+	char firstLetter = this->baseName.at(0);
+	if (Body::usedChars.find(firstLetter) == Body::usedChars.end()) {
+		Body::usedChars.insert(firstLetter);
+		monster.displayChar = tolower(firstLetter);
+	} else {
+		// let's just hope there aren't more than two monsters on the same letter
+		monster.displayChar = toupper(firstLetter);
+	}
 
 	if (this->flier) {
 		monster.moveSpeed = MoveSpeedType::FAST;
@@ -61,6 +76,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "rat";
+	body->baseColor = &brown;
 	body->minDamage = 1;
 	body->maxDamage = 3;
 	body->hp = 6;
@@ -69,6 +85,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "kobold";
+	body->baseColor = &green;
 	body->minDamage = 1;
 	body->maxDamage = 4;
 	body->hp = 7;
@@ -78,6 +95,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "jackal";
+	body->baseColor = &tanColor;
 	body->minDamage = 2;
 	body->maxDamage = 4;
 	body->hp = 8;
@@ -87,6 +105,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "goblin";
+	body->baseColor = &brown;
 	body->minDamage = 2;
 	body->maxDamage = 5;
 	body->hp = 15;
@@ -98,6 +117,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "toad";
+	body->baseColor = &darkGreen;
 	body->minDamage = 1;
 	body->maxDamage = 4;
 	body->hp = 8;
@@ -107,6 +127,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "bat";
+	body->baseColor = &gray;
 	body->minDamage = 2;
 	body->maxDamage = 6;
 	body->hp = 18;
@@ -116,6 +137,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "mound";
+	body->baseColor = &green;
 	body->minDamage = 1;
 	body->maxDamage = 3;
 	body->hp = 15;
@@ -125,6 +147,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "millipede";
+	body->baseColor = &darkYellow;
 	body->minDamage = 4;
 	body->maxDamage = 12;
 	body->hp = 18;
@@ -134,6 +157,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "ogre";
+	body->baseColor = &brown;
 	body->minDamage = 9;
 	body->maxDamage = 13;
 	body->hp = 55;
@@ -144,6 +168,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "monster";
+	body->baseColor = &darkGreen;
 	body->minDamage = 3;
 	body->maxDamage = 4;
 	body->hp = 55;
@@ -153,6 +178,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "arachnid";
+	body->baseColor = &darkYellow;
 	body->minDamage = 3;
 	body->maxDamage = 4;
 	body->hp = 20;
@@ -163,6 +189,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "wisp";
+	body->baseColor = &white;
 	body->minDamage = 5;
 	body->maxDamage = 8;
 	body->hp = 20;
@@ -173,6 +200,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "wraith";
+	body->baseColor = &yellow;
 	body->minDamage = 6;
 	body->maxDamage = 13;
 	body->hp = 50;
@@ -182,6 +210,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "giant";
+	body->baseColor = &darkGreen;
 	body->minDamage = 10;
 	body->maxDamage = 15;
 	body->hp = 65;
@@ -192,6 +221,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "lizard";
+	body->baseColor = &green;
 	body->minDamage = 7;
 	body->maxDamage = 11;
 	body->hp = 75;
@@ -200,6 +230,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "dar";
+	body->baseColor = &darkBlue;
 	body->minDamage = 3;
 	body->maxDamage = 5;
 	body->hp = 20;
@@ -209,6 +240,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "horseman";
+	body->baseColor = "yellow";
 	body->minDamage = 4;
 	body->maxDamage = 8;
 	body->hp = 35;
@@ -219,6 +251,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "worm";
+	body->baseColor = &gray;
 	body->minDamage = 18;
 	body->maxDamage = 22;
 	body->hp = 80;
@@ -229,6 +262,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "fury";
+	body->baseColor = &darkRed;
 	body->minDamage = 6;
 	body->maxDamage = 11;
 	body->hp = 20;
@@ -240,6 +274,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "horror";
+	body->baseColor = &darkPurple;
 	body->minDamage = 25;
 	body->maxDamage = 35;
 	body->hp = 120;
@@ -249,6 +284,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "dragon";
+	body->baseColor = &darkRed;
 	body->minDamage = 25;
 	body->maxDamage = 50;
 	body->hp = 150;
