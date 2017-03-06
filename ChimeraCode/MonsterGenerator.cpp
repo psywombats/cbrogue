@@ -17,7 +17,6 @@ MonsterGenerator::MonsterGenerator() {
 	this->bodies = std::list<Body *>();
 	this->abilities = std::list<Ability *>();
 	this->hordes = std::list<Horde *>();
-	this->fodderMonsters = std::list<std::reference_wrapper<ChimeraMonster>>();
 }
 
 MonsterGenerator::~MonsterGenerator() {
@@ -54,6 +53,8 @@ void MonsterGenerator::generate() {
 	int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
 	int specialistMookClasses = rand_range(2, 4);
 	Body *specialistMookBody;
+	std::list<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
+	std::list<std::reference_wrapper<ChimeraMonster>> mookMonsters;
 
 	// Step 2: Generate the fodder
 	for (int i = 0; i < fodderCount; i += 1) {
@@ -65,16 +66,16 @@ void MonsterGenerator::generate() {
 		}
 		ChimeraMonster *monster = new ChimeraMonster(*body);
 		this->monsters.push_back(monster);
-		this->fodderMonsters.push_back(*monster);
+		fodderMonsters.push_back(*monster);
 	}
 
 	// Step 3: Generate the vanilla mooks
 	for (int i = 0; i < mookCount; i += 1) {
 		Body *body = matchingBody([maxMookDL, mookCount, i](const Body *body) {
+			if (!(body->flags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
+				return false;
+			}
 			int dl = body->dangerLevel;
-//			if (i == specialistOnlyMook && !body->intelligent) {
-//				return false;
-//			}
 			return dl >= i * (maxMookDL / mookCount) && dl <= (i + 1) * (maxMookDL / mookCount);
 		});
 		if (body == NULL) {
@@ -85,12 +86,12 @@ void MonsterGenerator::generate() {
 		} else {
 			ChimeraMonster *monster = new ChimeraMonster(*body);
 			this->monsters.push_back(monster);
-			this->mookMonsters.push_back(*monster);
+			mookMonsters.push_back(*monster);
 		}
 	}
 
 	// Step 4: Fodder hordes
-	for (ChimeraMonster &monster : this->fodderMonsters) {
+	for (ChimeraMonster &monster : fodderMonsters) {
 		Horde *horde = new Horde(monster);
 		horde->purpose = HordePurposeType::FODDER;
 		this->hordes.push_back(horde);
@@ -98,7 +99,7 @@ void MonsterGenerator::generate() {
 
 	// Step 5: Fodder group hordes
 	int j = 0;
-	for (ChimeraMonster &monster : this->fodderMonsters) {
+	for (ChimeraMonster &monster : fodderMonsters) {
 		if (j >= fodderGroupHordes) {
 			break;
 		}
@@ -109,14 +110,14 @@ void MonsterGenerator::generate() {
 	}
 
 	// Step 6: Mook hordes
-	for (ChimeraMonster &monster : this->mookMonsters) {
+	for (ChimeraMonster &monster : mookMonsters) {
 		Horde *horde = new Horde(monster);
 		this->hordes.push_back(horde);
 	}
 
 	// Step 7: Mook group hordes
 	j = 0;
-	for (ChimeraMonster &monster : this->mookMonsters) {
+	for (ChimeraMonster &monster : mookMonsters) {
 		if (j >= mookGroupHordes) {
 			break;
 		}
@@ -128,14 +129,15 @@ void MonsterGenerator::generate() {
 
 	// Step 8: Turn the "specialist" mook into its classes
 	std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
+	ChimeraMonster genericSpecialistMook = ChimeraMonster(*specialistMookBody);
 	for (int i = 0; i < specialistMookClasses; i += 1) {
-		Ability *abil = matchingAbility([](const Ability *ability) {
-			return true;
+		Ability *ability = matchingAbility([genericSpecialistMook](const Ability *ability) {
+			return ability->validForMonster(genericSpecialistMook);
 		});
-		if (abil != NULL) {
+		if (ability != NULL) {
 			ChimeraMonster *monster = new ChimeraMonster(*specialistMookBody);
 			this->monsters.push_back(monster);
-			monster->applyAbility(*abil);
+			monster->applyAbility(*ability);
 			specialistMooks.push_back(*monster);
 		}
 	}
@@ -150,6 +152,54 @@ void MonsterGenerator::generate() {
 		}
 		if (horde->memberCount() == 1 && rand_percent(50)) {
 			horde->addMember(monster, 0, rand_range(1, 2));
+		}
+	}
+
+	// Step 8: variations on the mooks
+	for (ChimeraMonster &mook : mookMonsters) {
+		int choice = rand_range(0, 3);
+		if (choice == 0 || choice == 1 || choice == 2) {
+			// a mutant...
+			ChimeraMonster *monster = new ChimeraMonster(mook);
+			Ability *ability = matchingAbility([monster](const Ability *ability) {
+				return ability->validForMonster(*monster);
+			});
+			if (ability == NULL) {
+				continue;
+			}
+			monster->applyAbility(*ability);
+			this->monsters.push_back(monster);
+			Horde *horde = new Horde(*monster);
+			this->hordes.push_back(horde);
+
+			if (choice == 1) {
+				// and some followers?
+				Horde *horde = new Horde(*monster);
+				this->hordes.push_back(horde);
+				horde->addMember(mook, 2, rand_range(2, 4));
+			} else if (choice == 2) {
+				// two mutant types and a hunting party
+				ChimeraMonster *monster2 = new ChimeraMonster(mook);
+				Ability *ability2 = matchingAbility([monster2](const Ability *ability) {
+					return ability->validForMonster(*monster2);
+				});
+				if (ability2 == NULL) {
+					continue;
+				}
+				monster2->applyAbility(*ability2);
+				this->monsters.push_back(monster2);
+
+				Horde *horde = new Horde(*monster2);
+				this->hordes.push_back(horde);
+				horde->addMember(*monster, 1, 1);
+
+				Horde *horde2 = new Horde(*monster2);
+				this->hordes.push_back(horde2);
+				horde2->addMember(*monster, 1, 1);
+				horde2->addMember(mook, rand_range(1, 2), 2);
+			}
+		} else if (choice == 3) {
+			// shit out of luck
 		}
 	}
 

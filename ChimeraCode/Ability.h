@@ -52,10 +52,9 @@ public:
 	std::string nameSuffix;
 	ColorModFlavor colorMod;
 
-	// flavor prereqs
-
 	// generation
 	bool inUse;
+	int requiredFlags;			// bitset of GenerateFlag
 
 	static std::list<Ability *> loadModifierAbilities();
 

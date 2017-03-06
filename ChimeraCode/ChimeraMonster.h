@@ -11,11 +11,18 @@
 #include <string>
 #include <list>
 #include <functional>
+#include <bitset>
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
 class Body;
 class Ability;
+
+enum GenerateFlag : int {
+	AQUATIC			= 1 << 1,
+	ANIMAL			= 1 << 2,
+	SUPPORTS_CLASS	= 1 << 3,
+};
 
 enum class RegenSpeedType {
 	EXTREMELY_FAST,
@@ -103,6 +110,7 @@ public:
 	bool flits;
 
 	// generation
+	int flags;			// of GenerateFlag, really should be a bitset...
 	int monsterId;
 	int dangerLevel;
 

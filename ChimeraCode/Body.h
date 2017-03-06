@@ -45,6 +45,7 @@ public:
 	color *baseColor;
 
 	// generation
+	int flags;				// generateFlag bitset
 	int dangerLevel;
 	bool inUse;
 

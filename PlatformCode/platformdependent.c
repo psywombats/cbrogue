@@ -93,7 +93,7 @@ short sortScoreBuffer() {
 	mostRecentDate = 0;
 	
 	for (i=0; i<HIGH_SCORES_COUNT; i++) {
-		lineSorted[i] = false;
+		lineSorted[i] = 0;
 	}
 	
 	for (i=0; i<HIGH_SCORES_COUNT; i++) {
@@ -106,7 +106,7 @@ short sortScoreBuffer() {
 			}
 		}
 		sortedScoreBuffer[i] = scoreBuffer[highestUnsortedLine];
-		lineSorted[highestUnsortedLine] = true;
+		lineSorted[highestUnsortedLine] = 1;
 	}
 	
 	// copy the sorted list back into scoreBuffer, remember the most recent entry
@@ -248,7 +248,7 @@ boolean saveHighScore(rogueHighScoresEntry theEntry) {
 	}
 	
 	if (lowestScore > theEntry.score) {
-		return false;
+		return 0;
 	}
 	
 	scoreBuffer[lowestScoreIndex].score	=				theEntry.score;
@@ -257,7 +257,7 @@ boolean saveHighScore(rogueHighScoresEntry theEntry) {
 	
 	saveScoreBuffer();
 	
-	return true;
+	return 1;
 }
 
 // not needed in libtcod

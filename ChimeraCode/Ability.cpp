@@ -9,6 +9,7 @@
 
 Ability::Ability() :
 		hpBoost(0),
+		requiredFlags(0),
 		dangerBoost(0),
 		minDamageBoost(0),
 		maxDamageBoost(0),
@@ -52,7 +53,10 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 		monster.defense = this->defense;
 	}
 
-	monster.flies = this->flies;
+	if (this->flies) {
+		monster.flies = true;
+		monster.moveSpeed = MoveSpeedType::FAST;
+	}
 	monster.flits = this->flits;
 
 	if (this->namePrefix.size() > 0) {
@@ -68,6 +72,9 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
+	if (this->requiredFlags & monster.flags != this->requiredFlags) {
+		return false;
+	}
 	if (monster.flies && this->flies) {
 		return false;
 	}
@@ -141,6 +148,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->dangerBoost = 2;
 	ability->minDamageBoost = 2;
 	ability->maxDamageBoost = 6;
+	ability->requiredFlags = GenerateFlag::ANIMAL;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -149,6 +157,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->dangerBoost = 3;
 	ability->hpBoost = 12;
 	ability->accuracy = AccuracyType::ACCURATE;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -167,6 +176,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->hpBoost = 20;
 	ability->defense = DefenseType::LOW;
 	ability->regenSpeed = RegenSpeedType::VERY_FAST;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -176,6 +186,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = 0;
 	ability->maxDamageBoost = 6;
 	ability->moveSpeed = MoveSpeedType::FAST;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -183,6 +194,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->colorMod = ColorModFlavor::MOBILITY;
 	ability->dangerBoost = 3;
 	ability->moveSpeed = MoveSpeedType::FAST;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -200,6 +212,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = 1;
 	ability->defense = DefenseType::HIGH;
 	ability->accuracy = AccuracyType::ACCURATE;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	return abilities;

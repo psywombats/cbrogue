@@ -33,9 +33,6 @@ private:
 	std::list<Ability *> abilities;
 	std::list<Horde *> hordes;
 
-	std::list<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
-	std::list<std::reference_wrapper<ChimeraMonster>> mookMonsters;
-
 	Body *matchingBody(const std::function<bool(const Body *)>& filter);
 	Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
 

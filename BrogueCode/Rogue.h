@@ -77,9 +77,6 @@
 
 #define boolean                 char
 
-#define false                   0
-#define true                    1
-
 #define Fl(N)                   (1 << (N))
 
 #define PI 3.14159265

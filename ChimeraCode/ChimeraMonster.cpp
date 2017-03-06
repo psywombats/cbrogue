@@ -16,6 +16,7 @@ int ChimeraMonster::nextChimeraId = 0;
 
 ChimeraMonster::ChimeraMonster(Body &body) :
 		hp(0),
+		flags(0),
 		displayChar('x'),
 		accuracy(AccuracyType::NORMAL),
 		defense(DefenseType::NORMAL),
@@ -111,10 +112,10 @@ creatureType ChimeraMonster::convertToStruct() {
 
 	creatureStruct.flags = 0;
 	if (this->flies) {
-		creatureStruct.flags &= MONST_FLIES;
+		creatureStruct.flags |= MONST_FLIES;
 	}
 	if (this->flits) {
-		creatureStruct.flags &= MONST_FLITS;
+		creatureStruct.flags |= MONST_FLITS;
 	}
 
     // TODO

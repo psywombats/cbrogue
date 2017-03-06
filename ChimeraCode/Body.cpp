@@ -9,10 +9,11 @@
 #include "ChimeraMonster.h"
 #include "IncludeGlobals.h"
 
-static std::set<std::reference_wrapper<char>> Body::usedChars = std::set<std::reference_wrapper<char>>();
+std::set<std::reference_wrapper<char>> Body::usedChars = std::set<std::reference_wrapper<char>>();
 
 Body::Body() :
 		hp(0),
+		flags(0),
 		baseChar('?'),
 		baseColor(&brown),
 		inUse(false),
@@ -65,6 +66,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
 	}
 
 	this->inUse = true;
+	monster.flags |= this->flags;
 }
 
 // ideally this thing would read its data from JSON
@@ -83,6 +85,7 @@ std::list<Body *> Body::loadBodies() {
 	body->maxDamage = 3;
 	body->hp = 6;
 	body->dangerLevel = 1;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -93,6 +96,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 7;
 	body->dangerLevel = 2;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -103,6 +107,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 8;
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 3;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -115,6 +120,7 @@ std::list<Body *> Body::loadBodies() {
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 6;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -125,6 +131,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 8;
 	body->defense = DefenseType::DEFENSELESS;
 	body->dangerLevel = 2;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -134,7 +141,8 @@ std::list<Body *> Body::loadBodies() {
 	body->maxDamage = 6;
 	body->hp = 18;
 	body->flier = true;
-	body->dangerLevel = 7;
+	body->dangerLevel = 6;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -155,6 +163,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 18;
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 8;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -166,6 +175,7 @@ std::list<Body *> Body::loadBodies() {
 	body->attackSpeed = AttackSpeedType::SLOW;
 	body->dangerLevel = 10;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -187,6 +197,7 @@ std::list<Body *> Body::loadBodies() {
 	body->accuracy = AccuracyType::ACCURATE;
 	body->defense = DefenseType::HIGH;
 	body->dangerLevel = 8;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -208,6 +219,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 50;
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 13;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -219,15 +231,17 @@ std::list<Body *> Body::loadBodies() {
 	body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
 	body->dangerLevel = 15;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
-	body->baseName = "lizard";
+	body->baseName = "lizardman";
 	body->baseColor = &green;
 	body->minDamage = 7;
 	body->maxDamage = 11;
 	body->hp = 75;
 	body->dangerLevel = 13;
+	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -238,6 +252,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 20;
 	body->dangerLevel = 7;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -249,6 +264,7 @@ std::list<Body *> Body::loadBodies() {
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 10;
 	body->gender = GenderType::MALE_ONLY;
+	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::SUPPORTS_CLASS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -260,6 +276,7 @@ std::list<Body *> Body::loadBodies() {
 	body->moveSpeed = MoveSpeedType::SLOW;
 	body->attackSpeed = AttackSpeedType::SLOW;
 	body->dangerLevel = 13;
+	body->flags = (GenerateFlag::ANIMAL);
 	bodies.push_back(body);
 
 	body = new Body();
