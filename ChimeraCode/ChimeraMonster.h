@@ -10,10 +10,12 @@
 
 #include <string>
 #include <list>
+#include <functional>
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
 class Body;
+class Ability;
 
 enum class RegenSpeedType {
 	EXTREMELY_FAST,
@@ -77,6 +79,8 @@ public:
 
 	std::string debugReport() const;
 
+	void applyAbility(Ability &ability);
+
 	// flavor
 	std::string name;
 	const color *displayColor;
@@ -113,10 +117,11 @@ private:
 	std::list<std::string> generateAttackFlavor();
 	std::string generateSummonFlavor();
 
-	static int nextChimeraId;
-
 	// generation
 	const Body &body;
+	std::list<std::reference_wrapper<Ability>> abilities;
+
+	static int nextChimeraId;
 
 };
 

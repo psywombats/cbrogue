@@ -14,6 +14,7 @@
 class ChimeraMonster;
 class Body;
 class Horde;
+class Ability;
 
 class MonsterGenerator {
 
@@ -29,6 +30,7 @@ private:
 
 	std::list<ChimeraMonster *> monsters;
 	std::list<Body *> bodies;
+	std::list<Ability *> abilities;
 	std::list<Horde *> hordes;
 
 	std::list<std::reference_wrapper<ChimeraMonster>> fodderMonsters;

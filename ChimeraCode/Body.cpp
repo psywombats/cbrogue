@@ -17,7 +17,6 @@ Body::Body() :
 		baseColor(&brown),
 		inUse(false),
 		flier(false),
-		intelligent(false),
 		gender(GenderType::NONE),
 		dangerLevel(0),
 		accuracy(AccuracyType::NORMAL),
@@ -74,6 +73,9 @@ std::list<Body *> Body::loadBodies() {
 	std::list<Body *> bodies = std::list<Body *>();
 	Body *body;
 
+	// for reference, these are the supported base colors:
+	// brown green tanColor darkGreen gray darkYellow white darkBlue darkRed darkPurple
+
 	body = new Body();
 	body->baseName = "rat";
 	body->baseColor = &brown;
@@ -85,7 +87,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "kobold";
-	body->baseColor = &green;
+	body->baseColor = &darkGreen;
 	body->minDamage = 1;
 	body->maxDamage = 4;
 	body->hp = 7;
@@ -200,7 +202,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "wraith";
-	body->baseColor = &yellow;
+	body->baseColor = &gray;
 	body->minDamage = 6;
 	body->maxDamage = 13;
 	body->hp = 50;
@@ -240,7 +242,7 @@ std::list<Body *> Body::loadBodies() {
 
 	body = new Body();
 	body->baseName = "horseman";
-	body->baseColor = "yellow";
+	body->baseColor = &darkYellow;
 	body->minDamage = 4;
 	body->maxDamage = 8;
 	body->hp = 35;

@@ -9,11 +9,13 @@
 #include "ChimeraMonster.h"
 #include "Body.h"
 #include "Horde.h"
+#include "Ability.h"
 #include <vector>
 
 MonsterGenerator::MonsterGenerator() {
 	this->monsters = std::list<ChimeraMonster *>();
 	this->bodies = std::list<Body *>();
+	this->abilities = std::list<Ability *>();
 	this->hordes = std::list<Horde *>();
 	this->fodderMonsters = std::list<std::reference_wrapper<ChimeraMonster>>();
 }
@@ -40,6 +42,7 @@ std::list<Horde *> &MonsterGenerator::getHordes() {
 
 void MonsterGenerator::generate() {
 	this->bodies = Body::loadBodies();
+	this->abilities = Ability::loadModifierAbilities();
 
 	// Step 1: Let's put together some constants
 	int fodderCount = 3;
@@ -68,9 +71,9 @@ void MonsterGenerator::generate() {
 	for (int i = 0; i < mookCount; i += 1) {
 		Body *body = matchingBody([maxMookDL, mookCount, i](const Body *body) {
 			int dl = body->dangerLevel;
-			if (i == specialistOnlyMook && !body->intelligent) {
-				return false;
-			}
+//			if (i == specialistOnlyMook && !body->intelligent) {
+//				return false;
+//			}
 			return dl >= i * (maxMookDL / mookCount) && dl <= (i + 1) * (maxMookDL / mookCount);
 		});
 		if (body == NULL) {

@@ -37,6 +37,7 @@ public:
 	MoveSpeedType moveSpeed;
 	RegenSpeedType regenSpeed;
 	AttackSpeedType attackSpeed;
+	bool flier;
 
 	// flavor
 	std::string baseName;
@@ -46,8 +47,8 @@ public:
 	// generation
 	int dangerLevel;
 	bool inUse;
-	bool flier;
-	bool intelligent;
+
+	// flavor
 	GenderType gender;
 
 private:

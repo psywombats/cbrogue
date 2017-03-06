@@ -32,7 +32,6 @@ OBJS=BrogueCode/Architect.o \
 	ChimeraCode/Blueprints.o \
 	ChimeraCode/ChimeraMonster.o \
 	ChimeraCode/Ability.o \
-	ChimeraCode/AbilityTemplate.o \
 	ChimeraCode/Body.o \
 	ChimeraCode/MonsterGenerator.o \
 	ChimeraCode/Horde.o \

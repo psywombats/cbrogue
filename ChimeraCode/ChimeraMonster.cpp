@@ -9,6 +9,7 @@
 #include "Body.h"
 #include "IncludeGlobals.h"
 #include "MonsterGlobals.h"
+#include "Ability.h"
 #include <stdlib.h>
 
 int ChimeraMonster::nextChimeraId = 0;
@@ -32,6 +33,8 @@ ChimeraMonster::ChimeraMonster(Body &body) :
 		attackSpeed(AttackSpeedType::NORMAL) {
 
 	body.applyToMonster(*this);
+
+	this->abilities = std::list<std::reference_wrapper<Ability>>();
 
 	if (ChimeraMonster::nextChimeraId == 0) {
 		ChimeraMonster::nextChimeraId = getWardenMonsterId() + 1;
@@ -122,6 +125,11 @@ creatureType ChimeraMonster::convertToStruct() {
     //char summonMessage[DCOLS * 2];
 
 	return creatureStruct;
+}
+
+void ChimeraMonster::applyAbility(Ability &ability) {
+	ability.applyToMonster(*this);
+	this->abilities.push_back(ability);
 }
 
 std::string ChimeraMonster::debugReport() const {
