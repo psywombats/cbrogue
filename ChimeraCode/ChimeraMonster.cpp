@@ -48,7 +48,7 @@ creatureType ChimeraMonster::convertToStruct() {
 	creatureType creatureStruct = creatureType();
 
 	creatureStruct.monsterID = this->monsterId;
-	memcpy(&creatureStruct.absorbStatus, this->name.c_str(), this->name.length()+1);
+	memcpy(&creatureStruct.monsterName, this->name.c_str(), this->name.length()+1);
 	creatureStruct.displayChar = this->displayChar;
 	creatureStruct.foreColor = this->displayColor;
     creatureStruct.maxHP = this->hp;
@@ -61,7 +61,7 @@ creatureType ChimeraMonster::convertToStruct() {
 
     AbsorbFlavorType absorb = this->generateAbsorbFlavor();
     std::string flavor = this->generateFlavor();
-    memcpy(&creatureStruct.absorbStatus, flavor.c_str(), flavor.length()+1);
+    memcpy(&creatureStruct.flavorText, flavor.c_str(), flavor.length()+1);
     memcpy(&creatureStruct.absorbStatus, absorb.status.c_str(), absorb.status.length()+1);
     memcpy(&creatureStruct.absorbing, absorb.message.c_str(), absorb.message.length()+1);
 
@@ -124,11 +124,12 @@ creatureType ChimeraMonster::convertToStruct() {
 	return creatureStruct;
 }
 
-std::string ChimeraMonster::debugReport() {
+std::string ChimeraMonster::debugReport() const {
 	std::string report = "";
 
 	report += name + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
-	report += "HP: " + printInt(hp) + "  dmg: " + printInt(damage.lowerBound) + "-" + printInt(damage.upperBound) + "\n";
+	report += "  HP: " + printInt(hp) + "  dmg: " + printInt(damage.lowerBound) + "-" + printInt(damage.upperBound) + "\n";
+	report += "  Specials: ";
 	if (accuracy == AccuracyType::ACCURATE) report += "(accurate) ";
 	if (accuracy == AccuracyType::INACCURATE) report += "(inaccurate) ";
 	if (defense == DefenseType::DEFENSELESS) report += "(defenseless) ";

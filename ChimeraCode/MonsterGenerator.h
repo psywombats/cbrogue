@@ -36,7 +36,7 @@ private:
 
 	Body *matchingBody(const std::function<bool(const Body *)>& filter);
 
-	std::string debugReport();
+	std::string debugReport() const;
 };
 
 #endif /* MONSTERGENERATOR_H_ */

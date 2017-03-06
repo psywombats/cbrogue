@@ -192,6 +192,8 @@ void ensureCatalogsInitialized() {
         return;
     }
     
+    catalogInitialized = true;
+
     if (CHIMERAS_ENABLED) {
     	generator = new MonsterGenerator();
     	generator->generate();
@@ -200,15 +202,15 @@ void ensureCatalogsInitialized() {
     initMonsterCatalog();
     initHordeCatalog();
     initMonsterClassCatalog();
-    
-    catalogInitialized = true;
 }
 
 int getMonsterCatalogCount() {
+	ensureCatalogsInitialized();
 	if (CHIMERAS_ENABLED) {
 		return MONSTER_CLASS_COUNT;
 	} else {
-		return generator->getMonsters().size();
+		// extra 2: one for you, one for Yendor
+		return generator->getMonsters().size() + 2;
 	}
 }
 
@@ -217,6 +219,7 @@ int getMonsterClassCount() {
 }
 
 int getHordeCatalogCount() {
+	ensureCatalogsInitialized();
 	if (CHIMERAS_ENABLED) {
 		return generator->getHordes().size();
 	} else {
@@ -928,6 +931,7 @@ void initHordeCatalog() {
     if (CHIMERAS_ENABLED) {
     	for (Horde *horde : generator->getHordes()) {
     		hordeCatalog[id] = horde->convertToStruct();
+    		id += 1;
     	}
     	return;
     }

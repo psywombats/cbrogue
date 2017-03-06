@@ -72,12 +72,13 @@ void MonsterGenerator::generate() {
 		}
 		ChimeraMonster *monster = new ChimeraMonster(*body);
 		this->monsters.push_back(monster);
-		this->fodderMonsters.push_back(*monster);
+		this->mookMonsters.push_back(*monster);
 	}
 
 	// Step 4: Fodder hordes
 	for (ChimeraMonster &monster : this->fodderMonsters) {
 		Horde *horde = new Horde(monster);
+		horde->purpose = HordePurposeType::FODDER;
 		this->hordes.push_back(horde);
 	}
 
@@ -90,6 +91,7 @@ void MonsterGenerator::generate() {
 		j += 1;
 		Horde *horde = new Horde(monster);
 		horde->addMember(monster, 1, 2);
+		this->hordes.push_back(horde);
 	}
 
 	// Step 6: Mook hordes
@@ -107,6 +109,7 @@ void MonsterGenerator::generate() {
 		j += 1;
 		Horde *horde = new Horde(monster);
 		horde->addMember(monster, 2, 2);
+		this->hordes.push_back(horde);
 	}
 
 	std::string report = debugReport();
@@ -131,11 +134,15 @@ Body *MonsterGenerator::matchingBody(const std::function<bool(const Body *)>& fi
 	return passing[index];
 }
 
-std::string MonsterGenerator::debugReport() {
-	std::string report = "";
+std::string MonsterGenerator::debugReport() const {
+	std::string report = "\n==== MONSTERS ====\n\n";
 
 	for (ChimeraMonster *monster : this->monsters) {
 		report += monster->debugReport() + "\n";
+	}
+	report += "\n==== HORDES ====\n\n";
+	for (Horde *horde : this->hordes) {
+		report += horde->debugReport() + "\n";
 	}
 
 	return report;

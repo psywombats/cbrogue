@@ -9,6 +9,7 @@
 #define HOARD_H_
 
 #include <list>
+#include <string>
 #include "Rogue.h"
 
 class ChimeraMonster;
@@ -41,12 +42,16 @@ public:
 
 	void addMember(const ChimeraMonster &member, short min, short max);
 
+	std::string debugReport() const;
+
 	HordePurposeType purpose;
 
 private:
 
 	const ChimeraMonster &leader;
 	std::list<HordeMember *> members;
+
+	int calculateDL() const;
 };
 
 class HordeMember {

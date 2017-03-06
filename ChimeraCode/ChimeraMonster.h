@@ -75,7 +75,7 @@ public:
 	 */
 	creatureType convertToStruct();
 
-	std::string debugReport();
+	std::string debugReport() const;
 
 	// flavor
 	std::string name;
