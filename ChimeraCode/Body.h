@@ -24,7 +24,7 @@ public:
 	Body();
 	virtual ~Body();
 
-	static std::list<Body *> loadBodies();
+	static std::vector<Body *> loadBodies();
 
 	void applyToMonster(ChimeraMonster &monster);
 
@@ -37,7 +37,7 @@ public:
 	MoveSpeedType moveSpeed;
 	RegenSpeedType regenSpeed;
 	AttackSpeedType attackSpeed;
-	bool flier;
+	int flags;						// monsterBehaviorTypes bitset
 
 	// flavor
 	std::string baseName;
@@ -45,7 +45,7 @@ public:
 	color *baseColor;
 
 	// generation
-	int flags;				// generateFlag bitset
+	int genFlags;					// generateFlag bitset
 	int dangerLevel;
 	bool inUse;
 

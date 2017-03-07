@@ -99,14 +99,18 @@ hordeType Horde::convertToStruct() {
 
 int Horde::calculateDL() const {
 	int danger = leader.dangerLevel;
-	if (this->members.size() == 1) {
-		danger += this->members.front()->maxCount;
+	if (this->members.size() >= 1) {
+		if (this->purpose == HordePurposeType::FODDER) {
+			danger += this->members.front()->maxCount;
+		} else {
+			danger += this->members.front()->member.dangerLevel / 2;
+		}
 	}
-	if (this->members.size() == 2) {
-		danger += 6;
+	if (this->members.size() >= 2) {
+		danger += 2;
 	}
-	if (this->members.size() == 3) {
-		danger += 10;
+	if (this->members.size() >= 3) {
+		danger += 5;
 	}
 	return danger;
 }

@@ -26,6 +26,7 @@ enum GenerateFlag : int {
 	SHAMANISTIC		= 1 << 5,
 	WIZARDLY		= 1 << 6,
 	INSECTOID		= 1 << 7,
+	ARMED			= 1 << 8,
 };
 
 enum class RegenSpeedType {
@@ -111,11 +112,10 @@ public:
 
 	// flags
 	std::vector<boltType> bolts;
-	bool flies;
-	bool flits;
+	int flags;						// bitset of monsterBehaviorFlags
 
 	// generation
-	int flags;			// of GenerateFlag, really should be a bitset...
+	int genFlags;					// bitset of GenerateFlag
 	int monsterId;
 	int dangerLevel;
 

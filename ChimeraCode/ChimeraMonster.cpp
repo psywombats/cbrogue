@@ -16,6 +16,7 @@ int ChimeraMonster::nextChimeraId = 0;
 
 ChimeraMonster::ChimeraMonster(Body &body) :
 		hp(0),
+		genFlags(0),
 		flags(0),
 		displayChar('x'),
 		accuracy(AccuracyType::NORMAL),
@@ -26,8 +27,6 @@ ChimeraMonster::ChimeraMonster(Body &body) :
 		lightType(NO_LIGHT),
 		body(body),
 		dangerLevel(0),
-		flies(false),
-		flits(false),
 		gender(GenderType::NONE),
 		regenSpeed(RegenSpeedType::NORMAL),
 		moveSpeed(MoveSpeedType::NORMAL),
@@ -110,15 +109,9 @@ creatureType ChimeraMonster::convertToStruct() {
 		creatureStruct.defense /= 2;
 	}
 
-	creatureStruct.flags = 0;
-	if (this->flies) {
-		creatureStruct.flags |= MONST_FLIES;
-	}
-	if (this->flits) {
-		creatureStruct.flags |= MONST_FLITS;
-	}
+	creatureStruct.flags = this->flags;
 
-	for (int i = 0; i < this->bolts.size(); i += 1) {
+	for (unsigned int i = 0; i < this->bolts.size(); i += 1) {
 		creatureStruct.bolts[i] = this->bolts[i];
 		i += 1;
 	}

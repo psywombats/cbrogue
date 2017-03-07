@@ -19,6 +19,7 @@ enum class ColorModFlavor {
 	SPELLCASTING,
 	COMBAT,
 	MOBILITY,
+	FIRE,
 };
 
 enum AbilityFlag : int {
@@ -53,8 +54,7 @@ public:
 
 	// flags
 	std::vector<boltType> bolts;
-	bool flits;
-	bool flies;
+	int flags;						// bitset of monsterBehaviorTypes
 
 	// flavor
 	std::string namePrefix;
@@ -63,9 +63,9 @@ public:
 
 	// generation
 	bool inUse;
-	int requiredFlags;			// bitset of GenerateFlag
+	int requiredFlags;				// bitset of GenerateFlag
 
-	static std::list<Ability *> loadModifierAbilities();
+	static std::vector<Ability *> loadModifierAbilities();
 
 private:
 

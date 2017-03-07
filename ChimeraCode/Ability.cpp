@@ -10,6 +10,7 @@
 Ability::Ability() :
 		hpBoost(0),
 		requiredFlags(0),
+		flags(0),
 		dangerBoost(0),
 		minDamageBoost(0),
 		maxDamageBoost(0),
@@ -18,8 +19,6 @@ Ability::Ability() :
 		attackSpeed(AttackSpeedType::NORMAL),
 		accuracy(AccuracyType::NORMAL),
 		defense(DefenseType::NORMAL),
-		flits(false),
-		flies(false),
 		namePrefix(""),
 		nameSuffix(""),
 		colorMod(ColorModFlavor::NONE),
@@ -53,12 +52,6 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 		monster.defense = this->defense;
 	}
 
-	if (this->flies) {
-		monster.flies = true;
-		monster.moveSpeed = MoveSpeedType::FAST;
-	}
-	monster.flits = this->flits;
-
 	if (this->namePrefix.size() > 0) {
 		monster.name = this->namePrefix + " " + monster.name;
 	}
@@ -70,19 +63,19 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 		monster.bolts.push_back(bolt);
 	}
 
+	monster.flags |= this->flags;
+
 	monster.displayColor = this->blendColor(monster.displayColor);
 
 	this->inUse = true;
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
-	if ((this->requiredFlags & monster.flags) != this->requiredFlags) {
+	if ((this->requiredFlags & monster.genFlags) != this->requiredFlags) {
 		return false;
 	}
-	if (monster.flies && this->flies) {
-		return false;
-	}
-	if (monster.flits && this->flits) {
+	if ((monster.flags & this->flags) > 0) {
+		// this means we'd generate something stupid like a "winged bat" or "mounted horseman"
 		return false;
 	}
 	if (monster.defense == DefenseType::DEFENSELESS && this->defense != DefenseType::NORMAL) {
@@ -136,14 +129,22 @@ const color *Ability::blendColor(const color *baseColor) const {
 		} else {
 			return &teal;
 		}
+	case ColorModFlavor::FIRE:
+		if (baseColor == &darkGray || baseColor == &darkGreen) {
+			return &darkRed;
+		} else if (baseColor == &darkPurple) {
+			return &orange;
+		} else {
+			return &red;
+		}
 	case ColorModFlavor::NONE:
 		return baseColor;
 	}
 	return baseColor;
 }
 
-std::list<Ability *> Ability::loadModifierAbilities() {
-	std::list<Ability *> abilities = std::list<Ability *>();
+std::vector<Ability *> Ability::loadModifierAbilities() {
+	std::vector<Ability *> abilities = std::vector<Ability *>();
 	Ability *ability;
 
 	ability = new Ability();
@@ -205,8 +206,8 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->namePrefix = "winged";
 	ability->colorMod = ColorModFlavor::MOBILITY;
 	ability->dangerBoost = 3;
-	ability->flies = true;
-	ability->flits = true;
+	ability->flags = (MONST_FLIES | MONST_FLITS);
+	ability->moveSpeed = MoveSpeedType::FAST;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -216,7 +217,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = 1;
 	ability->defense = DefenseType::HIGH;
 	ability->accuracy = AccuracyType::ACCURATE;
-	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+	ability->requiredFlags = (GenerateFlag::ARMED);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -225,6 +226,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->dangerBoost = 4;
 	ability->bolts = {BOLT_SPIDERWEB};
 	ability->requiredFlags = GenerateFlag::INSECTOID;
+	ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_IMMUNE_TO_WEBS);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -236,6 +238,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->maxDamageBoost = -2;
 	ability->minDamageBoost = -2;
 	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -259,6 +262,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -1;
 	ability->moveSpeed = MoveSpeedType::FAST;
 	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -270,6 +274,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->maxDamageBoost = -3;
 	ability->minDamageBoost = -3;
 	ability->requiredFlags = (GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -300,6 +305,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -5;
 	ability->defense = DefenseType::LOW;
 	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -312,6 +318,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -6;
 	ability->defense = DefenseType::LOW;
 	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -324,11 +331,12 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -5;
 	ability->defense = DefenseType::LOW;
 	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
 	ability->nameSuffix = "fire mage";
-	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->colorMod = ColorModFlavor::FIRE;
 	ability->dangerBoost = 4;
 	ability->bolts = {BOLT_FIRE};
 	ability->hpBoost = -4;
@@ -336,6 +344,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -5;
 	ability->defense = DefenseType::LOW;
 	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -348,17 +357,19 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = -5;
 	ability->defense = DefenseType::LOW;
 	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
 	ability->namePrefix = "firebreathing";
-	ability->colorMod = ColorModFlavor::SPELLCASTING;
-	ability->dangerBoost = 5;
+	ability->colorMod = ColorModFlavor::FIRE;
+	ability->dangerBoost = 4;
 	ability->bolts = {BOLT_FIRE};
 	ability->hpBoost = -2;
 	ability->maxDamageBoost = -1;
 	ability->minDamageBoost = -1;
 	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	ability->flags = (MONST_CAST_SPELLS_SLOWLY);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -370,6 +381,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->maxDamageBoost = -1;
 	ability->minDamageBoost = -1;
 	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	ability->flags = (MONST_MAINTAINS_DISTANCE);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -378,7 +390,57 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->dangerBoost = 5;
 	ability->bolts = {BOLT_POISON_DART};
 	ability->defense = DefenseType::LOW;
-	ability->attackSpeed = AttackSpeedType::TURRET;
+	ability->attackSpeed = AttackSpeedType::TOTEM;
+	ability->flags = (MONST_CAST_SPELLS_SLOWLY);
+	ability->requiredFlags = (GenerateFlag::INSECTOID);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "skirmisher";
+	ability->colorMod = ColorModFlavor::MOBILITY;
+	ability->dangerBoost = 1;
+	ability->flags = (MONST_FLEES_NEAR_DEATH);
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "pack";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 2;
+	ability->minDamageBoost = 1;
+	ability->maxDamageBoost = 2;
+	ability->flags = (MONST_FLEES_NEAR_DEATH);
+	ability->requiredFlags = (GenerateFlag::ANIMAL | GenerateFlag::PACK_MEMBER);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "fire";
+	ability->colorMod = ColorModFlavor::FIRE;
+	ability->dangerBoost = 4;
+	ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_FIERY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "lava";
+	ability->colorMod = ColorModFlavor::FIRE;
+	ability->dangerBoost = 1;
+	ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_SUBMERGES);
+	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "waterbreathing";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 2;
+	ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
+	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "water";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 2;
+	ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
 	ability->requiredFlags = (GenerateFlag::INSECTOID);
 	abilities.push_back(ability);
 

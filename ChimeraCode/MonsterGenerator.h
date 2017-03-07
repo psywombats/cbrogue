@@ -8,7 +8,7 @@
 #ifndef MONSTERGENERATOR_H_
 #define MONSTERGENERATOR_H_
 
-#include <list>
+#include <vector>
 #include <functional>
 
 class ChimeraMonster;
@@ -23,15 +23,19 @@ public:
 	virtual ~MonsterGenerator();
 
 	void generate();
-	std::list<ChimeraMonster *> &getMonsters();
-	std::list<Horde *> &getHordes();
+	std::vector<ChimeraMonster *> &getMonsters();
+	std::vector<Horde *> &getHordes();
 
 private:
 
-	std::list<ChimeraMonster *> monsters;
-	std::list<Body *> bodies;
-	std::list<Ability *> abilities;
-	std::list<Horde *> hordes;
+	std::vector<ChimeraMonster *> monsters;
+	std::vector<Body *> bodies;
+	std::vector<Ability *> abilities;
+	std::vector<Horde *> hordes;
+
+	ChimeraMonster &newMonster(Body &body);
+	ChimeraMonster &newMonster(const ChimeraMonster &baseMonster);
+	Horde &newHorde(const ChimeraMonster &monster);
 
 	Body *matchingBody(const std::function<bool(const Body *)>& filter);
 	Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
