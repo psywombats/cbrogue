@@ -54,7 +54,8 @@ public:
 
 	// flags
 	std::vector<boltType> bolts;
-	int flags;						// bitset of monsterBehaviorTypes
+	unsigned long flags;			// bitset of monsterBehaviorTypes
+	unsigned long abilFlags;		// bitset of monsterAbilityFlags
 
 	// flavor
 	std::string namePrefix;
@@ -63,7 +64,7 @@ public:
 
 	// generation
 	bool inUse;
-	int requiredFlags;				// bitset of GenerateFlag
+	unsigned long requiredFlags;	// bitset of GenerateFlag
 
 	static std::vector<Ability *> loadModifierAbilities();
 

@@ -11,6 +11,7 @@ Ability::Ability() :
 		hpBoost(0),
 		requiredFlags(0),
 		flags(0),
+		abilFlags(0),
 		dangerBoost(0),
 		minDamageBoost(0),
 		maxDamageBoost(0),
@@ -64,6 +65,7 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 	}
 
 	monster.flags |= this->flags;
+	monster.abilFlags |= this->abilFlags;
 
 	monster.displayColor = this->blendColor(monster.displayColor);
 
@@ -172,6 +174,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 	ability->hpBoost = 8;
 	ability->minDamageBoost = 3;
 	ability->maxDamageBoost = 5;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -443,6 +446,89 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 	ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
 	ability->requiredFlags = (GenerateFlag::INSECTOID);
 	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "spearman";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 1;
+	ability->requiredFlags = (GenerateFlag::ARMED);
+	ability->abilFlags = (MA_ATTACKS_PENETRATE);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "axeman";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 1;
+	ability->requiredFlags = (GenerateFlag::ARMED);
+	ability->abilFlags = (MA_ATTACKS_ALL_ADJACENT);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "dominatrix";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 2;
+	ability->requiredFlags = (GenerateFlag::ARMED);
+	ability->abilFlags = (MA_ATTACKS_EXTEND);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "whiptail";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 1;
+	ability->requiredFlags = (GenerateFlag::INSECTOID);
+	ability->abilFlags = (MA_ATTACKS_EXTEND);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "rainbow";
+	ability->colorMod = ColorModFlavor::POISONOUS;
+	ability->dangerBoost = 5;
+	ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+	ability->abilFlags = (MA_HIT_HALLUCINATE);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "vampire";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 4;
+	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	ability->abilFlags = (MA_TRANSFERENCE);
+
+	ability = new Ability();
+	ability->nameSuffix = "grappler";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 4;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+	ability->abilFlags = (MA_SEIZES);
+
+	ability = new Ability();
+	ability->nameSuffix = "sticky";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 3;
+	ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+	ability->abilFlags = (MA_SEIZES);
+
+	ability = new Ability();
+	ability->nameSuffix = "venemous";
+	ability->colorMod = ColorModFlavor::POISONOUS;
+	ability->dangerBoost = 4;
+	ability->requiredFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::ANIMAL);
+	ability->abilFlags = (MA_POISONS);
+
+	ability = new Ability();
+	ability->namePrefix = "deadly";
+	ability->colorMod = ColorModFlavor::POISONOUS;
+	ability->dangerBoost = 5;
+	ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+	ability->abilFlags = (MA_CAUSES_WEAKNESS);
+
+	ability = new Ability();
+	ability->namePrefix = "acid";
+	ability->colorMod = ColorModFlavor::POISONOUS;
+	ability->dangerBoost = 6;
+	ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+	ability->abilFlags = (MA_HIT_DEGRADE_ARMOR);
+	ability->flags = (MONST_DEFEND_DEGRADE_WEAPON);
 
 	return abilities;
 }

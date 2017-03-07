@@ -43,13 +43,13 @@ void MonsterGenerator::generate() {
 
 	// Step 1: Let's put together some constants
 	int fodderCount = 3;
-	int mookCount = rand_range(6, 7);
+	int mookCount = rand_range(7, 8);
 	int maxMookDL = AMULET_LEVEL + 5;
 	int fodderGroupHordes = 1;
 	int mookGroupHordes = 3;
 
-	int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
-	int specialistMookClasses = rand_range(2, 4);
+	int specialistOnlyMook = -1;//rand_range(1, mookCount / 2); // index of the "dar", with no base type
+	int specialistMookClasses = rand_range(3, 4);
 	Body *specialistMookBody;
 	std::list<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
 	std::list<std::reference_wrapper<ChimeraMonster>> mookMonsters;
@@ -80,6 +80,7 @@ void MonsterGenerator::generate() {
 		}
 		if (i == specialistOnlyMook) {
 			specialistMookBody = body;
+			specialistMookBody->inUse = true;
 		} else {
 			ChimeraMonster &monster = this->newMonster(*body);
 			mookMonsters.push_back(monster);
@@ -120,35 +121,36 @@ void MonsterGenerator::generate() {
 	}
 
 	// Step 8: Turn the "specialist" mook into its classes
-	if (specialistMookBody != NULL) {
-		std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
-		ChimeraMonster genericSpecialistMook = ChimeraMonster(*specialistMookBody);
-		for (int i = 0; i < specialistMookClasses; i += 1) {
-			Ability *ability = matchingAbility([genericSpecialistMook](const Ability *ability) {
-				return ability->validForMonster(genericSpecialistMook);
-			});
-			if (ability != NULL) {
-				ChimeraMonster &monster = this->newMonster(*specialistMookBody);
-				monster.applyAbility(*ability);
-				specialistMooks.push_back(monster);
-			}
-			genericSpecialistMook.flags |= GenerateFlag::PACK_MEMBER;
-		}
-		j = 0;
-		for (ChimeraMonster &monster : specialistMooks) {
-			Horde &horde = this->newHorde(monster);
-			j += 1;
-			for (unsigned int k = j; k < specialistMooks.size(); k += 1) {
-				ChimeraMonster &additional = specialistMooks[k];
-				horde.addMember(additional, 1, rand_range(1, 2));
-			}
-			if (horde.memberCount() == 1 && rand_percent(50)) {
-				horde.addMember(monster, 0, rand_range(1, 2));
-			}
-		}
-	}
+//	if (specialistMookBody != NULL) {
+//		std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
+//		ChimeraMonster genericSpecialistMook = ChimeraMonster(*specialistMookBody);
+//		for (int i = 0; i < specialistMookClasses; i += 1) {
+//			Ability *ability = matchingAbility([genericSpecialistMook](const Ability *ability) {
+//				return ability->validForMonster(genericSpecialistMook);
+//				return true;
+//			});
+//			if (ability != NULL) {
+//				ChimeraMonster &monster = this->newMonster(*specialistMookBody);
+//				monster.applyAbility(*ability);
+//				specialistMooks.push_back(monster);
+//			}
+//			genericSpecialistMook.flags |= GenerateFlag::PACK_MEMBER;
+//		}
+//		j = 0;
+//		for (ChimeraMonster &monster : specialistMooks) {
+//			Horde &horde = this->newHorde(monster);
+//			j += 1;
+//			for (unsigned int k = j; k < specialistMooks.size(); k += 1) {
+//				ChimeraMonster &additional = specialistMooks[k];
+//				horde.addMember(additional, 1, rand_range(1, 2));
+//			}
+//			if (horde.memberCount() == 1 && rand_percent(50)) {
+//				horde.addMember(monster, 0, rand_range(1, 2));
+//			}
+//		}
+//	}
 
-	// Step 8: variations on the mooks
+	// Step 9: variations on the mooks
 	for (ChimeraMonster &mook : mookMonsters) {
 		int choice = rand_range(0, 3);
 		if (choice == 0 || choice == 1 || choice == 2) {

@@ -27,6 +27,7 @@ enum GenerateFlag : int {
 	WIZARDLY		= 1 << 6,
 	INSECTOID		= 1 << 7,
 	ARMED			= 1 << 8,
+	AMORPHOUS		= 1 << 9,
 };
 
 enum class RegenSpeedType {
@@ -112,10 +113,11 @@ public:
 
 	// flags
 	std::vector<boltType> bolts;
-	int flags;						// bitset of monsterBehaviorFlags
+	unsigned long flags;				// bitset of monsterBehaviorFlags
+	unsigned long abilFlags;			// bitset of monsterAbilityFlags
 
 	// generation
-	int genFlags;					// bitset of GenerateFlag
+	unsigned long genFlags;				// bitset of GenerateFlag
 	int monsterId;
 	int dangerLevel;
 

@@ -37,7 +37,8 @@ public:
 	MoveSpeedType moveSpeed;
 	RegenSpeedType regenSpeed;
 	AttackSpeedType attackSpeed;
-	int flags;						// monsterBehaviorTypes bitset
+	unsigned long flags;			// monsterBehaviorTypes bitset
+	unsigned long abilFlags;		// monsterAbilityTypes bitset
 
 	// flavor
 	std::string baseName;
@@ -45,7 +46,7 @@ public:
 	color *baseColor;
 
 	// generation
-	int genFlags;					// generateFlag bitset
+	unsigned long genFlags;			// generateFlag bitset
 	int dangerLevel;
 	bool inUse;
 

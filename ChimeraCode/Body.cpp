@@ -16,6 +16,7 @@ Body::Body() :
 		baseChar('?'),
 		genFlags(0),
 		flags(0),
+		abilFlags(0),
 		baseColor(&brown),
 		inUse(false),
 		gender(GenderType::NONE),
@@ -66,6 +67,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
 
 	monster.genFlags |= this->genFlags;
 	monster.flags |= this->flags;
+	monster.abilFlags |= this->abilFlags;
 }
 
 // ideally this thing would read its data from JSON
@@ -145,14 +147,14 @@ std::vector<Body *> Body::loadBodies() {
 	bodies.push_back(body);
 
 	body = new Body();
-	body->baseName = "toad";
+	body->baseName = "frog";
 	body->baseColor = &darkGreen;
 	body->minDamage = 1;
 	body->maxDamage = 4;
 	body->hp = 8;
 	body->defense = DefenseType::DEFENSELESS;
 	body->dangerLevel = 2;
-	body->genFlags = (GenerateFlag::ANIMAL);
+	body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::AMORPHOUS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -175,6 +177,7 @@ std::vector<Body *> Body::loadBodies() {
 	body->hp = 15;
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 2;
+	body->genFlags = (GenerateFlag::AMORPHOUS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -185,7 +188,7 @@ std::vector<Body *> Body::loadBodies() {
 	body->hp = 18;
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 8;
-	body->genFlags = (GenerateFlag::ANIMAL & GenerateFlag::INSECTOID);
+	body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -208,6 +211,7 @@ std::vector<Body *> Body::loadBodies() {
 	body->hp = 55;
 	body->regenSpeed = RegenSpeedType::FAST;
 	body->dangerLevel = 12;
+	body->genFlags = (GenerateFlag::AMORPHOUS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -219,7 +223,7 @@ std::vector<Body *> Body::loadBodies() {
 	body->accuracy = AccuracyType::ACCURATE;
 	body->defense = DefenseType::HIGH;
 	body->dangerLevel = 8;
-	body->genFlags = (GenerateFlag::ANIMAL & GenerateFlag::INSECTOID);
+	body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -241,6 +245,39 @@ std::vector<Body *> Body::loadBodies() {
 	body->hp = 50;
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 13;
+	body->genFlags = (GenerateFlag::ARMED);
+	bodies.push_back(body);
+
+	body = new Body();
+	body->baseName = "wight";
+	body->baseColor = &white;
+	body->minDamage = 3;
+	body->maxDamage = 9;
+	body->hp = 50;
+	body->dangerLevel = 13;
+	body->genFlags = (GenerateFlag::ARMED | GenerateFlag::WIZARDLY);
+	body->abilFlags = (MA_TRANSFERENCE);
+	bodies.push_back(body);
+
+	body = new Body();
+	body->baseName = "blob";
+	body->baseColor = &darkPurple;
+	body->minDamage = 5;
+	body->maxDamage = 10;
+	body->hp = 50;
+	body->defense = DefenseType::LOW;
+	body->dangerLevel = 10;
+	body->genFlags = (GenerateFlag::AMORPHOUS);
+	bodies.push_back(body);
+
+	body = new Body();
+	body->baseName = "vampire";
+	body->baseColor = &gray;
+	body->minDamage = 5;
+	body->maxDamage = 10;
+	body->hp = 30;
+	body->dangerLevel = 9;
+	body->abilFlags = (MA_TRANSFERENCE);
 	body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
@@ -346,6 +383,7 @@ std::vector<Body *> Body::loadBodies() {
 	body->hp = 120;
 	body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
 	body->dangerLevel = 28;
+	body->genFlags = (GenerateFlag::AMORPHOUS);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -357,6 +395,17 @@ std::vector<Body *> Body::loadBodies() {
 	body->dangerLevel = 28;
 	body->gender = GenderType::BOTH;
 	body->genFlags = (GenerateFlag::WIZARDLY);
+	bodies.push_back(body);
+
+	body = new Body();
+	body->baseName = "jelly";
+	body->baseColor = &darkGreen;
+	body->minDamage = 1;
+	body->maxDamage = 3;
+	body->hp = 38;
+	body->dangerLevel = 6;
+	body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
+	body->genFlags = (GenerateFlag::AMORPHOUS);
 	bodies.push_back(body);
 
 	return bodies;

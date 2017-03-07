@@ -17,6 +17,7 @@ int ChimeraMonster::nextChimeraId = 0;
 ChimeraMonster::ChimeraMonster(Body &body) :
 		hp(0),
 		genFlags(0),
+		abilFlags(0),
 		flags(0),
 		displayChar('x'),
 		accuracy(AccuracyType::NORMAL),
@@ -108,10 +109,16 @@ creatureType ChimeraMonster::convertToStruct() {
 	}
 
 	creatureStruct.flags = this->flags;
+	creatureStruct.abilityFlags = this->abilFlags;
 
 	for (unsigned int i = 0; i < this->bolts.size(); i += 1) {
 		creatureStruct.bolts[i] = this->bolts[i];
 		i += 1;
+	}
+
+	if (this->flags & (GenerateFlag::SUPPORTS_CLASS) > 0) {
+		// TODO: do this more smartlier
+		creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
 	}
 
     // TODO
@@ -152,6 +159,44 @@ std::string ChimeraMonster::debugReport() const {
 	for (boltType bolt : bolts) {
 		report += "{" + ChimeraMonster::boltToString(bolt) + "} ";
 	}
+
+	if ((this->flags & MONST_FLEES_NEAR_DEATH) > 0) report += "[flees] ";
+	if ((this->flags & MONST_CAST_SPELLS_SLOWLY) > 0) report += "[slowspells] ";
+	if ((this->flags & MONST_CARRY_ITEM_100) > 0) report += "[item100] ";
+	if ((this->flags & MONST_CARRY_ITEM_25) > 0) report += "[item] ";
+	if ((this->flags & MONST_DEFEND_DEGRADE_WEAPON) > 0) report += "[acid def] ";
+	if ((this->flags & MONST_ALWAYS_HUNTING) > 0) report += "[nosleep] ";
+	if ((this->flags & MONST_ALWAYS_USE_ABILITY) > 0) report += "[abilonly] ";
+	if ((this->flags & MONST_DIES_IF_NEGATED) > 0) report += "[negatedeath] ";
+	if ((this->flags & MONST_FIERY) > 0) report += "[fiery] ";
+	if ((this->flags & MONST_FLIES) > 0) report += "[flies] ";
+	if ((this->flags & MONST_FLITS) > 0) report += "[flits] ";
+	if ((this->flags & MONST_IMMUNE_TO_FIRE) > 0) report += "[fire immune] ";
+	if ((this->flags & MONST_IMMUNE_TO_WATER) > 0) report += "[water immune] ";
+	if ((this->flags & MONST_IMMUNE_TO_WEAPONS) > 0) report += "[weapon immune] ";
+	if ((this->flags & MONST_IMMUNE_TO_WEBS) > 0) report += "[web immune] ";
+	if ((this->flags & MONST_INVISIBLE) > 0) report += "[invisible] ";
+	if ((this->flags & MONST_MAINTAINS_DISTANCE) > 0) report += "[keeps distance] ";
+	if ((this->flags & MONST_REFLECT_4) > 0) report += "[reflective] ";
+	if ((this->flags & MONST_RESTRICTED_TO_LIQUID) > 0) report += "[liquids only] ";
+	if ((this->flags & MONST_SUBMERGES) > 0) report += "[submerges] ";
+
+	if ((this->abilFlags & MA_HIT_HALLUCINATE) > 0) report += ".hallucinative.";
+	if ((this->abilFlags & MA_HIT_STEAL_FLEE) > 0) report += ".thief.";
+	if ((this->abilFlags & MA_ENTER_SUMMONS) > 0) report += ".summon transforms.";
+	if ((this->abilFlags & MA_HIT_DEGRADE_ARMOR) > 0) report += ".acid atk.";
+	if ((this->abilFlags & MA_CAST_SUMMON) > 0) report += ".summons.";
+	if ((this->abilFlags & MA_SEIZES) > 0) report += ".grappler.";
+	if ((this->abilFlags & MA_POISONS) > 0) report += ".poisons.";
+	if ((this->abilFlags & MA_DF_ON_DEATH) > 0) report += ".death effect.";
+	if ((this->abilFlags & MA_CLONE_SELF_ON_DEFEND) > 0) report += ".splits.";
+	if ((this->abilFlags & MA_KAMIKAZE) > 0) report += ".kamikaze.";
+	if ((this->abilFlags & MA_TRANSFERENCE) > 0) report += ".vampiric.";
+	if ((this->abilFlags & MA_CAUSES_WEAKNESS) > 0) report += ".weakens.";
+	if ((this->abilFlags & MA_ATTACKS_PENETRATE) > 0) report += ".penetrate atk.";
+	if ((this->abilFlags & MA_ATTACKS_ALL_ADJACENT) > 0) report += ".axe atk.";
+	if ((this->abilFlags & MA_ATTACKS_EXTEND) > 0) report += ".whip atk.";
+	if ((this->abilFlags & MA_AVOID_CORRIDORS) > 0) report += ".nohalls.";
 
 	report += "\n";
 
