@@ -32,15 +32,13 @@ ChimeraMonster::ChimeraMonster(Body &body) :
 		moveSpeed(MoveSpeedType::NORMAL),
 		attackSpeed(AttackSpeedType::NORMAL) {
 
-	body.applyToMonster(*this);
-
-	this->abilities = std::list<std::reference_wrapper<Ability>>();
-
 	if (ChimeraMonster::nextChimeraId == 0) {
 		ChimeraMonster::nextChimeraId = getWardenMonsterId() + 1;
 	}
 	this->monsterId = ChimeraMonster::nextChimeraId;
 	ChimeraMonster::nextChimeraId += 1;
+
+	body.applyToMonster(*this);
 }
 
 ChimeraMonster::~ChimeraMonster() {

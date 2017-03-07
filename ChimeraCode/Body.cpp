@@ -60,6 +60,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
 			this->baseChar = toupper(this->baseChar);
 		}
 	}
+	monster.displayChar = this->baseChar;
 
 	this->inUse = true;
 
