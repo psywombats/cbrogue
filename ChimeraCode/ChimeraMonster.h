@@ -11,7 +11,7 @@
 #include <string>
 #include <list>
 #include <functional>
-#include <bitset>
+#include <vector>
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
@@ -22,6 +22,10 @@ enum GenerateFlag : int {
 	AQUATIC			= 1 << 1,
 	ANIMAL			= 1 << 2,
 	SUPPORTS_CLASS	= 1 << 3,
+	PACK_MEMBER		= 1 << 4,
+	SHAMANISTIC		= 1 << 5,
+	WIZARDLY		= 1 << 6,
+	INSECTOID		= 1 << 7,
 };
 
 enum class RegenSpeedType {
@@ -106,6 +110,7 @@ public:
 	AttackSpeedType attackSpeed;
 
 	// flags
+	std::vector<boltType> bolts;
 	bool flies;
 	bool flits;
 
@@ -128,6 +133,8 @@ private:
 	// generation
 	const Body &body;
 	std::list<std::reference_wrapper<Ability>> abilities;
+
+	static std::string boltToString(boltType bolt);
 
 	static int nextChimeraId;
 

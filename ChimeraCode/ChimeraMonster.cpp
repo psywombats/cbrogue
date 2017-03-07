@@ -118,10 +118,14 @@ creatureType ChimeraMonster::convertToStruct() {
 		creatureStruct.flags |= MONST_FLITS;
 	}
 
+	for (int i = 0; i < this->bolts.size(); i += 1) {
+		creatureStruct.bolts[i] = this->bolts[i];
+		i += 1;
+	}
+
     // TODO
     //short DFChance;                     // percent chance to spawn the dungeon feature per awake turn
     //enum dungeonFeatureTypes DFType;    // kind of dungeon feature
-    //enum boltType bolts[20];
     //unsigned long abilityFlags;
     //char summonMessage[DCOLS * 2];
 
@@ -153,9 +157,52 @@ std::string ChimeraMonster::debugReport() const {
 	if (regenSpeed == RegenSpeedType::EXTREMELY_FAST) report += "(e.fast regen) ";
 	if (regenSpeed == RegenSpeedType::FAST) report += "(fast regen) ";
 	if (regenSpeed == RegenSpeedType::VERY_FAST) report += "(v.fast regen) ";
+
+	for (boltType bolt : bolts) {
+		report += "{" + ChimeraMonster::boltToString(bolt) + "} ";
+	}
+
 	report += "\n";
 
 	return report;
+}
+
+std::string ChimeraMonster::boltToString(boltType bolt) {
+	switch (bolt) {
+		case BOLT_NONE:						return "None";
+		case BOLT_TELEPORT:					return "Teleport";
+		case BOLT_SLOW:						return "Slow";
+		case BOLT_POLYMORPH:				return "Polymorph";
+		case BOLT_NEGATION:					return "Negation";
+		case BOLT_DOMINATION:				return "Domination";
+		case BOLT_BECKONING:				return "Beckoning";
+		case BOLT_PLENTY:					return "Plenty";
+		case BOLT_INVISIBILITY:				return "Invisibility";
+		case BOLT_EMPOWERMENT:				return "Empowerment";
+		case BOLT_LIGHTNING:				return "Lightning";
+		case BOLT_FIRE:						return "Fire";
+		case BOLT_POISON:					return "Poison";
+		case BOLT_TUNNELING:				return "Tunneling";
+		case BOLT_BLINKING:					return "Blinking";
+		case BOLT_ENTRANCEMENT:				return "Entrancement";
+		case BOLT_OBSTRUCTION:				return "Obstruction";
+		case BOLT_DISCORD:					return "Discord";
+		case BOLT_CONJURATION:				return "Conjuration";
+		case BOLT_HEALING:					return "Healing";
+		case BOLT_HASTE:					return "Haste";
+		case BOLT_SLOW_2:					return "Slow2";
+		case BOLT_SHIELDING:				return "Shielding";
+		case BOLT_SPIDERWEB:				return "Web";
+		case BOLT_SPARK:					return "Spark";
+		case BOLT_DRAGONFIRE:				return "Dragonfire";
+		case BOLT_DISTANCE_ATTACK:			return "Arrow";
+		case BOLT_POISON_DART:				return "Dart";
+		case BOLT_ACID_TURRET_ATTACK:		return "Acid";
+		case BOLT_ANCIENT_SPIRIT_VINES:		return "Vines";
+		case BOLT_WHIP:						return "Whip";
+		default:							return printInt(bolt);
+	}
+	return "wat";
 }
 
 short ChimeraMonster::regenSpeedToTurnsPerRegen(RegenSpeedType speed) {

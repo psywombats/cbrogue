@@ -9,6 +9,7 @@
 #define ABILITY_H_
 
 #include <list>
+#include <vector>
 #include "Rogue.h"
 #include "ChimeraMonster.h"
 
@@ -18,6 +19,11 @@ enum class ColorModFlavor {
 	SPELLCASTING,
 	COMBAT,
 	MOBILITY,
+};
+
+enum AbilityFlag : int {
+	SPELLCASTING		= 1 << 1,
+	UNIQUE				= 1 << 2,
 };
 
 /**
@@ -44,6 +50,9 @@ public:
 	AttackSpeedType attackSpeed;
 	AccuracyType accuracy;
 	DefenseType defense;
+
+	// flags
+	std::vector<boltType> bolts;
 	bool flits;
 	bool flies;
 

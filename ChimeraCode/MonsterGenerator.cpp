@@ -161,6 +161,7 @@ void MonsterGenerator::generate() {
 		if (choice == 0 || choice == 1 || choice == 2) {
 			// a mutant...
 			ChimeraMonster *monster = new ChimeraMonster(mook);
+			monster->flags |= GenerateFlag::PACK_MEMBER;
 			Ability *ability = matchingAbility([monster](const Ability *ability) {
 				return ability->validForMonster(*monster);
 			});
@@ -180,6 +181,7 @@ void MonsterGenerator::generate() {
 			} else if (choice == 2) {
 				// two mutant types and a hunting party
 				ChimeraMonster *monster2 = new ChimeraMonster(mook);
+				monster->flags |= GenerateFlag::PACK_MEMBER;
 				Ability *ability2 = matchingAbility([monster2](const Ability *ability) {
 					return ability->validForMonster(*monster2);
 				});

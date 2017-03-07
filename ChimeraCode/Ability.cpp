@@ -66,6 +66,10 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 		monster.name += " " + this->nameSuffix;
 	}
 
+	for (boltType bolt : this->bolts) {
+		monster.bolts.push_back(bolt);
+	}
+
 	monster.displayColor = this->blendColor(monster.displayColor);
 
 	this->inUse = true;
@@ -186,7 +190,7 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->minDamageBoost = 0;
 	ability->maxDamageBoost = 6;
 	ability->moveSpeed = MoveSpeedType::FAST;
-	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
 	abilities.push_back(ability);
 
 	ability = new Ability();
@@ -213,6 +217,169 @@ std::list<Ability *> Ability::loadModifierAbilities() {
 	ability->defense = DefenseType::HIGH;
 	ability->accuracy = AccuracyType::ACCURATE;
 	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "webweaver";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 4;
+	ability->bolts = {BOLT_SPIDERWEB};
+	ability->requiredFlags = GenerateFlag::INSECTOID;
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "mystic";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 3;
+	ability->bolts = {BOLT_SHIELDING};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -2;
+	ability->minDamageBoost = -2;
+	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "archer";
+	ability->colorMod = ColorModFlavor::COMBAT;
+	ability->dangerBoost = 4;
+	ability->bolts = {BOLT_DISTANCE_ATTACK};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -1;
+	ability->minDamageBoost = -1;
+	ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "mounted";
+	ability->colorMod = ColorModFlavor::MOBILITY;
+	ability->dangerBoost = 8;
+	ability->bolts = {BOLT_DISTANCE_ATTACK};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -1;
+	ability->minDamageBoost = -1;
+	ability->moveSpeed = MoveSpeedType::FAST;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "shaman";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 5;
+	ability->bolts = {BOLT_SPARK, BOLT_HASTE};
+	ability->hpBoost = -6;
+	ability->maxDamageBoost = -3;
+	ability->minDamageBoost = -3;
+	ability->requiredFlags = (GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "blademaster";
+	ability->colorMod = ColorModFlavor::MOBILITY;
+	ability->dangerBoost = 4;
+	ability->bolts = {BOLT_BLINKING};
+	ability->defense = DefenseType::HIGH;
+	ability->accuracy = AccuracyType::ACCURATE;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "blink";
+	ability->colorMod = ColorModFlavor::MOBILITY;
+	ability->dangerBoost = 1;
+	ability->bolts = {BOLT_BLINKING};
+	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "priest";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 7;
+	ability->bolts = {BOLT_SPARK, BOLT_HEALING, BOLT_NEGATION, BOLT_HASTE};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -5;
+	ability->minDamageBoost = -5;
+	ability->defense = DefenseType::LOW;
+	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "healer";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 6;
+	ability->bolts = {BOLT_HEALING, BOLT_SHIELDING};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -6;
+	ability->minDamageBoost = -6;
+	ability->defense = DefenseType::LOW;
+	ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "battlemage";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 6;
+	ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -5;
+	ability->minDamageBoost = -5;
+	ability->defense = DefenseType::LOW;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "fire mage";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 4;
+	ability->bolts = {BOLT_FIRE};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -5;
+	ability->minDamageBoost = -5;
+	ability->defense = DefenseType::LOW;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->nameSuffix = "lightning mage";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 3;
+	ability->bolts = {BOLT_FIRE};
+	ability->hpBoost = -4;
+	ability->maxDamageBoost = -5;
+	ability->minDamageBoost = -5;
+	ability->defense = DefenseType::LOW;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "firebreathing";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 5;
+	ability->bolts = {BOLT_FIRE};
+	ability->hpBoost = -2;
+	ability->maxDamageBoost = -1;
+	ability->minDamageBoost = -1;
+	ability->requiredFlags = (GenerateFlag::ANIMAL);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "trickster";
+	ability->colorMod = ColorModFlavor::SPELLCASTING;
+	ability->dangerBoost = 8;
+	ability->bolts = {BOLT_NEGATION, BOLT_SLOW_2, BOLT_DISCORD, BOLT_SPARK};
+	ability->hpBoost = -2;
+	ability->maxDamageBoost = -1;
+	ability->minDamageBoost = -1;
+	ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+	abilities.push_back(ability);
+
+	ability = new Ability();
+	ability->namePrefix = "poison-spitting";
+	ability->colorMod = ColorModFlavor::POISONOUS;
+	ability->dangerBoost = 5;
+	ability->bolts = {BOLT_POISON_DART};
+	ability->defense = DefenseType::LOW;
+	ability->attackSpeed = AttackSpeedType::TURRET;
+	ability->requiredFlags = (GenerateFlag::INSECTOID);
 	abilities.push_back(ability);
 
 	return abilities;

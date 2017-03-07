@@ -96,7 +96,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 7;
 	body->dangerLevel = 2;
 	body->gender = GenderType::BOTH;
-	body->flags = (GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -120,7 +120,7 @@ std::list<Body *> Body::loadBodies() {
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 6;
 	body->gender = GenderType::BOTH;
-	body->flags = (GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::SUPPORTS_CLASS & GenerateFlag::SHAMANISTIC);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -163,7 +163,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 18;
 	body->accuracy = AccuracyType::INACCURATE;
 	body->dangerLevel = 8;
-	body->flags = (GenerateFlag::ANIMAL);
+	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::INSECTOID);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -175,7 +175,7 @@ std::list<Body *> Body::loadBodies() {
 	body->attackSpeed = AttackSpeedType::SLOW;
 	body->dangerLevel = 10;
 	body->gender = GenderType::BOTH;
-	body->flags = (GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -197,7 +197,7 @@ std::list<Body *> Body::loadBodies() {
 	body->accuracy = AccuracyType::ACCURATE;
 	body->defense = DefenseType::HIGH;
 	body->dangerLevel = 8;
-	body->flags = (GenerateFlag::ANIMAL);
+	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::INSECTOID);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -219,7 +219,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 50;
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 13;
-	body->flags = (GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -241,7 +241,7 @@ std::list<Body *> Body::loadBodies() {
 	body->maxDamage = 11;
 	body->hp = 75;
 	body->dangerLevel = 13;
-	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -252,7 +252,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 20;
 	body->dangerLevel = 7;
 	body->gender = GenderType::BOTH;
-	body->flags = (GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -264,7 +264,7 @@ std::list<Body *> Body::loadBodies() {
 	body->moveSpeed = MoveSpeedType::FAST;
 	body->dangerLevel = 10;
 	body->gender = GenderType::MALE_ONLY;
-	body->flags = (GenerateFlag::ANIMAL & GenerateFlag::SUPPORTS_CLASS);
+	body->flags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -276,7 +276,7 @@ std::list<Body *> Body::loadBodies() {
 	body->moveSpeed = MoveSpeedType::SLOW;
 	body->attackSpeed = AttackSpeedType::SLOW;
 	body->dangerLevel = 13;
-	body->flags = (GenerateFlag::ANIMAL);
+	body->flags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
 	bodies.push_back(body);
 
 	body = new Body();
@@ -309,6 +309,7 @@ std::list<Body *> Body::loadBodies() {
 	body->hp = 150;
 	body->dangerLevel = 28;
 	body->gender = GenderType::BOTH;
+	body->flags = (GenerateFlag::WIZARDLY);
 	bodies.push_back(body);
 
 	return bodies;
