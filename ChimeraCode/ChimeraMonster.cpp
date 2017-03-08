@@ -149,6 +149,7 @@ creatureType ChimeraMonster::convertToStruct() {
 void ChimeraMonster::applyAbility(Ability &ability) {
     ability.applyToMonster(*this);
     this->abilities.push_back(ability);
+    specializeName();
 }
 
 std::string ChimeraMonster::debugReport() const {
@@ -326,5 +327,20 @@ std::list<std::string> ChimeraMonster::generateAttackFlavor() {
 
 std::string ChimeraMonster::generateSummonFlavor() {
     return "summons allies.";
+}
+
+void ChimeraMonster::specializeName() {
+    if (name == "caustic bloat")            name = "bloat";
+    if (name == "vampire jackal")           name = "chupacabra";
+    if (name == "vampire dog")              name = "chupacabra";
+    if (name == "vampire hyena")            name = "chupacabra";
+    if (name == "infested spore crab")      name = "spore crab";
+    if (name == "explosive kamikaze dwarf") name = "kamikaze dwarf";
+    if (name == "lava rat")                 name = "hell rat";
+    if (name == "cinder rat")               name = "hell rat";
+    if (name == "sticky horror")            name = "tentacle horror";
+    if (name == "rainbow frog")             name = "toad";
+    if (name == "lizardman dominatrix")     name = "salamander";
+    if (name == "lizardman axeman")         name = "naga";
 }
 

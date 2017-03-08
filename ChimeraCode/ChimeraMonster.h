@@ -125,7 +125,7 @@ public:
     unsigned long abilFlags;            // bitset of monsterAbilityFlags
 
     // generation
-    unsigned long genFlags;                // bitset of GenerateFlag
+    unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
     int dangerLevel;
 
@@ -135,6 +135,7 @@ private:
     static short moveSpeedToTicksPerMove(MoveSpeedType speed);
     static short attackSpeedToTicksPerAttack(AttackSpeedType speed);
 
+    void specializeName();
     std::string generateFlavor();
     AbsorbFlavorType generateAbsorbFlavor();
     std::list<std::string> generateAttackFlavor();
