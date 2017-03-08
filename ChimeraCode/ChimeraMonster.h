@@ -30,6 +30,7 @@ enum GenerateFlag : int {
     AMORPHOUS           = 1 << 9,
     BURSTS              = 1 << 10,
     KAMIKAZE            = 1 << 11,
+    THIEVING            = 1 << 12,
 };
 
 enum class RegenSpeedType {

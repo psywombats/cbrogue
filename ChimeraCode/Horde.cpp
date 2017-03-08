@@ -154,11 +154,13 @@ int Horde::calculateFrequency() const {
     int frequency;
     switch (this->purpose) {
         case HordePurposeType::FODDER:              frequency = 15;                 break;
-        case HordePurposeType::KAMIKAZE:            frequency = 3;                  break;
+        case HordePurposeType::KAMIKAZE:            frequency = 4;                  break;
+        case HordePurposeType::THIEF:               frequency = 8;                  break;
         default:                                    frequency = 10;                 break;
     }
     
-    frequency -= this->memberCount();
+    frequency -= (this->memberCount() - 1);
     frequency += extraFrequency;
+    frequency = MAX(1, frequency);
     return frequency;
 }

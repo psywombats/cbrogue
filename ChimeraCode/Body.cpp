@@ -316,7 +316,7 @@ std::vector<Body *> Body::loadBodies() {
     body->minDamage = 3;
     body->maxDamage = 5;
     body->hp = 20;
-    body->dangerLevel = 7;
+    body->dangerLevel = 6;
     body->gender = GenderType::BOTH;
     body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     bodies.push_back(body);
@@ -440,7 +440,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 2;
     body->dangerLevel = 3;
     body->moveSpeed = MoveSpeedType::FAST;
-    body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
+    body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE | GenerateFlag::ANIMAL);
     bodies.push_back(body);
     
     body = new Body();
@@ -452,6 +452,62 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 6;
     body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
     body->rarityPercent = 33;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "monkey";
+    body->baseColor = &brown;
+    body->minDamage = 1;
+    body->maxDamage = 3;
+    body->hp = 12;
+    body->dangerLevel = 2;
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    body->rarityPercent = 75;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "ferret";
+    body->baseColor = &tanColor;
+    body->minDamage = 1;
+    body->maxDamage = 3;
+    body->hp = 10;
+    body->dangerLevel = 5;
+    body->defense = DefenseType::HIGH;
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    body->rarityPercent = 33;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "raven";
+    body->baseColor = &darkGray;
+    body->minDamage = 2;
+    body->maxDamage = 6;
+    body->hp = 20;
+    body->dangerLevel = 7;
+    body->flags = (MONST_FLIES | MONST_FLITS);
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    body->rarityPercent = 33;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "magpie";
+    body->baseColor = &gray;
+    body->minDamage = 1;
+    body->maxDamage = 3;
+    body->hp = 10;
+    body->dangerLevel = 4;
+    body->flags = (MONST_FLIES | MONST_FLITS);
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "demonspawn";
+    body->baseColor = &white;
+    body->minDamage = 4;
+    body->maxDamage = 9;
+    body->hp = 35;
+    body->dangerLevel = 8;
+    body->genFlags = (GenerateFlag::SUPPORTS_CLASS);
     bodies.push_back(body);
 
     return bodies;

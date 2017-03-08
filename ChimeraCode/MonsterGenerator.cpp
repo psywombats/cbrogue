@@ -43,22 +43,32 @@ void MonsterGenerator::generate() {
 
     // Step 1: Let's put together some constants
     int fodderCount = 3;
-    int mookCount = rand_range(7, 8);
+    int mookCount = rand_range(6, 7);
     int maxMookDL = AMULET_LEVEL + 5;
     int fodderGroupHordes = 1;
-    int mookGroupHordes = 3;
+    int mookGroupHordes = 2;
     int kamikazeMonstersCount = 3;
+    int thiefMonstersCount = 2;
+    
+    int roll = rand_range(0, 100);
+    if (roll < 33) {
+        mookGroupHordes += 1;
+    } else if (roll < 33) {
+        kamikazeMonstersCount += 1;
+    } else {
+        thiefMonstersCount += 1;
+    }
 
     int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
     int specialistMookClasses = rand_range(3, 4);
     Body *specialistMookBody = NULL;
-    std::list<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
-    std::list<std::reference_wrapper<ChimeraMonster>> mookMonsters;
+    std::vector<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
+    std::vector<std::reference_wrapper<ChimeraMonster>> mookMonsters;
 
     // Step 2: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
         Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & GenerateFlag::KAMIKAZE);
+            return body->dangerLevel <= 3 && !(body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING));
         });
         if (body == NULL) {
             continue;
@@ -73,7 +83,7 @@ void MonsterGenerator::generate() {
             if (!(body->flags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
                 return false;
             }
-            if (body->genFlags & GenerateFlag::KAMIKAZE) {
+            if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING)) {
                 return false;
             }
             int dl = body->dangerLevel;
@@ -269,6 +279,50 @@ void MonsterGenerator::generate() {
         Horde &horde = this->newHorde(monster);
         horde.addMember(monster, 2, 2);
         horde.purpose = HordePurposeType::KAMIKAZE;
+    }
+    
+    // Step 11: Thieves
+    std::vector<std::reference_wrapper<ChimeraMonster>> thieves;
+    for (int i = 0; i < thiefMonstersCount; i += 1) {
+        ChimeraMonster *monster;
+        if (rand_percent(50)) {
+            Body *body = matchingBody([](const Body *body) {
+                return body->genFlags & THIEVING;
+            });
+            monster = new ChimeraMonster(*body);
+        } else {
+            ChimeraMonster &mook = mookMonsters[rand_range(0, mookMonsters.size() - 3)];
+            monster = new ChimeraMonster(mook);
+        }
+        monster->genFlags |= GenerateFlag::THIEVING;
+        Ability *ability = matchingAbility([i, thiefMonstersCount, monster](const Ability *ability) {
+            if (!ability->validForMonster(*monster)) {
+                return false;
+            }
+            int minDL = i * (AMULET_LEVEL / thiefMonstersCount) - 3;
+            int maxDL = (i+1) * (AMULET_LEVEL / thiefMonstersCount) + 1;
+            int dl = (ability->dangerBoost + monster->dangerLevel);
+            return (ability->requiredFlags & GenerateFlag::THIEVING) > 0  && dl >= minDL && dl <= maxDL;
+        });
+        if (ability == NULL) {
+            delete monster;
+            i -= 1;
+            continue;
+        }
+        monster->applyAbility(*ability);
+        this->monsters.push_back(monster);
+        thieves.push_back(*monster);
+        Horde &horde = this->newHorde(*monster);
+        horde.purpose = HordePurposeType::THIEF;
+        horde.extraRange = -i;
+    }
+    duplicateGroupIndex = rand_range(0, MAX(0, thiefMonstersCount - 1));
+    if ((unsigned long)duplicateGroupIndex < thieves.size()) {
+        ChimeraMonster &monster = thieves[duplicateGroupIndex];
+        Horde &horde = this->newHorde(monster);
+        horde.addMember(monster, 2, 3);
+        horde.purpose = HordePurposeType::THIEF;
+        horde.extraRange = -1;
     }
 
     std::string report = debugReport();

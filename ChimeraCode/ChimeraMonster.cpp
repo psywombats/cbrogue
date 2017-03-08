@@ -342,5 +342,18 @@ void ChimeraMonster::specializeName() {
     if (name == "rainbow frog")             name = "toad";
     if (name == "lizardman dominatrix")     name = "salamander";
     if (name == "lizardman axeman")         name = "naga";
+    if (name == "horseman archer")          name = "centaur";
+    if (name == "mounted goblin")           name = "warg rider";
+    if (name == "thieving ferret")          name = "ferret";
+    if (name == "thieving monkey")          name = "monkey";
+    if (name == "thieving raven")           name = "raven";
+    if (name == "thieving magpie")          name = "magpie";
+    if (name == "impish quasit")            name = "imp";
+    
+    if (isupper(this->displayChar)) {
+        this->displayChar = toupper(name[0]);
+    } else {
+        this->displayChar = tolower(name[0]);
+    }
 }
 

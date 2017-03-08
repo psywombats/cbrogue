@@ -19,6 +19,7 @@ enum class HordePurposeType {
     FODDER,
     GENERAL,
     KAMIKAZE,
+    THIEF,
 //    RESOURCE,
 //    WATER,
 //    GROUP,

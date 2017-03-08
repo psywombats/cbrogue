@@ -106,6 +106,11 @@ bool Ability::validForMonster(const ChimeraMonster &monster) const {
         // this means we'd generate something stupid like a "winged bat" or "mounted horseman"
         return false;
     }
+    if (((monster.flags & MONST_FLIES) && this->moveSpeed != MoveSpeedType::NORMAL) ||
+            (monster.moveSpeed != MoveSpeedType::NORMAL && (monster.flags & MONST_FLIES))) {
+        // flying is incompatible with movement modifiers
+        return false;
+    }
     if (monster.defense == DefenseType::DEFENSELESS && this->defense != DefenseType::NORMAL) {
         return false;
     }
@@ -333,7 +338,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 66;
     abilities.push_back(ability);
 
@@ -347,7 +352,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -6;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 66;
     abilities.push_back(ability);
 
@@ -361,7 +366,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -374,7 +379,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -387,7 +392,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -411,7 +416,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -654,6 +659,64 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_CONFUSION_GAS_CLOUD_POTION;
     ability->featureMessage = "bursts, and the air starts to shimmer and sparkle!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "thieving";
+    ability->colorMod = ColorModFlavor::NONE;
+    ability->dangerBoost = 3;
+    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    ability->abilFlags = (MA_HIT_STEAL_FLEE);
+    ability->rarityPercent = 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "pickpocket";
+    ability->colorOverride = &ogreColor;
+    ability->dangerBoost = 3;
+    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::SUPPORTS_CLASS);
+    ability->abilFlags = (MA_HIT_STEAL_FLEE);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "impish";
+    ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->dangerBoost = 12;
+    ability->defense = DefenseType::HIGH;
+    ability->accuracy = AccuracyType::ACCURATE;
+    ability->requiredFlags = (GenerateFlag::THIEVING);
+    ability->forbiddenFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::INSECTOID);
+    ability->bolts = {BOLT_BLINKING};
+    ability->abilFlags = (MA_HIT_STEAL_FLEE);
+    ability->rarityPercent = 66;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "rogue";
+    ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->dangerBoost = 11;
+    ability->defense = DefenseType::HIGH;
+    ability->requiredFlags = (GenerateFlag::THIEVING);
+    ability->bolts = {BOLT_SLOW_2, BOLT_HASTE};
+    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::SUPPORTS_CLASS);
+    ability->abilFlags = (MA_HIT_STEAL_FLEE);
+    ability->flags = (MONST_CAST_SPELLS_SLOWLY);
+    ability->rarityPercent = 66;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "bandit";
+    ability->colorOverride = &ogreColor;
+    ability->dangerBoost = 8;
+    ability->moveSpeed = MoveSpeedType::FAST;
+    ability->hpBoost = -6;
+    ability->maxDamageBoost = -3;
+    ability->minDamageBoost = -3;
+    ability->defense = DefenseType::LOW;
+    ability->accuracy = AccuracyType::ACCURATE;
+    ability->requiredFlags = (GenerateFlag::THIEVING);
+    ability->forbiddenFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::INSECTOID);
+    ability->abilFlags = (MA_HIT_STEAL_FLEE);
     abilities.push_back(ability);
 
     return abilities;
