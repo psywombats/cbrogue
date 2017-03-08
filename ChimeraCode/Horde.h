@@ -16,56 +16,56 @@ class ChimeraMonster;
 class HordeMember;
 
 enum class HordePurposeType {
-	FODDER,
-	GENERAL,
-	SPECIAL,
-//	RESOURCE,
-//	WATER,
-//	GROUP,
-//	TOTEM,
-//	TURRET,
-//	STATUE,
-//	THIEF,
+    FODDER,
+    GENERAL,
+    SPECIAL,
+//    RESOURCE,
+//    WATER,
+//    GROUP,
+//    TOTEM,
+//    TURRET,
+//    STATUE,
+//    THIEF,
 };
 
 class Horde {
 
 public:
 
-	Horde(const ChimeraMonster &leader);
-	virtual ~Horde();
+    Horde(const ChimeraMonster &leader);
+    virtual ~Horde();
 
-	/**
-	 * Convert to what the rest of Brogue uses.
-	 */
-	hordeType convertToStruct();
+    /**
+     * Convert to what the rest of Brogue uses.
+     */
+    hordeType convertToStruct();
 
-	void addMember(const ChimeraMonster &member, short min, short max);
-	std::string debugReport() const;
-	int memberCount() const;
+    void addMember(const ChimeraMonster &member, short min, short max);
+    std::string debugReport() const;
+    int memberCount() const;
 
-	HordePurposeType purpose;
+    HordePurposeType purpose;
 
 private:
 
-	const ChimeraMonster &leader;
-	std::list<HordeMember *> members;
+    const ChimeraMonster &leader;
+    std::list<HordeMember *> members;
 
-	int calculateDL() const;
+    int calculateDL() const;
 };
 
 class HordeMember {
 public:
-	HordeMember(const ChimeraMonster &member, short minCount, short maxCount) :
-		member(member),
-		minCount(minCount),
-		maxCount(maxCount) {
+    HordeMember(const ChimeraMonster &member, short minCount, short maxCount) :
+        member(member),
+        minCount(minCount),
+        maxCount(maxCount) {
 
-	};
+    };
 
-	const ChimeraMonster &member;
-	short minCount;
-	short maxCount;
+    const ChimeraMonster &member;
+    short minCount;
+    short maxCount;
 };
 
 #endif /* HOARD_H_ */

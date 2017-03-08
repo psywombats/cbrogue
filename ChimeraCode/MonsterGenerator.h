@@ -19,28 +19,28 @@ class Ability;
 class MonsterGenerator {
 
 public:
-	MonsterGenerator();
-	virtual ~MonsterGenerator();
+    MonsterGenerator();
+    virtual ~MonsterGenerator();
 
-	void generate();
-	std::vector<ChimeraMonster *> &getMonsters();
-	std::vector<Horde *> &getHordes();
+    void generate();
+    std::vector<ChimeraMonster *> &getMonsters();
+    std::vector<Horde *> &getHordes();
 
 private:
 
-	std::vector<ChimeraMonster *> monsters;
-	std::vector<Body *> bodies;
-	std::vector<Ability *> abilities;
-	std::vector<Horde *> hordes;
+    std::vector<ChimeraMonster *> monsters;
+    std::vector<Body *> bodies;
+    std::vector<Ability *> abilities;
+    std::vector<Horde *> hordes;
 
-	ChimeraMonster &newMonster(Body &body);
-	ChimeraMonster &newMonster(const ChimeraMonster &baseMonster);
-	Horde &newHorde(const ChimeraMonster &monster);
+    ChimeraMonster &newMonster(Body &body);
+    ChimeraMonster &newMonster(const ChimeraMonster &baseMonster);
+    Horde &newHorde(const ChimeraMonster &monster);
 
-	Body *matchingBody(const std::function<bool(const Body *)>& filter);
-	Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
+    Body *matchingBody(const std::function<bool(const Body *)>& filter);
+    Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
 
-	std::string debugReport() const;
+    std::string debugReport() const;
 };
 
 #endif /* MONSTERGENERATOR_H_ */

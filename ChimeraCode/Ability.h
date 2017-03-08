@@ -14,17 +14,17 @@
 #include "ChimeraMonster.h"
 
 enum class ColorModFlavor {
-	NONE,
-	POISONOUS,
-	SPELLCASTING,
-	COMBAT,
-	MOBILITY,
-	FIRE,
+    NONE,
+    POISONOUS,
+    SPELLCASTING,
+    COMBAT,
+    MOBILITY,
+    FIRE,
 };
 
 enum AbilityFlag : int {
-	SPELLCASTING		= 1 << 1,
-	UNIQUE				= 1 << 2,
+    SPELLCASTING        = 1 << 1,
+    UNIQUE                = 1 << 2,
 };
 
 /**
@@ -35,42 +35,42 @@ class Ability {
 
 public:
 
-	Ability();
-	virtual ~Ability();
+    Ability();
+    virtual ~Ability();
 
-	void applyToMonster(ChimeraMonster &monster);
-	bool validForMonster(const ChimeraMonster &monster) const;
+    void applyToMonster(ChimeraMonster &monster);
+    bool validForMonster(const ChimeraMonster &monster) const;
 
-	// rpg
-	int hpBoost;
-	int dangerBoost;
-	int minDamageBoost;
-	int maxDamageBoost;
-	RegenSpeedType regenSpeed;
-	MoveSpeedType moveSpeed;
-	AttackSpeedType attackSpeed;
-	AccuracyType accuracy;
-	DefenseType defense;
+    // rpg
+    int hpBoost;
+    int dangerBoost;
+    int minDamageBoost;
+    int maxDamageBoost;
+    RegenSpeedType regenSpeed;
+    MoveSpeedType moveSpeed;
+    AttackSpeedType attackSpeed;
+    AccuracyType accuracy;
+    DefenseType defense;
 
-	// flags
-	std::vector<boltType> bolts;
-	unsigned long flags;			// bitset of monsterBehaviorTypes
-	unsigned long abilFlags;		// bitset of monsterAbilityFlags
+    // flags
+    std::vector<boltType> bolts;
+    unsigned long flags;            // bitset of monsterBehaviorTypes
+    unsigned long abilFlags;        // bitset of monsterAbilityFlags
 
-	// flavor
-	std::string namePrefix;
-	std::string nameSuffix;
-	ColorModFlavor colorMod;
+    // flavor
+    std::string namePrefix;
+    std::string nameSuffix;
+    ColorModFlavor colorMod;
 
-	// generation
-	bool inUse;
-	unsigned long requiredFlags;	// bitset of GenerateFlag
+    // generation
+    bool inUse;
+    unsigned long requiredFlags;    // bitset of GenerateFlag
 
-	static std::vector<Ability *> loadModifierAbilities();
+    static std::vector<Ability *> loadModifierAbilities();
 
 private:
 
-	const color *blendColor(const color *baseColor) const;
+    const color *blendColor(const color *baseColor) const;
 
 };
 

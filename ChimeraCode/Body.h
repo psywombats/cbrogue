@@ -21,41 +21,41 @@
 class Body {
 
 public:
-	Body();
-	virtual ~Body();
+    Body();
+    virtual ~Body();
 
-	static std::vector<Body *> loadBodies();
+    static std::vector<Body *> loadBodies();
 
-	void applyToMonster(ChimeraMonster &monster);
+    void applyToMonster(ChimeraMonster &monster);
 
-	// rpg
-	short hp;
-	short minDamage;
-	short maxDamage;
-	AccuracyType accuracy;
-	DefenseType defense;
-	MoveSpeedType moveSpeed;
-	RegenSpeedType regenSpeed;
-	AttackSpeedType attackSpeed;
-	unsigned long flags;			// monsterBehaviorTypes bitset
-	unsigned long abilFlags;		// monsterAbilityTypes bitset
+    // rpg
+    short hp;
+    short minDamage;
+    short maxDamage;
+    AccuracyType accuracy;
+    DefenseType defense;
+    MoveSpeedType moveSpeed;
+    RegenSpeedType regenSpeed;
+    AttackSpeedType attackSpeed;
+    unsigned long flags;            // monsterBehaviorTypes bitset
+    unsigned long abilFlags;        // monsterAbilityTypes bitset
 
-	// flavor
-	std::string baseName;
-	char baseChar;
-	color *baseColor;
+    // flavor
+    std::string baseName;
+    char baseChar;
+    color *baseColor;
 
-	// generation
-	unsigned long genFlags;			// generateFlag bitset
-	int dangerLevel;
-	bool inUse;
+    // generation
+    unsigned long genFlags;            // generateFlag bitset
+    int dangerLevel;
+    bool inUse;
 
-	// flavor
-	GenderType gender;
+    // flavor
+    GenderType gender;
 
 private:
 
-	static std::set<std::reference_wrapper<char>> usedChars;
+    static std::set<std::reference_wrapper<char>> usedChars;
 };
 
 #endif /* BODY_H_ */
