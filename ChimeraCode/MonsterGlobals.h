@@ -9,7 +9,7 @@
 #ifndef MonsterGlobals_h
 #define MonsterGlobals_h
 
-#define CHIMERAS_ENABLED false
+#define CHIMERAS_ENABLED true
 
 #include <stdio.h>
 #include <string>
@@ -19,6 +19,8 @@
 creatureType *getMonsterCatalog();
 hordeType *getHordeCatalog();
 monsterClass *getMonsterClassCatalog();
+
+void resetMonsterGeneration();
 
 // utility
 std::string printInt(int n);

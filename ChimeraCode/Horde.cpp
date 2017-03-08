@@ -101,9 +101,9 @@ int Horde::calculateDL() const {
     int danger = leader.dangerLevel;
     if (this->members.size() >= 1) {
         if (this->purpose == HordePurposeType::FODDER) {
-            danger += this->members.front()->maxCount;
+            danger += 2;
         } else {
-            danger += this->members.front()->member.dangerLevel / 2;
+            danger += MAX(3, this->members.front()->member.dangerLevel / 2);
         }
     }
     if (this->members.size() >= 2) {

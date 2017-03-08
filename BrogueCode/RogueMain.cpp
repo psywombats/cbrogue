@@ -233,6 +233,8 @@ void initializeRogue(unsigned long seed) {
     rogue.cautiousMode = false;
     rogue.milliseconds = 0;
     
+    resetMonsterGeneration();
+    
     rogue.RNG = RNG_SUBSTANTIVE;
     if (!rogue.playbackMode) {
         rogue.seed = seedRandomGenerator(seed);

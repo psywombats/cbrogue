@@ -94,6 +94,8 @@ enum monsterTypes {
 
 #define MONSTER_CLASS_COUNT         13
 
+static bool monsterCatalogInitialized = false;
+
 creatureType *catalog;
 hordeType *hordeCatalog;
 monsterClass *monsterClassCatalog;
@@ -184,13 +186,16 @@ short getCharmSummonMonsterId() {
     return MK_CHARM_GUARDIAN;
 }
 
+void resetMonsterGeneration() {
+    monsterCatalogInitialized = false;
+}
+
 void ensureCatalogsInitialized() {
-    static bool catalogInitialized = false;
-    if (catalogInitialized) {
+    if (monsterCatalogInitialized) {
         return;
     }
     
-    catalogInitialized = true;
+    monsterCatalogInitialized = true;
 
     if (CHIMERAS_ENABLED) {
         generator = new MonsterGenerator();
