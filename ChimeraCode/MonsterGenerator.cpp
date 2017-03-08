@@ -290,8 +290,14 @@ Body *MonsterGenerator::matchingBody(const std::function<bool(const Body *)>& fi
         return NULL;
     }
 
-    int index = rand_range(0, passing.size() - 1);
-    return passing[index];
+    for (int i = 0; i < 100; i += 1) {
+        int index = rand_range(0, passing.size() - 1);
+        Body *body = passing[index];
+        if (rand_percent(body->rarityPercent)) {
+            return body;
+        }
+    }
+    return NULL;
 }
 
 Ability *MonsterGenerator::matchingAbility(const std::function<bool(const Ability *)>& filter) {
@@ -306,9 +312,15 @@ Ability *MonsterGenerator::matchingAbility(const std::function<bool(const Abilit
     if (passing.size() == 0) {
         return NULL;
     }
-
-    int index = rand_range(0, passing.size() - 1);
-    return passing[index];
+    
+    for (int i = 0; i < 100; i += 1) {
+        int index = rand_range(0, passing.size() - 1);
+        Ability *ability = passing[index];
+        if (rand_percent(ability->rarityPercent)) {
+            return ability;
+        }
+    }
+    return NULL;
 }
 
 std::string MonsterGenerator::debugReport() const {

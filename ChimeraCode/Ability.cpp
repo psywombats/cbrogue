@@ -9,6 +9,7 @@
 
 Ability::Ability() :
         hpBoost(0),
+        rarityPercent(50),
         requiredFlags(0),
         flags(0),
         forbiddenFlags(0),
@@ -249,6 +250,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->bolts = {BOLT_SPIDERWEB};
     ability->requiredFlags = GenerateFlag::INSECTOID;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_IMMUNE_TO_WEBS);
+    ability->rarityPercent = 75;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -272,6 +274,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
     ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -285,6 +288,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->moveSpeed = MoveSpeedType::FAST;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -297,6 +301,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -3;
     ability->requiredFlags = (GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->rarityPercent = 66;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -315,6 +320,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_BLINKING};
     ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -328,6 +334,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->rarityPercent = 66;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -341,6 +348,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->rarityPercent = 66;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -415,6 +423,18 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->attackSpeed = AttackSpeedType::TOTEM;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     ability->requiredFlags = (GenerateFlag::INSECTOID);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "acid-spitting";
+    ability->colorMod = ColorModFlavor::POISONOUS;
+    ability->dangerBoost = 10;
+    ability->bolts = {BOLT_ACID_TURRET_ATTACK};
+    ability->defense = DefenseType::LOW;
+    ability->attackSpeed = AttackSpeedType::TURRET;
+    ability->flags = (MONST_CAST_SPELLS_SLOWLY);
+    ability->requiredFlags = (GenerateFlag::INSECTOID);
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -521,14 +541,16 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
     ability->forbiddenFlags = (GenerateFlag::WIZARDLY);
     ability->abilFlags = (MA_SEIZES);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "sticky";
+    ability->namePrefix = "sticky";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_SEIZES);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -554,6 +576,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_HIT_DEGRADE_ARMOR);
     ability->flags = (MONST_DEFEND_DEGRADE_WEAPON);
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -563,6 +586,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_BLOAT_DEATH;
     ability->featureMessage = "bursts, leaving behind an expanding cloud of caustic gas!";
+    ability->rarityPercent = 66;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -572,6 +596,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_HOLE_POTION;
     ability->featureMessage = "bursts, causing the floor underneath $HIMHER to disappear!";
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -590,6 +615,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_MUTATION_LICHEN;
     ability->featureMessage = "bursts, filling the air with a cloud of fungal spores!";
+    ability->rarityPercent = 25;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -608,6 +634,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_SHATTERING_SPELL;
     ability->featureMessage = "bursts, releasing a wave of turquoise radiation! The walls begin to shimmer.";
+    ability->rarityPercent = 25;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -617,6 +644,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GenerateFlag::BURSTS);
     ability->featureKamikaze = DF_DEWAR_METHANE;
     ability->featureMessage = "bursts, and an offensive odor accompanies the hiss of escaping methane!";
+    ability->rarityPercent = 25;
     abilities.push_back(ability);
     
     ability = new Ability();

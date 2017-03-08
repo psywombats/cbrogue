@@ -145,6 +145,7 @@ private:
     std::list<std::reference_wrapper<Ability>> abilities;
 
     static std::string boltToString(boltType bolt);
+    static std::string dungeonFeatureToString(dungeonFeatureTypes feature);
 
     static int nextChimeraId;
 

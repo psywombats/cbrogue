@@ -158,6 +158,7 @@ int Horde::calculateFrequency() const {
         default:                                    frequency = 10;                 break;
     }
     
+    frequency -= this->memberCount();
     frequency += extraFrequency;
     return frequency;
 }

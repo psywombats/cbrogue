@@ -14,6 +14,7 @@ std::set<std::reference_wrapper<char>> Body::usedChars = std::set<std::reference
 Body::Body() :
         hp(0),
         baseChar('?'),
+        rarityPercent(50),
         genFlags(0),
         flags(0),
         abilFlags(0),
@@ -178,6 +179,7 @@ std::vector<Body *> Body::loadBodies() {
     body->accuracy = AccuracyType::INACCURATE;
     body->dangerLevel = 2;
     body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -189,6 +191,7 @@ std::vector<Body *> Body::loadBodies() {
     body->accuracy = AccuracyType::INACCURATE;
     body->dangerLevel = 8;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -212,6 +215,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::FAST;
     body->dangerLevel = 12;
     body->genFlags = (GenerateFlag::AMORPHOUS);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -224,6 +228,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::HIGH;
     body->dangerLevel = 8;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -268,6 +273,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::LOW;
     body->dangerLevel = 10;
     body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -279,6 +285,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 9;
     body->abilFlags = (MA_TRANSFERENCE);
     body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    body->rarityPercent = 25;
     bodies.push_back(body);
 
     body = new Body();
@@ -324,6 +331,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 10;
     body->gender = GenderType::MALE_ONLY;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -337,6 +345,7 @@ std::vector<Body *> Body::loadBodies() {
     body->gender = GenderType::MALE_ONLY;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
     body->flags = (MONST_FLEES_NEAR_DEATH);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -362,6 +371,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::HIGH;
     body->moveSpeed = MoveSpeedType::FAST;
     body->dangerLevel = 16;
+    body->rarityPercent = 66;
     bodies.push_back(body);
 
     body = new Body();
@@ -384,6 +394,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
     body->dangerLevel = 28;
     body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
+    body->rarityPercent = 66;
     bodies.push_back(body);
 
     body = new Body();
@@ -395,6 +406,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 28;
     body->gender = GenderType::BOTH;
     body->genFlags = (GenerateFlag::WIZARDLY);
+    body->rarityPercent = 66;
     bodies.push_back(body);
 
     body = new Body();
@@ -417,6 +429,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 1;
     body->flags = (MONST_FLIES | MONST_FLITS);
     body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
+    body->rarityPercent = 66;
     bodies.push_back(body);
     
     body = new Body();
@@ -435,9 +448,10 @@ std::vector<Body *> Body::loadBodies() {
     body->baseColor = &brown;
     body->minDamage = 0;
     body->maxDamage = 0;
-    body->hp = 12;
-    body->dangerLevel = 5;
+    body->hp = 15;
+    body->dangerLevel = 6;
     body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     return bodies;

@@ -71,6 +71,7 @@ public:
 
     // generation
     bool inUse;
+    int rarityPercent;
     unsigned long requiredFlags;    // bitset of GenerateFlag
     unsigned long forbiddenFlags;   // bitset of GenerateFlag
 
