@@ -227,7 +227,7 @@ void updateLighting() {
     // Paint all glowing tiles.
     for (i = 0; i < DCOLS; i++) {
         for (j = 0; j < DROWS; j++) {
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 tile = pmap[i][j].layers[layer];
                 if (tileCatalog[tile].glowLight) {
                     paintLight(&(lightCatalog[tileCatalog[tile].glowLight]), i, j, false, false);
@@ -286,7 +286,7 @@ bool playerInDarkness() {
 #define flarePrecision 1000
 
 flare *newFlare(lightSource *light, short x, short y, short changePerFrame, short limit) {
-    flare *theFlare = malloc(sizeof(flare));
+    flare *theFlare = (flare *)malloc(sizeof(flare));
     memset(theFlare, '\0', sizeof(flare));
     theFlare->light = light;
     theFlare->xLoc = x;
@@ -309,7 +309,7 @@ void createFlare(short x, short y, enum lightType lightIndex) {
     
     if (rogue.flareCount >= rogue.flareCapacity) {
         rogue.flareCapacity += 10;
-        rogue.flares = realloc(rogue.flares, sizeof(flare *) * rogue.flareCapacity);
+        rogue.flares = (flare **)realloc(rogue.flares, sizeof(flare *) * rogue.flareCapacity);
     }
     rogue.flares[rogue.flareCount] = theFlare;
     rogue.flareCount++;

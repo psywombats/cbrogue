@@ -1171,7 +1171,7 @@ enum subseqDFTypes {
 
 // Returns the terrain flags of this tile after it's promoted according to the event corresponding to subseqDFTypes.
 unsigned long successorTerrainFlags(enum tileType tile, enum subseqDFTypes promotionType) {
-    enum dungeonFeatureTypes DF = 0;
+    enum dungeonFeatureTypes DF = (dungeonFeatureTypes)0;
     
     switch (promotionType) {
         case SUBSEQ_PROMOTE:
@@ -2091,7 +2091,7 @@ enum directions monsterSwarmDirection(creature *monst, creature *enemy) {
     shuffleList(dirList, 4);
     shuffleList(&(dirList[4]), 4);
     for (i=0; i<8 && targetDir == NO_DIRECTION; i++) {
-        dir = dirList[i];
+        dir = (directions)dirList[i];
         newX = monst->xLoc + nbDirs[dir][0];
         newY = monst->yLoc + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -2124,7 +2124,7 @@ enum directions monsterSwarmDirection(creature *monst, creature *enemy) {
             // Found a prospective ally.
             // Check that there isn't already an open space from which to attack the enemy that is accessible to the ally.
             alternateDirectionExists = false;
-            for (dir=0; dir< DIRECTION_COUNT && !alternateDirectionExists; NEXT_DIR(dir)) {
+            for (dir=(directions)0; dir< DIRECTION_COUNT && !alternateDirectionExists; NEXT_DIR(dir)) {
                 newX = ally->xLoc + nbDirs[dir][0];
                 newY = ally->yLoc + nbDirs[dir][1];
                 if (coordinatesAreInMap(newX, newY)
@@ -2621,7 +2621,7 @@ bool isLocalScentMaximum(short x, short y) {
     
     const short baselineScent = scentMap[x][y];
     
-    for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
+    for (dir=(directions)0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -2648,7 +2648,7 @@ enum directions scentDirection(creature *monst) {
     
     for (;;) {
         
-        for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
+        for (dir=(directions)0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
             newX = x + nbDirs[dir][0];
             newY = y + nbDirs[dir][1];
             otherMonst = monsterAtLoc(newX, newY);
@@ -2674,10 +2674,10 @@ enum directions scentDirection(creature *monst) {
             // There's a possibility he's stuck for some other reason, though, so we'll only
             // try once per his move -- hence the failsafe.
             canTryAgain = false;
-            for (dir=0; dir<4; NEXT_DIR(dir)) {
+            for (dir=(directions)0; dir<4; NEXT_DIR(dir)) {
                 newX = x + nbDirs[dir][0];
                 newY = y + nbDirs[dir][1];
-                for (dir2=0; dir2<4; NEXT_DIR(dir2)) {
+                for (dir2=(directions)0; dir2<4; NEXT_DIR(dir2)) {
                     newestX = newX + nbDirs[dir2][0];
                     newestY = newY + nbDirs[dir2][1];
                     if (coordinatesAreInMap(newX, newY) && coordinatesAreInMap(newestX, newestY)) {
@@ -2801,7 +2801,7 @@ void monsterMillAbout(creature *monst, short movementChance) {
     const short y = monst->yLoc;
     
     if (rand_percent(movementChance)) {
-        dir = randValidDirectionFrom(monst, x, y, true);
+        dir = (directions)randValidDirectionFrom(monst, x, y, true);
         if (dir != -1) {
             targetLoc[0] = x + nbDirs[dir][0];
             targetLoc[1] = y + nbDirs[dir][1];
@@ -3014,7 +3014,7 @@ bool updateMonsterCorpseAbsorption(creature *monst) {
             monst->targetCorpseLoc[0] = monst->targetCorpseLoc[1] = 0;
             if (monst->absorptionBolt != BOLT_NONE) {
                 for (i=0; monst->info.bolts[i] != BOLT_NONE; i++);
-                monst->info.bolts[i] = monst->absorptionBolt;
+                monst->info.bolts[i] = (boltType)monst->absorptionBolt;
             } else if (monst->absorbBehavior) {
                 monst->info.flags |= monst->absorptionFlags;
             } else {
@@ -3604,7 +3604,7 @@ bool moveMonster(creature *monst, short dx, short dy) {
                 }
                 return true;
             } else {
-                for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+                for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
                     if (dx == nbDirs[dir][0]
                         && dy == nbDirs[dir][1]) {
                         
@@ -3732,7 +3732,7 @@ bool getQualifyingLocNear(short loc[2],
 
 bool getQualifyingGridLocNear(short loc[2],
                                  short x, short y,
-                                 bool grid[DCOLS][DROWS],
+                                 char grid[DCOLS][DROWS],
                                  bool deterministic) {
     short i, j, k, candidateLocs, randIndex;
     

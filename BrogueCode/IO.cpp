@@ -2461,10 +2461,12 @@ void executeKeystroke(signed long keystroke, bool controlKey, bool shiftKey) {
             displayLevel();
             refreshSideBar(-1, -1, false);
             if (rogue.trueColorMode) {
-                messageWithColor(KEYBOARD_LABELS ? "Color effects disabled. Press '\\' again to enable." : "Color effects disabled.",
+                std::string message = KEYBOARD_LABELS ? "Color effects disabled. Press '\\' again to enable." : "Color effects disabled.";
+                messageWithColor((char *)message.c_str(),
                                  &teal, false);
             } else {
-                messageWithColor(KEYBOARD_LABELS ? "Color effects enabled. Press '\\' again to disable." : "Color effects enabled.",
+                std::string message = KEYBOARD_LABELS ? "Color effects enabled. Press '\\' again to disable." : "Color effects enabled.";
+                messageWithColor((char *)message.c_str(),
                                  &teal, false);
             }
             break;
@@ -2473,10 +2475,12 @@ void executeKeystroke(signed long keystroke, bool controlKey, bool shiftKey) {
             displayLevel();
             refreshSideBar(-1, -1, false);
             if (rogue.displayAggroRangeMode) {
-                messageWithColor(KEYBOARD_LABELS ? "Stealth range displayed. Press ']' again to hide." : "Stealth range displayed.",
+                std::string message = KEYBOARD_LABELS ? "Stealth range displayed. Press ']' again to hide." : "Stealth range displayed.";
+                messageWithColor((char *)message.c_str(),
                                  &teal, false);
             } else {
-                messageWithColor(KEYBOARD_LABELS ? "Stealth range hidden. Press ']' again to display." : "Stealth range hidden.",
+                std::string message = KEYBOARD_LABELS ? "Stealth range hidden. Press ']' again to display." : "Stealth range hidden.";
+                messageWithColor((char *)message.c_str(),
                                  &teal, false);
             }
             break;

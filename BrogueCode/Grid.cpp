@@ -28,9 +28,9 @@
 // mallocing two-dimensional arrays! dun dun DUN!
 short **allocGrid() {
     short i;
-    short **array = malloc(DCOLS * sizeof(short *));
+    short **array = (short **)malloc(DCOLS * sizeof(short *));
     
-    array[0] = malloc(DROWS * DCOLS * sizeof(short));
+    array[0] = (short *)malloc(DROWS * DCOLS * sizeof(short));
     for(i = 1; i < DCOLS; i++) {
         array[i] = array[0] + i * DROWS;
     }
@@ -121,7 +121,7 @@ short floodFillGrid(short **grid, short x, short y, short eligibleValueMin, shor
     brogueAssert(fillValue < eligibleValueMin || fillValue > eligibleValueMax);
     
     grid[x][y] = fillValue;
-    for (dir = 0; dir < 4; NEXT_DIR(dir)) {
+    for (dir = (directions)0; dir < 4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -405,7 +405,7 @@ void cellularAutomataRound(short **grid, char birthParameters[9], char survivalP
     for(i=0; i<DCOLS; i++) {
         for(j=0; j<DROWS; j++) {
             nbCount = 0;
-            for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
+            for (dir=(directions)0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
                 newX = i + nbDirs[dir][0];
                 newY = j + nbDirs[dir][1];
                 if (coordinatesAreInMap(newX, newY)
@@ -435,7 +435,7 @@ short fillContiguousRegion(short **grid, short x, short y, short fillValue) {
     grid[x][y] = fillValue;
     
     // Iterate through the four cardinal neighbors.
-    for (dir=0; dir<4; NEXT_DIR(dir)) {
+    for (dir=(directions)0; dir<4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (!coordinatesAreInMap(newX, newY)) {

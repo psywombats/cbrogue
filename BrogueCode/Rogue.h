@@ -2930,7 +2930,7 @@ extern "C" {
                                  bool deterministic);
     bool getQualifyingGridLocNear(short loc[2],
                                      short x, short y,
-                                     bool grid[DCOLS][DROWS],
+                                     char grid[DCOLS][DROWS],
                                      bool deterministic);
     
     // Grid operations

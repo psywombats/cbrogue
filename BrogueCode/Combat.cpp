@@ -132,7 +132,7 @@ void addMonsterToContiguousMonsterGrid(short x, short y, creature *monst, char g
     creature *tempMonst;
     
     grid[x][y] = true;
-    for (dir=0; dir<4; NEXT_DIR(dir)) {
+    for (dir=(directions)0; dir<4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         
@@ -604,7 +604,7 @@ void magicWeaponHit(creature *defender, item *theItem, bool backstabbed) {
     //  W_SPEED, W_QUIETUS, W_PARALYSIS, W_MULTIPLICITY, W_SLOWING, W_CONFUSION, W_FORCE, W_SLAYING, W_MERCY, W_PLENTY
     short chance, i;
     float enchant;
-    enum weaponEnchants enchantType = theItem->enchant2;
+    enum weaponEnchants enchantType = (weaponEnchants)theItem->enchant2;
     creature *newMonst;
     bool autoID = false;
     
@@ -1702,7 +1702,7 @@ void buildHitList(creature **hitList,
         if (nbDirs[i][0] == newX - x
             && nbDirs[i][1] == newY - y) {
             
-            dir = i;
+            dir = (directions)i;
             break;
         }
     }
@@ -1727,7 +1727,7 @@ void buildHitList(creature **hitList,
             dir = UP; // Just pick one.
         }
         for (i=0; i<8; i++) {
-            newDir = (dir + i) % DIRECTION_COUNT;
+            newDir = (directions)(((int)dir + i) % DIRECTION_COUNT);
             newestX = x + cDirs[newDir][0];
             newestY = y + cDirs[newDir][1];
             if (coordinatesAreInMap(newestX, newestY) && (pmap[newestX][newestY].flags & (HAS_MONSTER | HAS_PLAYER))) {

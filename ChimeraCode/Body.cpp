@@ -37,7 +37,7 @@ Body::~Body() {
 
 void Body::applyToMonster(ChimeraMonster &monster) {
 	monster.hp = this->hp;
-	monster.damage = (randomRange) {minDamage, maxDamage, (maxDamage - minDamage) / 3};
+	monster.damage = (randomRange) {minDamage, maxDamage, (short)((maxDamage - minDamage) / 3)};
 	monster.accuracy = this->accuracy;
 	monster.defense = this->defense;
 

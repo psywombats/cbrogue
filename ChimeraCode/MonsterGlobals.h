@@ -9,7 +9,7 @@
 #ifndef MonsterGlobals_h
 #define MonsterGlobals_h
 
-#define CHIMERAS_ENABLED true
+#define CHIMERAS_ENABLED false
 
 #include <stdio.h>
 #include <string>

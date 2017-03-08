@@ -26,6 +26,7 @@
 #include "IncludeGlobals.h"
 #include "MonsterGlobals.h"
 #include <math.h>
+#include <string>
 
 item *initializeItem() {
     short i;
@@ -388,7 +389,7 @@ item *placeItem(item *theItem, short x, short y) {
             sprintf(buf, "a pressure plate clicks underneath the %s!", theItemName);
             message(buf, true);
         }
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].flags & T_IS_DF_TRAP) {
                 spawnDungeonFeature(x, y, &(dungeonFeatureCatalog[tileCatalog[pmap[x][y].layers[layer]].fireType]), true, false);
                 promoteTile(x, y, layer, false);
@@ -410,7 +411,7 @@ void fillItemSpawnHeatMap(unsigned short heatMap[DCOLS][DROWS], unsigned short h
     if (heatMap[x][y] > heatLevel) {
         heatMap[x][y] = heatLevel;
     }
-    for (dir = 0; dir < 4; NEXT_DIR(dir)) {
+    for (dir = (directions)0; dir < 4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
@@ -711,7 +712,7 @@ void removeItemFrom(short x, short y) {
     if (cellHasTMFlag(x, y, TM_PROMOTES_ON_ITEM_PICKUP)) {
         for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_ON_ITEM_PICKUP) {
-                promoteTile(x, y, layer, false);
+                promoteTile(x, y, (dungeonLayers)layer, false);
             }
         }
     }
@@ -735,8 +736,8 @@ void pickUpItemAt(short x, short y) {
     }
     
     if ((theItem->flags & ITEM_KIND_AUTO_ID)
-        && tableForItemCategory(theItem->category, NULL)
-        && !(tableForItemCategory(theItem->category, NULL)[theItem->kind].identified)) {
+        && tableForItemCategory((itemCategory)theItem->category, NULL)
+        && !(tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified)) {
         
         identifyItemKind(theItem);
     }
@@ -1107,7 +1108,7 @@ void updateFloorItems() {
             continue;
         }
         if (cellHasTMFlag(x, y, TM_PROMOTES_ON_STEP)) {
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_ON_STEP) {
                     promoteTile(x, y, layer, false);
                 }
@@ -1167,7 +1168,7 @@ bool itemCanBeCalled(item *theItem) {
     if (theItem->category & (WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND|CHARM)) {
         return true;
     } else if ((theItem->category & (POTION | SCROLL))
-               && !tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+               && !tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
         return true;
     } else {
         return false;
@@ -1188,15 +1189,16 @@ void call(item *theItem) {
         // and then reset it immediately afterward.
         for (tempItem = packItems->nextItem; tempItem != NULL; tempItem = tempItem->nextItem) {
             if ((tempItem->category & (POTION | SCROLL))
-                && tableForItemCategory(tempItem->category, NULL)[tempItem->kind].identified) {
+                && tableForItemCategory((itemCategory)tempItem->category, NULL)[tempItem->kind].identified) {
                 
                 tempItem->flags &= ~ITEM_CAN_BE_IDENTIFIED;
             } else {
                 tempItem->flags |= ITEM_CAN_BE_IDENTIFIED;
             }
         }
+        std::string message = KEYBOARD_LABELS ? "Call what? (a-z, shift for more info; or <esc> to cancel)" : "Call what?";
         theItem = promptForItemOfType((WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND|CHARM), ITEM_CAN_BE_IDENTIFIED, 0,
-                                      KEYBOARD_LABELS ? "Call what? (a-z, shift for more info; or <esc> to cancel)" : "Call what?",
+                                       (char *)message.c_str(),
                                       true);
         updateIdentifiableItems(); // Reset the flags.
     }
@@ -1223,7 +1225,7 @@ void call(item *theItem) {
     }
     
     if (theItem->category & (WEAPON | ARMOR | STAFF | WAND | RING)) {
-        if (tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+        if (tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
             if (inscribeItem(theItem)) {
                 command[c++] = '\0';
                 strcat((char *) command, theItem->inscription);
@@ -1245,8 +1247,8 @@ void call(item *theItem) {
         }
     }
     
-    if (tableForItemCategory(theItem->category, NULL)
-        && !(tableForItemCategory(theItem->category, NULL)[theItem->kind].identified)) {
+    if (tableForItemCategory((itemCategory)theItem->category, NULL)
+        && !(tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified)) {
         
         if (getInputTextString(itemText, "call them: \"", 29, "", "\"", TEXT_INPUT_NORMAL, false)) {
             command[c++] = '\0';
@@ -1254,11 +1256,11 @@ void call(item *theItem) {
             recordKeystrokeSequence(command);
             recordKeystroke(RETURN_KEY, false, false);
             if (itemText[0]) {
-                strcpy(tableForItemCategory(theItem->category, NULL)[theItem->kind].callTitle, itemText);
-                tableForItemCategory(theItem->category, NULL)[theItem->kind].called = true;
+                strcpy(tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].callTitle, itemText);
+                tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].called = true;
             } else {
-                tableForItemCategory(theItem->category, NULL)[theItem->kind].callTitle[0] = '\0';
-                tableForItemCategory(theItem->category, NULL)[theItem->kind].called = false;
+                tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].callTitle[0] = '\0';
+                tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].called = false;
             }
             confirmMessages();
             itemName(theItem, buf, false, true, NULL);
@@ -1811,10 +1813,10 @@ void itemDetails(char *buf, item *theItem) {
     itemName(theItem, theName, false, false, NULL);
     
     // introductory text
-    if (tableForItemCategory(theItem->category, NULL)
-        && (tableForItemCategory(theItem->category, NULL)[theItem->kind].identified || rogue.playbackOmniscience)) {
+    if (tableForItemCategory((itemCategory)theItem->category, NULL)
+        && (tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified || rogue.playbackOmniscience)) {
         
-        strcat(buf, tableForItemCategory(theItem->category, NULL)[theItem->kind].description);
+        strcat(buf, tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].description);
         
         if (theItem->category == POTION && theItem->kind == POTION_LIFE) {
             sprintf(buf2, "\n\nIt will increase your maximum health by %s%i%%%s.",
@@ -1830,7 +1832,7 @@ void itemDetails(char *buf, item *theItem) {
                         (singular ? "This" : "These"),
                         (singular ? "" : "s"),
                         (singular ? "s" : ""),
-                        tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor,
+                        tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor,
                         (singular ? "it" : "they"));
                 break;
             case SCROLL:
@@ -1839,21 +1841,21 @@ void itemDetails(char *buf, item *theItem) {
                         (singular ? "" : "s"),
                         (singular ? "is" : "are"),
                         (singular ? "s" : ""),
-                        tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor,
+                        tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor,
                         (singular ? "it" : "they"));
                 break;
             case STAFF:
                 sprintf(buf2, "This gnarled %s staff is warm to the touch. Who knows what it will do when used?",
-                        tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor);
+                        tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor);
                 break;
             case WAND:
                 sprintf(buf2, "This thin %s wand is warm to the touch. Who knows what it will do when used?",
-                        tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor);
+                        tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor);
                 break;
             case RING:
                 sprintf(buf2, "This metal band is adorned with a%s %s gem that glitters in the darkness. Who knows what effect it has when worn? ",
-                        isVowelish(tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor) ? "n" : "",
-                        tableForItemCategory(theItem->category, NULL)[theItem->kind].flavor);
+                        isVowelish(tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor) ? "n" : "",
+                        tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].flavor);
                 break;
             case CHARM: // Should never be displayed.
                 strcat(buf2, "What a perplexing charm!");
@@ -3101,8 +3103,9 @@ void equip(item *theItem) {
     
     command[c++] = EQUIP_KEY;
     if (!theItem) {
+        std::string message = KEYBOARD_LABELS ? "Equip what? (a-z, shift for more info; or <esc> to cancel)" : "Equip what?";
         theItem = promptForItemOfType((WEAPON|ARMOR|RING), 0, ITEM_EQUIPPED,
-                                      KEYBOARD_LABELS ? "Equip what? (a-z, shift for more info; or <esc> to cancel)" : "Equip what?", true);
+                                      (char *)message.c_str(), true);
     }
     if (theItem == NULL) {
         return;
@@ -3456,7 +3459,7 @@ bool tunnelize(short x, short y) {
         pmap[x][y].layers[DUNGEON] = CRYSTAL_WALL; // don't dissolve the boundary walls
         didSomething = true;
     } else {
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].flags & (T_OBSTRUCTS_PASSABILITY | T_OBSTRUCTS_VISION)) {
                 pmap[x][y].layers[layer] = (layer == DUNGEON ? FLOOR : NOTHING);
                 didSomething = true;
@@ -3476,7 +3479,7 @@ bool tunnelize(short x, short y) {
     if (!cellHasTerrainFlag(x, y, T_OBSTRUCTS_DIAGONAL_MOVEMENT)
         && didSomething) {
         // Tunnel out any diagonal kinks between walls.
-        for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+        for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
             x2 = x + nbDirs[dir][0];
             y2 = y + nbDirs[dir][1];
             if (coordinatesAreInMap(x2, y2)
@@ -4083,7 +4086,7 @@ void checkForMissingKeys(short x, short y) {
     if (cellHasTMFlag(x, y, TM_PROMOTES_WITHOUT_KEY) && !keyOnTileAt(x, y)) {
         for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_WITHOUT_KEY) {
-                promoteTile(x, y, layer, false);
+                promoteTile(x, y, (dungeonLayers)layer, false);
             }
         }
     }
@@ -4109,7 +4112,7 @@ void beckonMonster(creature *monst, short x, short y) {
 
 enum boltEffects boltEffectForItem(item *theItem) {
     if (theItem->category & (STAFF | WAND)) {
-        return boltCatalog[tableForItemCategory(theItem->category, NULL)[theItem->kind].strengthRequired].boltEffect;
+        return (boltEffects)boltCatalog[tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].strengthRequired].boltEffect;
     } else {
         return BE_NONE;
     }
@@ -4117,9 +4120,9 @@ enum boltEffects boltEffectForItem(item *theItem) {
 
 enum boltType boltForItem(item *theItem) {
     if (theItem->category & (STAFF | WAND)) {
-        return tableForItemCategory(theItem->category, NULL)[theItem->kind].strengthRequired;
+        return (boltType)tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].strengthRequired;
     } else {
-        return 0;
+        return (boltType)0;
     }
 }
 
@@ -5242,7 +5245,7 @@ bool chooseTarget(short returnLoc[2],
     short originLoc[2], targetLoc[2], oldTargetLoc[2], coordinates[DCOLS][2], numCells, i, distance, newX, newY;
     creature *monst;
     bool canceled, targetConfirmed, tabKey, cursorInTrajectory, focusedOnSomething = false;
-    rogueEvent event = {0};
+    rogueEvent event = rogueEvent();
     short oldRNG;
     color trajColor = *trajectoryColor;
     
@@ -5392,7 +5395,7 @@ void identifyItemKind(item *theItem) {
     itemTable *theTable;
     short tableCount, i, lastItem;
     
-    theTable = tableForItemCategory(theItem->category, NULL);
+    theTable = tableForItemCategory((itemCategory)theItem->category, NULL);
     if (theTable) {
         theItem->flags &= ~ITEM_KIND_AUTO_ID;
         
@@ -5451,8 +5454,8 @@ void autoIdentify(item *theItem) {
     short quantityBackup;
     char buf[COLS * 3], oldName[COLS * 3], newName[COLS * 3];
     
-    if (tableForItemCategory(theItem->category, NULL)
-        && !tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+    if (tableForItemCategory((itemCategory)theItem->category, NULL)
+        && !tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
         
         identifyItemKind(theItem);
         quantityBackup = theItem->quantity;
@@ -5753,8 +5756,9 @@ void throwCommand(item *theItem) {
     
     command[0] = THROW_KEY;
     if (theItem == NULL) {
+        std::string message = KEYBOARD_LABELS ? "Throw what? (a-z, shift for more info; or <esc> to cancel)" : "Throw what?";
         theItem = promptForItemOfType((ALL_ITEMS), 0, 0,
-                                      KEYBOARD_LABELS ? "Throw what? (a-z, shift for more info; or <esc> to cancel)" : "Throw what?", true);
+                                      (char *)message.c_str(), true);
     }
     if (theItem == NULL) {
         return;
@@ -5831,8 +5835,9 @@ void relabel(item *theItem) {
         return;
     }
     if (theItem == NULL) {
+        std::string message = KEYBOARD_LABELS ? "Relabel what? (a-z, shift for more info; or <esc> to cancel)" : "Relabel what?";
         theItem = promptForItemOfType((ALL_ITEMS), 0, 0,
-                                      KEYBOARD_LABELS ? "Relabel what? (a-z, shift for more info; or <esc> to cancel)" : "Relabel what?", true);
+                                      (char *)message.c_str(), true);
     }
     if (theItem == NULL) {
         return;
@@ -5962,7 +5967,7 @@ bool useStaffOrWand(item *theItem, bool *commandsRecorded) {
     sprintf(buf, "Zapping your %s:", buf2);
     printString(buf, mapToWindowX(0), 1, &itemMessageColor, &black, NULL);
     
-    theBolt = boltCatalog[tableForItemCategory(theItem->category, NULL)[theItem->kind].strengthRequired];
+    theBolt = boltCatalog[tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].strengthRequired];
     if (theItem->category == STAFF) {
         theBolt.magnitude = theItem->enchant1;
     }
@@ -5974,7 +5979,7 @@ bool useStaffOrWand(item *theItem, bool *commandsRecorded) {
     } else {
         maxDistance = -1;
     }
-    if (tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+    if (tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
         autoTarget = targetAllies = passThroughCreatures = false;
         if (!player.status[STATUS_HALLUCINATING]) {
             if (theBolt.flags & (BF_TARGET_ALLIES | BF_TARGET_ENEMIES)) {
@@ -6029,7 +6034,7 @@ bool useStaffOrWand(item *theItem, bool *commandsRecorded) {
                          &theBolt,
                          !boltKnown);   // hide bolt details
             if (autoID) {
-                if (!tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+                if (!tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
                     itemName(theItem, buf2, false, false, NULL);
                     sprintf(buf, "(Your %s must be ", buf2);
                     identifyItemKind(theItem);
@@ -6151,8 +6156,9 @@ void apply(item *theItem, bool recordCommands) {
     revealItemType = false;
     
     if (!theItem) {
+        std::string message = KEYBOARD_LABELS ? "Apply what? (a-z, shift for more info; or <esc> to cancel)" : "Apply what?";
         theItem = promptForItemOfType((SCROLL|FOOD|POTION|STAFF|WAND|CHARM), 0, 0,
-                                      KEYBOARD_LABELS ? "Apply what? (a-z, shift for more info; or <esc> to cancel)" : "Apply what?",
+                                      (char *)message.c_str(),
                                       true);
     }
     
@@ -6162,14 +6168,14 @@ void apply(item *theItem, bool recordCommands) {
     
     if ((theItem->category == SCROLL || theItem->category == POTION)
         && magicCharDiscoverySuffix(theItem->category, theItem->kind) == -1
-        && ((theItem->flags & ITEM_MAGIC_DETECTED) || tableForItemCategory(theItem->category, NULL)[theItem->kind].identified)) {
+        && ((theItem->flags & ITEM_MAGIC_DETECTED) || tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified)) {
         
-        if (tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+        if (tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
             sprintf(buf,
                     "Really %s a %s of %s?",
                     theItem->category == SCROLL ? "read" : "drink",
                     theItem->category == SCROLL ? "scroll" : "potion",
-                    tableForItemCategory(theItem->category, NULL)[theItem->kind].name);
+                    tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].name);
         } else {
             sprintf(buf,
                     "Really %s a cursed %s?",
@@ -6393,7 +6399,7 @@ void updateIdentifiableItem(item *theItem) {
         theItem->flags &= ~ITEM_CAN_BE_IDENTIFIED;
     } else if ((theItem->category & (RING | STAFF | WAND))
                && (theItem->flags & ITEM_IDENTIFIED)
-               && tableForItemCategory(theItem->category, NULL)[theItem->kind].identified) {
+               && tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].identified) {
         
         theItem->flags &= ~ITEM_CAN_BE_IDENTIFIED;
     } else if ((theItem->category & (WEAPON | ARMOR))
@@ -6446,8 +6452,9 @@ void readScroll(item *theItem) {
                 break;
             }
             do {
+                std::string outMessage = KEYBOARD_LABELS ? "Identify what? (a-z; shift for more info)" : "Identify what?";
                 theItem = promptForItemOfType((ALL_ITEMS), ITEM_CAN_BE_IDENTIFIED, 0,
-                                              KEYBOARD_LABELS ? "Identify what? (a-z; shift for more info)" : "Identify what?",
+                                              (char *)outMessage.c_str(),
                                               false);
                 if (rogue.gameHasEnded) {
                     return;
@@ -6491,8 +6498,9 @@ void readScroll(item *theItem) {
                 break;
             }
             do {
+                std::string outMessage = KEYBOARD_LABELS ? "Enchant what? (a-z; shift for more info)" : "Enchant what?";
                 theItem = promptForItemOfType((WEAPON | ARMOR | RING | STAFF | WAND | CHARM), 0, 0,
-                                              KEYBOARD_LABELS ? "Enchant what? (a-z; shift for more info)" : "Enchant what?",
+                                              (char *)outMessage.c_str(),
                                               false);
                 confirmMessages();
                 if (theItem == NULL || !(theItem->category & (WEAPON | ARMOR | RING | STAFF | WAND | CHARM))) {
@@ -6859,7 +6867,7 @@ short magicCharDiscoverySuffix(short category, short kind) {
             break;
         case WAND:
         case STAFF:
-            if (boltCatalog[tableForItemCategory(category, NULL)[kind].strengthRequired].flags & (BF_TARGET_ALLIES)) {
+            if (boltCatalog[tableForItemCategory((itemCategory)category, NULL)[kind].strengthRequired].flags & (BF_TARGET_ALLIES)) {
                 result = -1;
             } else {
                 result = 1;
@@ -6913,7 +6921,7 @@ uchar itemMagicChar(item *theItem) {
                 return 0;
             }
         case STAFF:
-            if (boltCatalog[tableForItemCategory(theItem->category, NULL)[theItem->kind].strengthRequired].flags & (BF_TARGET_ALLIES)) {
+            if (boltCatalog[tableForItemCategory((itemCategory)theItem->category, NULL)[theItem->kind].strengthRequired].flags & (BF_TARGET_ALLIES)) {
                 return BAD_MAGIC_CHAR;
             } else {
                 return GOOD_MAGIC_CHAR;
@@ -6941,8 +6949,9 @@ void unequip(item *theItem) {
     
     command[0] = UNEQUIP_KEY;
     if (theItem == NULL) {
+        std::string message = KEYBOARD_LABELS ? "Remove (unequip) what? (a-z or <esc> to cancel)" : "Remove (unequip) what?";
         theItem = promptForItemOfType(ALL_ITEMS, ITEM_EQUIPPED, 0,
-                                      KEYBOARD_LABELS ? "Remove (unequip) what? (a-z or <esc> to cancel)" : "Remove (unequip) what?",
+                                      (char *)message.c_str(),
                                       true);
     }
     if (theItem == NULL) {
@@ -6999,8 +7008,9 @@ void drop(item *theItem) {
     
     command[0] = DROP_KEY;
     if (theItem == NULL) {
+        std::string message = KEYBOARD_LABELS ? "Drop what? (a-z, shift for more info; or <esc> to cancel)" : "Drop what?";
         theItem = promptForItemOfType(ALL_ITEMS, 0, 0,
-                                      KEYBOARD_LABELS ? "Drop what? (a-z, shift for more info; or <esc> to cancel)" : "Drop what?",
+                                      (char *)message.c_str(),
                                       true);
     }
     if (theItem == NULL) {

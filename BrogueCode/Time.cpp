@@ -218,7 +218,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
             // usually means an invisible monster
             message("a pressure plate clicks!", false);
         }
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[*x][*y].layers[layer]].flags & T_IS_DF_TRAP) {
                 spawnDungeonFeature(*x, *y, &(dungeonFeatureCatalog[tileCatalog[pmap[*x][*y].layers[layer]].fireType]), true, false);
                 promoteTile(*x, *y, layer, false);
@@ -233,7 +233,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
         // happen unpredictably if the tile does not promote to a tile without the T_PROMOTES_ON_STEP
         // attribute. That's acceptable for some effects, e.g. doors opening,
         // but not for others, e.g. magical glyphs activating.
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[*x][*y].layers[layer]].mechFlags & TM_PROMOTES_ON_STEP) {
                 promoteTile(*x, *y, layer, false);
             }
@@ -242,7 +242,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
     
     if (cellHasTMFlag(*x, *y, TM_PROMOTES_ON_PLAYER_ENTRY) && monst == &player) {
         // Subject to same caveats as T_PROMOTES_ON_STEP above.
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[*x][*y].layers[layer]].mechFlags & TM_PROMOTES_ON_PLAYER_ENTRY) {
                 promoteTile(*x, *y, layer, false);
             }
@@ -280,7 +280,7 @@ void applyInstantTileEffectsToCreature(creature *monst) {
         monst->status[STATUS_EXPLOSION_IMMUNITY] = 5;
         if (monst == &player) {
             rogue.disturbed = true;
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS && !(tileCatalog[pmap[*x][*y].layers[layer]].flags & T_CAUSES_EXPLOSIVE_DAMAGE); NEXT_LAYER(layer));
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS && !(tileCatalog[pmap[*x][*y].layers[layer]].flags & T_CAUSES_EXPLOSIVE_DAMAGE); NEXT_LAYER(layer));
             message(tileCatalog[pmap[*x][*y].layers[layer]].flavorText, false);
             if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_DAMPENING) {
                 itemName(rogue.armor, buf2, false, false, NULL);
@@ -466,7 +466,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
         
         damage = (monst->info.maxHP / 15) * ticks / 100;
         damage = MAX(1, damage);
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS && !(tileCatalog[pmap[x][y].layers[layer]].flags & T_CAUSES_DAMAGE); NEXT_LAYER(layer));
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS && !(tileCatalog[pmap[x][y].layers[layer]].flags & T_CAUSES_DAMAGE); NEXT_LAYER(layer));
         if (monst == &player) {
             if (rogue.armor && (rogue.armor->flags & ITEM_RUNIC) && rogue.armor->enchant2 == A_RESPIRATION) {
                 if (!(rogue.armor->flags & ITEM_RUNIC_IDENTIFIED)) {
@@ -564,7 +564,7 @@ void updateClairvoyance() {
 void updateTelepathy() {
     short i, j;
     creature *monst;
-    bool grid[DCOLS][DROWS];
+    char grid[DCOLS][DROWS];
     
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
@@ -994,7 +994,7 @@ void activateMachine(short machineNumber) {
                 pmap[x][y].flags |= IS_POWERED;
                 for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                     if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_IS_WIRED) {
-                        promoteTile(x, y, layer, false);
+                        promoteTile(x, y, (dungeonLayers)layer, false);
                     }
                 }
             }
@@ -1012,7 +1012,7 @@ void activateMachine(short machineNumber) {
             
             if (monsterCount > maxMonsters) {
                 maxMonsters += 10;
-                activatedMonsterList = realloc(activatedMonsterList, sizeof(creature *) * maxMonsters);
+                activatedMonsterList = (creature **)realloc(activatedMonsterList, sizeof(creature *) * maxMonsters);
             }
             activatedMonsterList[monsterCount - 1] = monst;
         }
@@ -1090,7 +1090,7 @@ bool exposeTileToElectricity(short x, short y) {
     if (!cellHasTMFlag(x, y, TM_PROMOTES_ON_ELECTRICITY)) {
         return false;
     }
-    for (layer=0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+    for (layer=(dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_PROMOTES_ON_ELECTRICITY) {
             promoteTile(x, y, layer, false);
             promotedSomething = true;
@@ -1111,7 +1111,7 @@ bool exposeTileToFire(short x, short y, bool alwaysIgnite) {
     }
     
     // Pick the extinguishing layer with the best priority.
-    for (layer=0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+    for (layer=(dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if ((tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_EXTINGUISHES_FIRE)
             && tileCatalog[pmap[x][y].layers[layer]].drawPriority < bestExtinguishingPriority) {
             bestExtinguishingPriority = tileCatalog[pmap[x][y].layers[layer]].drawPriority;
@@ -1119,7 +1119,7 @@ bool exposeTileToFire(short x, short y, bool alwaysIgnite) {
     }
     
     // Pick the fire type of the most flammable layer that is either gas or equal-or-better priority than the best extinguishing layer.
-    for (layer=0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+    for (layer=(dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if ((tileCatalog[pmap[x][y].layers[layer]].flags & T_IS_FLAMMABLE)
             && (layer == GAS || tileCatalog[pmap[x][y].layers[layer]].drawPriority <= bestExtinguishingPriority)
             && tileCatalog[pmap[x][y].layers[layer]].chanceToIgnite > ignitionChance) {
@@ -1132,7 +1132,7 @@ bool exposeTileToFire(short x, short y, bool alwaysIgnite) {
         
         // Count explosive neighbors.
         if (cellHasTMFlag(x, y, TM_EXPLOSIVE_PROMOTE)) {
-            for (dir = 0, explosiveNeighborCount = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+            for (dir = (directions)0, explosiveNeighborCount = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
                 newX = x + nbDirs[dir][0];
                 newY = y + nbDirs[dir][1];
                 if (coordinatesAreInMap(newX, newY)
@@ -1147,7 +1147,7 @@ bool exposeTileToFire(short x, short y, bool alwaysIgnite) {
         }
         
         // Flammable layers are consumed.
-        for (layer=0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer=(dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].flags & T_IS_FLAMMABLE) {
                 if (layer == GAS) {
                     pmap[x][y].volume = 0; // Flammable gas burns its volume away.
@@ -1182,7 +1182,7 @@ void updateVolumetricMedia() {
                 numSpaces = 1;
                 highestNeighborVolume = pmap[i][j].volume;
                 gasType = pmap[i][j].layers[GAS];
-                for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
+                for (dir=(directions)0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
                     newX = i + nbDirs[dir][0];
                     newY = j + nbDirs[dir][1];
                     if (coordinatesAreInMap(newX, newY)
@@ -1222,7 +1222,7 @@ void updateVolumetricMedia() {
             } else if (pmap[i][j].volume > 0) { // if has gas but can't hold gas,
                 // disperse gas instantly into neighboring tiles that can hold gas
                 numSpaces = 0;
-                for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+                for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
                     newX = i + nbDirs[dir][0];
                     newY = j + nbDirs[dir][1];
                     if (coordinatesAreInMap(newX, newY)
@@ -1232,7 +1232,7 @@ void updateVolumetricMedia() {
                     }
                 }
                 if (numSpaces > 0) {
-                    for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+                    for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
                         newX = i + nbDirs[dir][0];
                         newY = j + nbDirs[dir][1];
                         if (coordinatesAreInMap(newX, newY)
@@ -1382,7 +1382,7 @@ void updateEnvironment() {
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
             promotions[i][j] = 0;
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 tile = &(tileCatalog[pmap[i][j].layers[layer]]);
                 if (tile->promoteChance < 0) {
                     promoteChance = 0;
@@ -1409,7 +1409,7 @@ void updateEnvironment() {
     // Second pass, do the promotions:
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 if ((promotions[i][j] & Fl(layer))) {
                     //&& (tileCatalog[pmap[i][j].layers[layer]].promoteChance != 0)){
                     // make sure that it's still a promotable layer
@@ -1429,7 +1429,7 @@ void updateEnvironment() {
                 pmap[i][j].flags &= ~PRESSURE_PLATE_DEPRESSED;
             }
             if (cellHasTMFlag(i, j, TM_PROMOTES_WITHOUT_KEY) && !keyOnTileAt(i, j)) {
-                for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+                for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                     if (tileCatalog[pmap[i][j].layers[layer]].mechFlags & TM_PROMOTES_WITHOUT_KEY) {
                         promoteTile(i, j, layer, false);
                     }
@@ -1520,7 +1520,7 @@ void updateAllySafetyMap() {
 void resetDistanceCellInGrid(short **grid, short x, short y) {
     enum directions dir;
     short newX, newY;
-    for (dir = 0; dir < 4; NEXT_DIR(dir)) {
+    for (dir = (directions)0; dir < 4; NEXT_DIR(dir)) {
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];
         if (coordinatesAreInMap(newX, newY)
