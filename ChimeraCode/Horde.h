@@ -18,7 +18,7 @@ class HordeMember;
 enum class HordePurposeType {
     FODDER,
     GENERAL,
-    SPECIAL,
+    KAMIKAZE,
 //    RESOURCE,
 //    WATER,
 //    GROUP,
@@ -45,6 +45,9 @@ public:
     int memberCount() const;
 
     HordePurposeType purpose;
+    
+    int extraRange;
+    int extraFrequency;
 
 private:
 
@@ -52,6 +55,10 @@ private:
     std::list<HordeMember *> members;
 
     int calculateDL() const;
+    int minDL() const;
+    int maxDL() const;
+    int dangerDelta() const;
+    int calculateFrequency() const;
     void applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile);
 };
 

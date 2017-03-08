@@ -246,7 +246,7 @@ void MonsterGenerator::generate() {
     });
     for (int i = 0; i < kamikazeMonstersCount; i += 1) {
         ChimeraMonster &monster = this->newMonster(*kamikazeBody);
-        Ability *burst = matchingAbility([i, kamikazeMonstersCount, kamikazeBody](const Ability *ability) {
+        Ability *burst = matchingAbility([i, monster, kamikazeMonstersCount, kamikazeBody](const Ability *ability) {
             if (!ability->validForMonster(monster)) {
                 return false;
             }
@@ -259,7 +259,8 @@ void MonsterGenerator::generate() {
             monster.applyAbility(*burst);
             kamikazes.push_back(monster);
             Horde &horde = this->newHorde(monster);
-            horde.purpose = HordePurposeType::SPECIAL;
+            horde.purpose = HordePurposeType::KAMIKAZE;
+            horde.extraRange += (2 - i);
         }
     }
     int duplicateGroupIndex = rand_range(0, MAX(0, kamikazeMonstersCount - 1));
@@ -267,7 +268,7 @@ void MonsterGenerator::generate() {
         ChimeraMonster &monster = kamikazes[duplicateGroupIndex];
         Horde &horde = this->newHorde(monster);
         horde.addMember(monster, 2, 2);
-        horde.purpose = HordePurposeType::SPECIAL;
+        horde.purpose = HordePurposeType::KAMIKAZE;
     }
 
     std::string report = debugReport();

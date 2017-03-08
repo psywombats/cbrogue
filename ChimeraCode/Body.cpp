@@ -431,11 +431,11 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "bomb goblin";
+    body->baseName = "kamikaze dwarf";
     body->baseColor = &brown;
     body->minDamage = 0;
     body->maxDamage = 0;
-    body->hp = 15;
+    body->hp = 12;
     body->dangerLevel = 5;
     body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
     bodies.push_back(body);

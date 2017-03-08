@@ -10,6 +10,8 @@
 
 Horde::Horde(const ChimeraMonster &leader) :
         purpose(HordePurposeType::GENERAL),
+        extraRange(0),
+        extraFrequency(0),
         leader(leader) {
     this->members = std::list<HordeMember *>();
 }
@@ -28,7 +30,8 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
 std::string Horde::debugReport() const {
     std::string report = "";
 
-    report += leader.name + " (DL " + printInt(calculateDL()) + ")\n";
+    report += leader.name + " (DL " + printInt(minDL()) + "-" + printInt(maxDL());
+    report += "  freq. " + printInt(calculateFrequency()) + ")\n";
 
     for (HordeMember *member : this->members) {
         report += "  " + member->member.name + " {" + printInt(member->minCount) + "-" + printInt(member->maxCount) + "}\n";
@@ -45,34 +48,13 @@ hordeType Horde::convertToStruct() {
     hordeType hordeStruct = hordeType();
 
     int danger = this->calculateDL();
-    int dangerDelta;
-    if (danger <= 5) {
-        dangerDelta = 2;
-    } else if (danger <= 10) {
-        dangerDelta = 3;
-    } else if (danger <= 15) {
-        dangerDelta = 4;
-    } else if (danger <= 21) {
-        dangerDelta = 5;
-    } else {
-        dangerDelta = 6;
-    }
-    hordeStruct.minLevel = MAX(1, danger - dangerDelta);
-    hordeStruct.maxLevel = MIN(DEEPEST_LEVEL-1, danger + dangerDelta);
+    hordeStruct.minLevel = this->minDL();
+    hordeStruct.maxLevel = this->maxDL();
     if (danger >= 28) {
         hordeStruct.maxLevel = DEEPEST_LEVEL-1;
     }
-
-    short frequency;
-    switch (this->purpose) {
-        case HordePurposeType::FODDER:             frequency = 15;                break;
-        case HordePurposeType::SPECIAL:         frequency = 6;                break;
-        default:                                 frequency = 10;                break;
-    }
-    if (this->purpose == HordePurposeType::SPECIAL && danger < 5) {
-        frequency /= 2;
-    }
-    hordeStruct.frequency = frequency;
+    
+    hordeStruct.frequency = this->calculateFrequency();
 
 //    if (this->purpose == HordePurposeType::TOTEM || this->purpose == HordePurposeType::TURRET) {
 //        hordeStruct->flags &= HORDE_NO_PERIODIC_SPAWN;
@@ -115,6 +97,11 @@ void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag,
 
 int Horde::calculateDL() const {
     int danger = leader.dangerLevel;
+    for (HordeMember *member : this->members) {
+        if (member->member.dangerLevel > danger) {
+            danger = member->member.dangerLevel;
+        }
+    }
     if (this->members.size() >= 1) {
         if (this->purpose == HordePurposeType::FODDER) {
             danger += 2;
@@ -123,10 +110,54 @@ int Horde::calculateDL() const {
         }
     }
     if (this->members.size() >= 2) {
-        danger += 2;
-    }
-    if (this->members.size() >= 3) {
-        danger += 5;
+        if (this->purpose == HordePurposeType::FODDER) {
+            danger += 2;
+        } else {
+            danger += MAX(3, this->members.front()->member.dangerLevel / 2);
+        }
     }
     return danger;
+}
+
+int Horde::minDL() const {
+    int danger = this->calculateDL();
+    int dangerDelta = this->dangerDelta();
+    return MAX(1, danger - dangerDelta);
+}
+
+int Horde::maxDL() const {
+    int danger = this->calculateDL();
+    int dangerDelta = this->dangerDelta();
+    return MIN(DEEPEST_LEVEL-1, danger + dangerDelta);
+}
+
+int Horde::dangerDelta() const {
+    int dangerDelta;
+    int danger = this->calculateDL();
+    if (danger <= 5) {
+        dangerDelta = 2;
+    } else if (danger <= 10) {
+        dangerDelta = 3;
+    } else if (danger <= 15) {
+        dangerDelta = 4;
+    } else if (danger <= 21) {
+        dangerDelta = 5;
+    } else {
+        dangerDelta = 6;
+    }
+    
+    dangerDelta += this->extraRange;
+    return dangerDelta;
+}
+
+int Horde::calculateFrequency() const {
+    int frequency;
+    switch (this->purpose) {
+        case HordePurposeType::FODDER:              frequency = 15;                 break;
+        case HordePurposeType::KAMIKAZE:            frequency = 3;                  break;
+        default:                                    frequency = 10;                 break;
+    }
+    
+    frequency += extraFrequency;
+    return frequency;
 }
