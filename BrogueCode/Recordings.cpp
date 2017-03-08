@@ -122,7 +122,7 @@ void recordEvent(rogueEvent *event) {
 }
 
 // For convenience.
-void recordKeystroke(uchar keystroke, boolean controlKey, boolean shiftKey) {
+void recordKeystroke(uchar keystroke, bool controlKey, bool shiftKey) {
     rogueEvent theEvent;
     
     if (rogue.playbackMode) {
@@ -145,7 +145,7 @@ void recordKeystrokeSequence(unsigned char *keystrokeSequence) {
 }
 
 // For convenience.
-void recordMouseClick(short x, short y, boolean controlKey, boolean shiftKey) {
+void recordMouseClick(short x, short y, bool controlKey, bool shiftKey) {
     rogueEvent theEvent;
     
     if (rogue.playbackMode) {
@@ -324,7 +324,7 @@ void playbackPanic() {
 
 void recallEvent(rogueEvent *event) {
     unsigned char c;
-    boolean tryAgain;
+    bool tryAgain;
     
     do {
         tryAgain = false;
@@ -554,7 +554,7 @@ void RNGCheck() {
     rogue.RNG = oldRNG;
 }
 
-boolean unpause() {
+bool unpause() {
     if (rogue.playbackOOS) {
         flashTemporaryAlert(" Out of sync ", 2000);
     } else if (rogue.playbackPaused) {
@@ -622,7 +622,7 @@ void printPlaybackHelpScreen() {
 void advanceToLocation(unsigned long destinationFrame) {
     unsigned long progressBarInterval, initialFrameNumber;
     rogueEvent theEvent;
-    boolean useProgressBar, omniscient, stealth, trueColors;
+    bool useProgressBar, omniscient, stealth, trueColors;
     
     omniscient = rogue.playbackOmniscience;
     stealth = rogue.displayAggroRangeMode;
@@ -691,7 +691,7 @@ void advanceToLocation(unsigned long destinationFrame) {
 void promptToAdvanceToLocation(short keystroke) {
     char entryText[30], buf[MAX(30, DCOLS)];
     unsigned long destinationFrame;
-    boolean enteredText;
+    bool enteredText;
     
     if (!rogue.playbackPaused || unpause()) {
         buf[0] = (keystroke == '0' ? '\0' : keystroke);
@@ -741,7 +741,7 @@ void executePlaybackInput(rogueEvent *recordingInput) {
     signed long key;
     short newDelay, frameCount, x, y, previousDeepestLevel;
     unsigned long destinationFrame;
-    boolean pauseState, proceed;
+    bool pauseState, proceed;
     rogueEvent theEvent;
     char path[BROGUE_FILENAME_MAX];
     
@@ -1000,7 +1000,7 @@ void getAvailableFilePath(char *returnPath, const char *defaultPath, const char 
     }
 }
 
-boolean characterForbiddenInFilename(const char theChar) {
+bool characterForbiddenInFilename(const char theChar) {
     if (theChar == '/' || theChar == '\\' || theChar == ':') {
         return true;
     } else {
@@ -1010,7 +1010,7 @@ boolean characterForbiddenInFilename(const char theChar) {
 
 void saveGame() {
     char filePath[BROGUE_FILENAME_MAX], defaultPath[BROGUE_FILENAME_MAX];
-    boolean askAgain;
+    bool askAgain;
     
     if (rogue.playbackMode) {
         return; // Call me paranoid, but I'd rather it be impossible to embed malware in a recording.
@@ -1041,7 +1041,7 @@ void saveGame() {
 
 void saveRecording() {
     char filePath[BROGUE_FILENAME_MAX], defaultPath[BROGUE_FILENAME_MAX];
-    boolean askAgain;
+    bool askAgain;
     
     if (rogue.playbackMode) {
         return;
@@ -1218,8 +1218,8 @@ void appendModifierKeyDescription(char *description) {
 }
 
 // Deprecated! Only used to parse recordings, a debugging feature.
-boolean selectFile(char *prompt, char *defaultName, char *suffix) {
-    boolean retval;
+bool selectFile(char *prompt, char *defaultName, char *suffix) {
+    bool retval;
     char newFilePath[BROGUE_FILENAME_MAX];
     
     retval = false;

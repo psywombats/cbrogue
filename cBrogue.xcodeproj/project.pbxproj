@@ -8,30 +8,35 @@
 
 /* Begin PBXBuildFile section */
 		1DDD58160DA1D0A300B32029 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58140DA1D0A300B32029 /* MainMenu.xib */; };
-		5852BB4C118650A10064384E /* Architect.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB40118650A10064384E /* Architect.c */; };
-		5852BB4D118650A20064384E /* Combat.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB41118650A10064384E /* Combat.c */; };
-		5852BB4E118650A20064384E /* Globals.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB42118650A10064384E /* Globals.c */; };
-		5852BB4F118650A20064384E /* IO.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB44118650A10064384E /* IO.c */; };
-		5852BB50118650A20064384E /* Items.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB45118650A10064384E /* Items.c */; };
-		5852BB51118650A20064384E /* Light.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB46118650A10064384E /* Light.c */; };
-		5852BB52118650A20064384E /* Monsters.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB47118650A10064384E /* Monsters.c */; };
-		5852BB53118650A20064384E /* Movement.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB48118650A10064384E /* Movement.c */; };
-		5852BB54118650A20064384E /* RogueMain.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB4A118650A10064384E /* RogueMain.c */; };
 		5852BB60118650D90064384E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB5A118650D90064384E /* main.m */; };
 		5852BB61118650D90064384E /* RogueDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB5D118650D90064384E /* RogueDriver.m */; };
 		5852BB62118650D90064384E /* Viewport.m in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB5F118650D90064384E /* Viewport.m */; };
-		5852BB9C118652BA0064384E /* Dijkstra.c in Sources */ = {isa = PBXBuildFile; fileRef = 5852BB9B118652BA0064384E /* Dijkstra.c */; };
 		58831148109E46C800FF029E /* cBrogue Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 58831147109E46C800FF029E /* cBrogue Icon.icns */; };
-		58A17EDB1235ACA100647687 /* Recordings.c in Sources */ = {isa = PBXBuildFile; fileRef = 58A17EDA1235ACA100647687 /* Recordings.c */; };
-		58EE4FF7120E01FB0020458E /* Random.c in Sources */ = {isa = PBXBuildFile; fileRef = 58EE4FF6120E01FB0020458E /* Random.c */; };
-		694753061672E75D003BE7CB /* Grid.c in Sources */ = {isa = PBXBuildFile; fileRef = 694753051672E75D003BE7CB /* Grid.c */; };
-		696F73E814C27D9F00CF8C90 /* MainMenu.c in Sources */ = {isa = PBXBuildFile; fileRef = 696F73E714C27D9F00CF8C90 /* MainMenu.c */; };
-		69A642211476EC76006246FB /* Buttons.c in Sources */ = {isa = PBXBuildFile; fileRef = 69A642201476EC76006246FB /* Buttons.c */; };
-		69C7414A1775466100CD2D5F /* Time.c in Sources */ = {isa = PBXBuildFile; fileRef = 69C741491775466100CD2D5F /* Time.c */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		F030731C1E56AD870045C83E /* Blueprints.c in Sources */ = {isa = PBXBuildFile; fileRef = F030731A1E56AD870045C83E /* Blueprints.c */; };
-		F075856D1D7FAB5C004246C8 /* MonsterGlobals.c in Sources */ = {isa = PBXBuildFile; fileRef = F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */; };
+		F0743E501E6F3ACE004EB400 /* Ability.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E421E6F3ACE004EB400 /* Ability.cpp */; };
+		F0743E511E6F3ACE004EB400 /* Blueprints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E441E6F3ACE004EB400 /* Blueprints.cpp */; };
+		F0743E521E6F3ACE004EB400 /* Body.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E461E6F3ACE004EB400 /* Body.cpp */; };
+		F0743E531E6F3ACE004EB400 /* ChimeraMonster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E481E6F3ACE004EB400 /* ChimeraMonster.cpp */; };
+		F0743E541E6F3ACE004EB400 /* Horde.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E4A1E6F3ACE004EB400 /* Horde.cpp */; };
+		F0743E551E6F3ACE004EB400 /* MonsterGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E4C1E6F3ACE004EB400 /* MonsterGenerator.cpp */; };
+		F0743E561E6F3ACE004EB400 /* MonsterGlobals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E4E1E6F3ACE004EB400 /* MonsterGlobals.cpp */; };
+		F0743E671E6F3AE4004EB400 /* Architect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E571E6F3AE4004EB400 /* Architect.cpp */; };
+		F0743E681E6F3AE4004EB400 /* Buttons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E581E6F3AE4004EB400 /* Buttons.cpp */; };
+		F0743E691E6F3AE4004EB400 /* Combat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E591E6F3AE4004EB400 /* Combat.cpp */; };
+		F0743E6A1E6F3AE4004EB400 /* Dijkstra.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5A1E6F3AE4004EB400 /* Dijkstra.cpp */; };
+		F0743E6B1E6F3AE4004EB400 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5B1E6F3AE4004EB400 /* Globals.cpp */; };
+		F0743E6C1E6F3AE4004EB400 /* Grid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5C1E6F3AE4004EB400 /* Grid.cpp */; };
+		F0743E6D1E6F3AE4004EB400 /* IO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5D1E6F3AE4004EB400 /* IO.cpp */; };
+		F0743E6E1E6F3AE4004EB400 /* Items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5E1E6F3AE4004EB400 /* Items.cpp */; };
+		F0743E6F1E6F3AE4004EB400 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E5F1E6F3AE4004EB400 /* Light.cpp */; };
+		F0743E701E6F3AE4004EB400 /* MainMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E601E6F3AE4004EB400 /* MainMenu.cpp */; };
+		F0743E711E6F3AE4004EB400 /* Monsters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E611E6F3AE4004EB400 /* Monsters.cpp */; };
+		F0743E721E6F3AE4004EB400 /* Movement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E621E6F3AE4004EB400 /* Movement.cpp */; };
+		F0743E731E6F3AE4004EB400 /* Random.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E631E6F3AE4004EB400 /* Random.cpp */; };
+		F0743E741E6F3AE4004EB400 /* Recordings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E641E6F3AE4004EB400 /* Recordings.cpp */; };
+		F0743E751E6F3AE4004EB400 /* RogueMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E651E6F3AE4004EB400 /* RogueMain.cpp */; };
+		F0743E761E6F3AE4004EB400 /* Time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0743E661E6F3AE4004EB400 /* Time.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,37 +46,47 @@
 		1DDD58150DA1D0A300B32029 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		5852BB40118650A10064384E /* Architect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = Architect.c; path = BrogueCode/Architect.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
-		5852BB41118650A10064384E /* Combat.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Combat.c; path = BrogueCode/Combat.c; sourceTree = "<group>"; };
-		5852BB42118650A10064384E /* Globals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Globals.c; path = BrogueCode/Globals.c; sourceTree = "<group>"; };
 		5852BB43118650A10064384E /* IncludeGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IncludeGlobals.h; path = BrogueCode/IncludeGlobals.h; sourceTree = "<group>"; };
-		5852BB44118650A10064384E /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = IO.c; path = BrogueCode/IO.c; sourceTree = "<group>"; };
-		5852BB45118650A10064384E /* Items.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Items.c; path = BrogueCode/Items.c; sourceTree = "<group>"; };
-		5852BB46118650A10064384E /* Light.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Light.c; path = BrogueCode/Light.c; sourceTree = "<group>"; };
-		5852BB47118650A10064384E /* Monsters.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Monsters.c; path = BrogueCode/Monsters.c; sourceTree = "<group>"; };
-		5852BB48118650A10064384E /* Movement.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Movement.c; path = BrogueCode/Movement.c; sourceTree = "<group>"; };
 		5852BB49118650A10064384E /* Rogue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Rogue.h; path = BrogueCode/Rogue.h; sourceTree = "<group>"; };
-		5852BB4A118650A10064384E /* RogueMain.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = RogueMain.c; path = BrogueCode/RogueMain.c; sourceTree = "<group>"; };
 		5852BB5A118650D90064384E /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PlatformCode/main.m; sourceTree = "<group>"; };
 		5852BB5C118650D90064384E /* RogueDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RogueDriver.h; path = PlatformCode/RogueDriver.h; sourceTree = "<group>"; };
 		5852BB5D118650D90064384E /* RogueDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RogueDriver.m; path = PlatformCode/RogueDriver.m; sourceTree = "<group>"; };
 		5852BB5E118650D90064384E /* Viewport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Viewport.h; path = PlatformCode/Viewport.h; sourceTree = "<group>"; };
 		5852BB5F118650D90064384E /* Viewport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Viewport.m; path = PlatformCode/Viewport.m; sourceTree = "<group>"; };
-		5852BB9B118652BA0064384E /* Dijkstra.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Dijkstra.c; path = BrogueCode/Dijkstra.c; sourceTree = "<group>"; };
 		58831147109E46C800FF029E /* cBrogue Icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "cBrogue Icon.icns"; sourceTree = "<group>"; };
-		58A17EDA1235ACA100647687 /* Recordings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Recordings.c; path = BrogueCode/Recordings.c; sourceTree = "<group>"; };
 		58CA453411A8C4F9006D03FC /* PlatformDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformDefines.h; path = PlatformCode/PlatformDefines.h; sourceTree = "<group>"; };
-		58EE4FF6120E01FB0020458E /* Random.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Random.c; path = BrogueCode/Random.c; sourceTree = "<group>"; };
-		694753051672E75D003BE7CB /* Grid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Grid.c; path = BrogueCode/Grid.c; sourceTree = "<group>"; };
-		696F73E714C27D9F00CF8C90 /* MainMenu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MainMenu.c; path = BrogueCode/MainMenu.c; sourceTree = "<group>"; };
-		69A642201476EC76006246FB /* Buttons.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Buttons.c; path = BrogueCode/Buttons.c; sourceTree = "<group>"; };
-		69C741491775466100CD2D5F /* Time.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Time.c; path = BrogueCode/Time.c; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* cBrogue.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cBrogue.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F030731A1E56AD870045C83E /* Blueprints.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = Blueprints.c; path = "Chimera Code/Blueprints.c"; sourceTree = "<group>"; };
-		F030731B1E56AD870045C83E /* Blueprints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Blueprints.h; path = "Chimera Code/Blueprints.h"; sourceTree = "<group>"; };
-		F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = MonsterGlobals.c; path = "Chimera Code/MonsterGlobals.c"; sourceTree = "<group>"; };
-		F075856C1D7FAB5C004246C8 /* MonsterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonsterGlobals.h; path = "Chimera Code/MonsterGlobals.h"; sourceTree = "<group>"; };
+		F0743E421E6F3ACE004EB400 /* Ability.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ability.cpp; path = ChimeraCode/Ability.cpp; sourceTree = "<group>"; };
+		F0743E431E6F3ACE004EB400 /* Ability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ability.h; path = ChimeraCode/Ability.h; sourceTree = "<group>"; };
+		F0743E441E6F3ACE004EB400 /* Blueprints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Blueprints.cpp; path = ChimeraCode/Blueprints.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F0743E451E6F3ACE004EB400 /* Blueprints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Blueprints.h; path = ChimeraCode/Blueprints.h; sourceTree = "<group>"; };
+		F0743E461E6F3ACE004EB400 /* Body.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Body.cpp; path = ChimeraCode/Body.cpp; sourceTree = "<group>"; };
+		F0743E471E6F3ACE004EB400 /* Body.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Body.h; path = ChimeraCode/Body.h; sourceTree = "<group>"; };
+		F0743E481E6F3ACE004EB400 /* ChimeraMonster.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChimeraMonster.cpp; path = ChimeraCode/ChimeraMonster.cpp; sourceTree = "<group>"; };
+		F0743E491E6F3ACE004EB400 /* ChimeraMonster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChimeraMonster.h; path = ChimeraCode/ChimeraMonster.h; sourceTree = "<group>"; };
+		F0743E4A1E6F3ACE004EB400 /* Horde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Horde.cpp; path = ChimeraCode/Horde.cpp; sourceTree = "<group>"; };
+		F0743E4B1E6F3ACE004EB400 /* Horde.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Horde.h; path = ChimeraCode/Horde.h; sourceTree = "<group>"; };
+		F0743E4C1E6F3ACE004EB400 /* MonsterGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonsterGenerator.cpp; path = ChimeraCode/MonsterGenerator.cpp; sourceTree = "<group>"; };
+		F0743E4D1E6F3ACE004EB400 /* MonsterGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonsterGenerator.h; path = ChimeraCode/MonsterGenerator.h; sourceTree = "<group>"; };
+		F0743E4E1E6F3ACE004EB400 /* MonsterGlobals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonsterGlobals.cpp; path = ChimeraCode/MonsterGlobals.cpp; sourceTree = "<group>"; };
+		F0743E4F1E6F3ACE004EB400 /* MonsterGlobals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonsterGlobals.h; path = ChimeraCode/MonsterGlobals.h; sourceTree = "<group>"; };
+		F0743E571E6F3AE4004EB400 /* Architect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Architect.cpp; path = BrogueCode/Architect.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F0743E581E6F3AE4004EB400 /* Buttons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Buttons.cpp; path = BrogueCode/Buttons.cpp; sourceTree = "<group>"; };
+		F0743E591E6F3AE4004EB400 /* Combat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Combat.cpp; path = BrogueCode/Combat.cpp; sourceTree = "<group>"; };
+		F0743E5A1E6F3AE4004EB400 /* Dijkstra.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dijkstra.cpp; path = BrogueCode/Dijkstra.cpp; sourceTree = "<group>"; };
+		F0743E5B1E6F3AE4004EB400 /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; name = Globals.cpp; path = BrogueCode/Globals.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		F0743E5C1E6F3AE4004EB400 /* Grid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Grid.cpp; path = BrogueCode/Grid.cpp; sourceTree = "<group>"; };
+		F0743E5D1E6F3AE4004EB400 /* IO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IO.cpp; path = BrogueCode/IO.cpp; sourceTree = "<group>"; };
+		F0743E5E1E6F3AE4004EB400 /* Items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Items.cpp; path = BrogueCode/Items.cpp; sourceTree = "<group>"; };
+		F0743E5F1E6F3AE4004EB400 /* Light.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Light.cpp; path = BrogueCode/Light.cpp; sourceTree = "<group>"; };
+		F0743E601E6F3AE4004EB400 /* MainMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenu.cpp; path = BrogueCode/MainMenu.cpp; sourceTree = "<group>"; };
+		F0743E611E6F3AE4004EB400 /* Monsters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Monsters.cpp; path = BrogueCode/Monsters.cpp; sourceTree = "<group>"; };
+		F0743E621E6F3AE4004EB400 /* Movement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Movement.cpp; path = BrogueCode/Movement.cpp; sourceTree = "<group>"; };
+		F0743E631E6F3AE4004EB400 /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Random.cpp; path = BrogueCode/Random.cpp; sourceTree = "<group>"; };
+		F0743E641E6F3AE4004EB400 /* Recordings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Recordings.cpp; path = BrogueCode/Recordings.cpp; sourceTree = "<group>"; };
+		F0743E651E6F3AE4004EB400 /* RogueMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RogueMain.cpp; path = BrogueCode/RogueMain.cpp; sourceTree = "<group>"; };
+		F0743E661E6F3AE4004EB400 /* Time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Time.cpp; path = BrogueCode/Time.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,24 +156,24 @@
 		29B97315FDCFA39411CA2CEA /* Brogue Code */ = {
 			isa = PBXGroup;
 			children = (
+				F0743E571E6F3AE4004EB400 /* Architect.cpp */,
+				F0743E581E6F3AE4004EB400 /* Buttons.cpp */,
+				F0743E591E6F3AE4004EB400 /* Combat.cpp */,
+				F0743E5A1E6F3AE4004EB400 /* Dijkstra.cpp */,
+				F0743E5B1E6F3AE4004EB400 /* Globals.cpp */,
+				F0743E5C1E6F3AE4004EB400 /* Grid.cpp */,
+				F0743E5D1E6F3AE4004EB400 /* IO.cpp */,
+				F0743E5E1E6F3AE4004EB400 /* Items.cpp */,
+				F0743E5F1E6F3AE4004EB400 /* Light.cpp */,
+				F0743E601E6F3AE4004EB400 /* MainMenu.cpp */,
+				F0743E611E6F3AE4004EB400 /* Monsters.cpp */,
+				F0743E621E6F3AE4004EB400 /* Movement.cpp */,
+				F0743E631E6F3AE4004EB400 /* Random.cpp */,
+				F0743E641E6F3AE4004EB400 /* Recordings.cpp */,
+				F0743E651E6F3AE4004EB400 /* RogueMain.cpp */,
+				F0743E661E6F3AE4004EB400 /* Time.cpp */,
 				5852BB49118650A10064384E /* Rogue.h */,
-				5852BB42118650A10064384E /* Globals.c */,
 				5852BB43118650A10064384E /* IncludeGlobals.h */,
-				5852BB4A118650A10064384E /* RogueMain.c */,
-				696F73E714C27D9F00CF8C90 /* MainMenu.c */,
-				69A642201476EC76006246FB /* Buttons.c */,
-				5852BB40118650A10064384E /* Architect.c */,
-				58EE4FF6120E01FB0020458E /* Random.c */,
-				58A17EDA1235ACA100647687 /* Recordings.c */,
-				5852BB41118650A10064384E /* Combat.c */,
-				5852BB9B118652BA0064384E /* Dijkstra.c */,
-				5852BB44118650A10064384E /* IO.c */,
-				5852BB45118650A10064384E /* Items.c */,
-				5852BB46118650A10064384E /* Light.c */,
-				5852BB47118650A10064384E /* Monsters.c */,
-				5852BB48118650A10064384E /* Movement.c */,
-				69C741491775466100CD2D5F /* Time.c */,
-				694753051672E75D003BE7CB /* Grid.c */,
 			);
 			name = "Brogue Code";
 			sourceTree = "<group>";
@@ -186,10 +201,20 @@
 		F075856E1D7FAB5F004246C8 /* Chimera Code */ = {
 			isa = PBXGroup;
 			children = (
-				F075856B1D7FAB5C004246C8 /* MonsterGlobals.c */,
-				F075856C1D7FAB5C004246C8 /* MonsterGlobals.h */,
-				F030731A1E56AD870045C83E /* Blueprints.c */,
-				F030731B1E56AD870045C83E /* Blueprints.h */,
+				F0743E421E6F3ACE004EB400 /* Ability.cpp */,
+				F0743E431E6F3ACE004EB400 /* Ability.h */,
+				F0743E441E6F3ACE004EB400 /* Blueprints.cpp */,
+				F0743E451E6F3ACE004EB400 /* Blueprints.h */,
+				F0743E461E6F3ACE004EB400 /* Body.cpp */,
+				F0743E471E6F3ACE004EB400 /* Body.h */,
+				F0743E481E6F3ACE004EB400 /* ChimeraMonster.cpp */,
+				F0743E491E6F3ACE004EB400 /* ChimeraMonster.h */,
+				F0743E4A1E6F3ACE004EB400 /* Horde.cpp */,
+				F0743E4B1E6F3ACE004EB400 /* Horde.h */,
+				F0743E4C1E6F3ACE004EB400 /* MonsterGenerator.cpp */,
+				F0743E4D1E6F3ACE004EB400 /* MonsterGenerator.h */,
+				F0743E4E1E6F3ACE004EB400 /* MonsterGlobals.cpp */,
+				F0743E4F1E6F3ACE004EB400 /* MonsterGlobals.h */,
 			);
 			name = "Chimera Code";
 			sourceTree = "<group>";
@@ -260,27 +285,32 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5852BB4C118650A10064384E /* Architect.c in Sources */,
-				5852BB4D118650A20064384E /* Combat.c in Sources */,
-				5852BB4E118650A20064384E /* Globals.c in Sources */,
-				5852BB4F118650A20064384E /* IO.c in Sources */,
-				5852BB50118650A20064384E /* Items.c in Sources */,
-				5852BB51118650A20064384E /* Light.c in Sources */,
-				5852BB52118650A20064384E /* Monsters.c in Sources */,
-				5852BB53118650A20064384E /* Movement.c in Sources */,
-				5852BB54118650A20064384E /* RogueMain.c in Sources */,
+				F0743E551E6F3ACE004EB400 /* MonsterGenerator.cpp in Sources */,
+				F0743E6D1E6F3AE4004EB400 /* IO.cpp in Sources */,
+				F0743E731E6F3AE4004EB400 /* Random.cpp in Sources */,
+				F0743E6A1E6F3AE4004EB400 /* Dijkstra.cpp in Sources */,
+				F0743E561E6F3ACE004EB400 /* MonsterGlobals.cpp in Sources */,
+				F0743E6B1E6F3AE4004EB400 /* Globals.cpp in Sources */,
+				F0743E511E6F3ACE004EB400 /* Blueprints.cpp in Sources */,
+				F0743E751E6F3AE4004EB400 /* RogueMain.cpp in Sources */,
+				F0743E721E6F3AE4004EB400 /* Movement.cpp in Sources */,
+				F0743E6E1E6F3AE4004EB400 /* Items.cpp in Sources */,
 				5852BB60118650D90064384E /* main.m in Sources */,
 				5852BB61118650D90064384E /* RogueDriver.m in Sources */,
+				F0743E671E6F3AE4004EB400 /* Architect.cpp in Sources */,
 				5852BB62118650D90064384E /* Viewport.m in Sources */,
-				5852BB9C118652BA0064384E /* Dijkstra.c in Sources */,
-				58EE4FF7120E01FB0020458E /* Random.c in Sources */,
-				58A17EDB1235ACA100647687 /* Recordings.c in Sources */,
-				69A642211476EC76006246FB /* Buttons.c in Sources */,
-				F030731C1E56AD870045C83E /* Blueprints.c in Sources */,
-				696F73E814C27D9F00CF8C90 /* MainMenu.c in Sources */,
-				F075856D1D7FAB5C004246C8 /* MonsterGlobals.c in Sources */,
-				694753061672E75D003BE7CB /* Grid.c in Sources */,
-				69C7414A1775466100CD2D5F /* Time.c in Sources */,
+				F0743E681E6F3AE4004EB400 /* Buttons.cpp in Sources */,
+				F0743E711E6F3AE4004EB400 /* Monsters.cpp in Sources */,
+				F0743E761E6F3AE4004EB400 /* Time.cpp in Sources */,
+				F0743E741E6F3AE4004EB400 /* Recordings.cpp in Sources */,
+				F0743E6F1E6F3AE4004EB400 /* Light.cpp in Sources */,
+				F0743E531E6F3ACE004EB400 /* ChimeraMonster.cpp in Sources */,
+				F0743E691E6F3AE4004EB400 /* Combat.cpp in Sources */,
+				F0743E521E6F3ACE004EB400 /* Body.cpp in Sources */,
+				F0743E541E6F3ACE004EB400 /* Horde.cpp in Sources */,
+				F0743E501E6F3ACE004EB400 /* Ability.cpp in Sources */,
+				F0743E6C1E6F3AE4004EB400 /* Grid.cpp in Sources */,
+				F0743E701E6F3AE4004EB400 /* MainMenu.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +361,7 @@
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = NO;
-				GCC_WARN_PEDANTIC = YES;
+				GCC_WARN_PEDANTIC = NO;
 				GCC_WARN_PROTOTYPE_CONVERSION = NO;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = YES;
@@ -343,7 +373,7 @@
 				GCC_WARN_UNUSED_VALUE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = cBrogue;
 				SDKROOT = macosx;
@@ -367,7 +397,7 @@
 				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = cBrogue;
 				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
@@ -379,11 +409,13 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
@@ -395,10 +427,12 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ANALYZER_DEADCODE_DEADSTORES = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				GCC_C_LANGUAGE_STANDARD = "compiler-default";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";

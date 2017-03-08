@@ -185,9 +185,9 @@ void initializeButtonState(buttonState *state,
 // Returns the index of a button if one is chosen.
 // Otherwise, returns -1. That can be if the user canceled (in which case *canceled is true),
 // or, more commonly, if the user's input in this particular split-second round was not decisive.
-short processButtonInput(buttonState *state, boolean *canceled, rogueEvent *event) {
+short processButtonInput(buttonState *state, bool *canceled, rogueEvent *event) {
     short i, k, x, y;
-    boolean buttonUsed = false;
+    bool buttonUsed = false;
     
     // Mouse event:
     if (event->eventType == MOUSE_DOWN
@@ -325,7 +325,7 @@ short buttonInputLoop(brogueButton *buttons,
                       short winHeight,
                       rogueEvent *returnEvent) {
     short x, y, button; // (x, y) keeps track of the mouse location
-    boolean canceled;
+    bool canceled;
     rogueEvent theEvent;
     buttonState state = {0};
     

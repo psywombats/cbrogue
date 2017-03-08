@@ -278,7 +278,7 @@ void randomLocationInGrid(short **grid, short *x, short *y, short validValue) {
 
 // Finds the lowest positive number in a grid, chooses one location with that number randomly and returns it as (x, y).
 // If there are no valid locations, returns (-1, -1).
-void randomLeastPositiveLocationInGrid(short **grid, short *x, short *y, boolean deterministic) {
+void randomLeastPositiveLocationInGrid(short **grid, short *x, short *y, bool deterministic) {
     const short targetValue = leastPositiveValueInGrid(grid);
     short locationCount;
     short i, j, index;
@@ -317,14 +317,14 @@ void randomLeastPositiveLocationInGrid(short **grid, short *x, short *y, boolean
     return;
 }
 
-boolean getQualifyingPathLocNear(short *retValX, short *retValY,
+bool getQualifyingPathLocNear(short *retValX, short *retValY,
                                  short x, short y,
-                                 boolean hallwaysAllowed,
+                                 bool hallwaysAllowed,
                                  unsigned long blockingTerrainFlags,
                                  unsigned long blockingMapFlags,
                                  unsigned long forbiddenTerrainFlags,
                                  unsigned long forbiddenMapFlags,
-                                 boolean deterministic) {
+                                 bool deterministic) {
     short **grid, **costMap;
     short loc[2];
     
@@ -461,7 +461,7 @@ void createBlobOnGrid(short **grid,
     
     short topBlobMinX, topBlobMinY, topBlobMaxX, topBlobMaxY, blobWidth, blobHeight;
     //short buffer2[maxBlobWidth][maxBlobHeight]; // buffer[][] is already a global short array
-    boolean foundACellThisLine;
+    bool foundACellThisLine;
     
     // Generate blobs until they satisfy the minBlobWidth and minBlobHeight restraints
     do {

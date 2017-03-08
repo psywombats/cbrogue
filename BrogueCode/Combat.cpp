@@ -113,7 +113,7 @@ short hitProbability(creature *attacker, creature *defender) {
     return hitProbability;
 }
 
-boolean attackHit(creature *attacker, creature *defender) {
+bool attackHit(creature *attacker, creature *defender) {
     
     // automatically hit if the monster is sleeping or captive or stuck in a web
     if (defender->status[STATUS_STUCK]
@@ -334,7 +334,7 @@ void moralAttack(creature *attacker, creature *defender) {
     }
 }
 
-boolean playerImmuneToMonster(creature *monst) {
+bool playerImmuneToMonster(creature *monst) {
     if (monst != &player
         && rogue.armor
         && (rogue.armor->flags & ITEM_RUNIC)
@@ -449,7 +449,7 @@ void specialHit(creature *attacker, creature *defender, short damage) {
     }
 }
 
-short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchantLevel) {
+short runicWeaponChance(item *theItem, bool customEnchantLevel, float enchantLevel) {
     const float effectChances[NUMBER_WEAPON_RUNIC_KINDS] = {
         0.16,   // W_SPEED
         0.06,   // W_QUIETUS
@@ -508,11 +508,11 @@ short runicWeaponChance(item *theItem, boolean customEnchantLevel, float enchant
     return chance;
 }
 
-boolean forceWeaponHit(creature *defender, item *theItem) {
+bool forceWeaponHit(creature *defender, item *theItem) {
     short oldLoc[2], newLoc[2], forceDamage;
     char buf[DCOLS*3], buf2[COLS], monstName[DCOLS];
     creature *otherMonster = NULL;
-    boolean knowFirstMonsterDied = false, autoID = false;
+    bool knowFirstMonsterDied = false, autoID = false;
     bolt theBolt;
     
     monsterName(monstName, defender, true);
@@ -596,7 +596,7 @@ boolean forceWeaponHit(creature *defender, item *theItem) {
     return autoID;
 }
 
-void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
+void magicWeaponHit(creature *defender, item *theItem, bool backstabbed) {
     char buf[DCOLS*3], monstName[DCOLS], theItemName[DCOLS];
     
     const color *effectColors[NUMBER_WEAPON_RUNIC_KINDS] = {&white, &black,
@@ -606,7 +606,7 @@ void magicWeaponHit(creature *defender, item *theItem, boolean backstabbed) {
     float enchant;
     enum weaponEnchants enchantType = theItem->enchant2;
     creature *newMonst;
-    boolean autoID = false;
+    bool autoID = false;
     
     // If the defender is already dead, proceed only if the runic is speed or multiplicity.
     // (Everything else acts on the victim, which would literally be overkill.)
@@ -813,10 +813,10 @@ void attackVerb(char returnString[DCOLS], creature *attacker, short hitPercentil
     resolvePronounEscapes(returnString, attacker);
 }
 
-void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *damage, boolean melee) {
+void applyArmorRunicEffect(char returnString[DCOLS], creature *attacker, short *damage, bool melee) {
     char armorName[DCOLS], attackerName[DCOLS], monstName[DCOLS], buf[DCOLS * 3];
-    boolean runicKnown;
-    boolean runicDiscovered;
+    bool runicKnown;
+    bool runicDiscovered;
     short newDamage, dir, newX, newY, count, i;
     float enchant;
     creature *monst, *hitList[8];
@@ -1003,10 +1003,10 @@ void decrementWeaponAutoIDTimer() {
 }
 
 // returns whether the attack hit
-boolean attack(creature *attacker, creature *defender, boolean lungeAttack) {
+bool attack(creature *attacker, creature *defender, bool lungeAttack) {
     short damage, specialDamage, poisonDamage;
     char buf[COLS*2], buf2[COLS*2], attackerName[COLS], defenderName[COLS], verb[DCOLS], explicationClause[DCOLS] = "", armorRunicString[DCOLS*3];
-    boolean sneakAttack, defenderWasAsleep, defenderWasParalyzed, degradesAttackerWeapon, sightUnseen;
+    bool sneakAttack, defenderWasAsleep, defenderWasParalyzed, degradesAttackerWeapon, sightUnseen;
     
     if (attacker == &player) {
         rogue.featRecord[FEAT_PURE_MAGE] = false;
@@ -1308,7 +1308,7 @@ void flashMonster(creature *monst, const color *theColor, short strength) {
     }
 }
 
-boolean canAbsorb(creature *ally, boolean ourBolts[NUMBER_BOLT_KINDS], creature *prey, short **grid) {
+bool canAbsorb(creature *ally, bool ourBolts[NUMBER_BOLT_KINDS], creature *prey, short **grid) {
     short i;
     
     if (ally->creatureState == MONSTER_ALLY
@@ -1342,12 +1342,12 @@ boolean canAbsorb(creature *ally, boolean ourBolts[NUMBER_BOLT_KINDS], creature 
     return false;
 }
 
-boolean anyoneWantABite(creature *decedent) {
+bool anyoneWantABite(creature *decedent) {
     short candidates, randIndex, i;
     short **grid;
     creature *ally;
-    boolean success = false;
-    boolean ourBolts[NUMBER_BOLT_KINDS];
+    bool success = false;
+    bool ourBolts[NUMBER_BOLT_KINDS];
     
     candidates = 0;
     if ((!(decedent->info.abilityFlags & LEARNABLE_ABILITIES)
@@ -1453,10 +1453,10 @@ void inflictLethalDamage(creature *attacker, creature *defender) {
 
 // returns true if this was a killing stroke; does NOT free the pointer, but DOES remove it from the monster chain
 // flashColor indicates the color that the damage will cause the creature to flash
-boolean inflictDamage(creature *attacker, creature *defender,
-                      short damage, const color *flashColor, boolean ignoresProtectionShield) {
+bool inflictDamage(creature *attacker, creature *defender,
+                      short damage, const color *flashColor, bool ignoresProtectionShield) {
     
-    boolean killed = false;
+    bool killed = false;
     dungeonFeature theBlood;
     short transferenceAmount;
     
@@ -1580,7 +1580,7 @@ void addPoison(creature *monst, short durationIncrement, short concentrationIncr
 // Or, if the decedent is a player ally at the moment of death, insert it into the purgatory chain for possible future resurrection.
 // Use "administrativeDeath" if the monster is being deleted for administrative purposes, as opposed to dying as a result of physical actions.
 // AdministrativeDeath means the monster simply disappears, with no messages, dropped item, DFs or other effect.
-void killCreature(creature *decedent, boolean administrativeDeath) {
+void killCreature(creature *decedent, bool administrativeDeath) {
     short x, y;
     char monstName[DCOLS], buf[DCOLS];
     
@@ -1688,7 +1688,7 @@ void killCreature(creature *decedent, boolean administrativeDeath) {
 
 void buildHitList(creature **hitList,
                   const creature *attacker, creature *defender,
-                  const boolean penetrate, const boolean sweep) {
+                  const bool penetrate, const bool sweep) {
     short i, x, y, newX, newY, newestX, newestY;
     enum directions dir, newDir;
     

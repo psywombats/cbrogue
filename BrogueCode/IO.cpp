@@ -66,7 +66,7 @@ void reversePath(short path[1000][2], short steps) {
     }
 }
 
-void hilitePath(short path[1000][2], short steps, boolean unhilite) {
+void hilitePath(short path[1000][2], short steps, bool unhilite) {
     short i;
     if (unhilite) {
         for (i=0; i<steps; i++) {
@@ -159,7 +159,7 @@ void processSnapMap(short **map) {
     for (i = 0; i < DCOLS; i++) {
         for (j = 0; j < DROWS; j++) {
             if (cellHasTMFlag(i, j, TM_INVERT_WHEN_HIGHLIGHTED)) {
-                for (dir = 0; dir < 4; NEXT_DIR(dir)) {
+                for (dir = (enum directions)0; dir < (enum directions)4; NEXT_DIR(dir)) {
                     newX = i + nbDirs[dir][0];
                     newY = j + nbDirs[dir][1];
                     if (coordinatesAreInMap(newX, newY)
@@ -181,10 +181,10 @@ void processSnapMap(short **map) {
 // Returns the keystroke to effect the button's command, or -1 if canceled.
 // Some buttons take effect in this function instead of returning a value,
 // i.e. true colors mode and display stealth mode.
-short actionMenu(short x, boolean playingBack) {
+short actionMenu(short x, bool playingBack) {
     short buttonCount;
     short y;
-    boolean takeActionOurselves[ROWS] = {false};
+    bool takeActionOurselves[ROWS] = {false};
     rogueEvent theEvent;
     
     brogueButton buttons[ROWS] = {{{0}}};
@@ -509,7 +509,7 @@ void mainInputLoop() {
     item *theItem;
     cellDisplayBuffer rbuf[COLS][ROWS];
     
-    boolean canceled, targetConfirmed, tabKey, focusedOnMonster, focusedOnItem, focusedOnTerrain,
+    bool canceled, targetConfirmed, tabKey, focusedOnMonster, focusedOnItem, focusedOnTerrain,
     playingBack, doEvent, textDisplayed;
     
     rogueEvent theEvent;
@@ -891,7 +891,7 @@ void bakeColor(color *theColor) {
     theColor->redRand = theColor->greenRand = theColor->blueRand = theColor->rand = 0;
 }
 
-void shuffleTerrainColors(short percentOfCells, boolean refreshCells) {
+void shuffleTerrainColors(short percentOfCells, bool refreshCells) {
     enum directions dir;
     short i, j;
     
@@ -906,7 +906,7 @@ void shuffleTerrainColors(short percentOfCells, boolean refreshCells) {
                 && (i != rogue.cursorLoc[0] || j != rogue.cursorLoc[1])
                 && (percentOfCells >= 100 || rand_range(1, 100) <= percentOfCells)) {
                     
-                    for (dir=0; dir<DIRECTION_COUNT; NEXT_DIR(dir)) {
+                    for (dir=(enum directions)0; dir<(enum directions)DIRECTION_COUNT; NEXT_DIR(dir)) {
                         terrainRandomValues[i][j][dir] += rand_range(-600, 600);
                         terrainRandomValues[i][j][dir] = CLAMP(terrainRandomValues[i][j][dir], 0, 1000);
                     }
@@ -922,10 +922,10 @@ void shuffleTerrainColors(short percentOfCells, boolean refreshCells) {
 
 // if forecolor is too similar to back, darken or lighten it and return true.
 // Assumes colors have already been baked (no random components).
-boolean separateColors(color *fore, color *back) {
+bool separateColors(color *fore, color *back) {
     color f, b, *modifier;
     short failsafe;
-    boolean madeChange;
+    bool madeChange;
     
     f = *fore;
     b = *back;
@@ -982,7 +982,7 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
     short distance;
     uchar cellChar = 0;
     color cellForeColor, cellBackColor, lightMultiplierColor = black, gasAugmentColor;
-    boolean monsterWithDetectedItem = false, needDistinctness = false;
+    bool monsterWithDetectedItem = false, needDistinctness = false;
     short gasAugmentWeight = 0;
     creature *monst = NULL;
     item *theItem = NULL;
@@ -1035,15 +1035,15 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
         
         if (!(pmap[x][y].flags & DISCOVERED) && !rogue.playbackOmniscience) {
             if (pmap[x][y].flags & MAGIC_MAPPED) {
-                maxLayer = LIQUID + 1; // Can see only dungeon and liquid layers with magic mapping.
+                maxLayer = (dungeonLayers)((int)LIQUID + 1); // Can see only dungeon and liquid layers with magic mapping.
             } else {
-                maxLayer = 0; // Terrain shouldn't influence the tile appearance at all if it hasn't been discovered.
+                maxLayer = (enum dungeonLayers)0; // Terrain shouldn't influence the tile appearance at all if it hasn't been discovered.
             }
         } else {
             maxLayer = NUMBER_TERRAIN_LAYERS;
         }
         
-        for (layer = 0; layer < maxLayer; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < maxLayer; NEXT_LAYER(layer)) {
             // Gas shows up as a color average, not directly.
             if (pmap[x][y].layers[layer] && layer != GAS) {
                 tile = pmap[x][y].layers[layer];
@@ -1228,11 +1228,11 @@ void getCellAppearance(short x, short y, uchar *returnChar, color *returnForeCol
             pmap[x][y].flags |= STABLE_MEMORY;
             if (pmap[x][y].flags & HAS_ITEM) {
                 theItem = itemAtLoc(x, y);
-                pmap[x][y].rememberedItemCategory = theItem->category;
+                pmap[x][y].rememberedItemCategory = (itemCategory)theItem->category;
                 pmap[x][y].rememberedItemKind = theItem->kind;
                 pmap[x][y].rememberedItemQuantity = theItem->quantity;
             } else {
-                pmap[x][y].rememberedItemCategory = 0;
+                pmap[x][y].rememberedItemCategory = (itemCategory)0;
                 pmap[x][y].rememberedItemKind = 0;
                 pmap[x][y].rememberedItemQuantity = 0;
             }
@@ -1524,9 +1524,9 @@ void irisFadeBetweenBuffers(cellDisplayBuffer fromBuf[COLS][ROWS],
                             cellDisplayBuffer toBuf[COLS][ROWS],
                             short x, short y,
                             short frameCount,
-                            boolean outsideIn) {
+                            bool outsideIn) {
     short i, j, frame, percentBasis, thisCellPercent;
-    boolean fastForward;
+    bool fastForward;
     color fromBackColor, toBackColor, fromForeColor, toForeColor, currentForeColor, currentBackColor;
     uchar fromChar, toChar, currentChar;
     short completionMap[COLS][ROWS], maxDistance;
@@ -1598,7 +1598,7 @@ void colorBlendCell(short x, short y, color *hiliteColor, short hiliteStrength) 
 }
 
 // takes dungeon coordinates
-void hiliteCell(short x, short y, const color *hiliteColor, short hiliteStrength, boolean distinctColors) {
+void hiliteCell(short x, short y, const color *hiliteColor, short hiliteStrength, bool distinctColors) {
     uchar displayChar;
     color foreColor, backColor;
     
@@ -1952,7 +1952,7 @@ void flashForeground(short *x, short *y, color **flashColor, short *flashStrengt
 
 void flash(color *theColor, short frames, short x, short y) {
     short i;
-    boolean interrupted = false;
+    bool interrupted = false;
     
     for (i=0; i<frames && !interrupted; i++) {
         colorBlendCell(x, y, theColor, 100 - 100 * i / frames);
@@ -1967,7 +1967,7 @@ void colorFlash(const color *theColor, unsigned long reqTerrainFlags,
                 unsigned long reqTileFlags, short frames, short maxRadius, short x, short y) {
     short i, j, k, intensity, currentRadius, fadeOut;
     short localRadius[DCOLS][DROWS];
-    boolean tileQualifies[DCOLS][DROWS], aTileQualified, fastForward;
+    bool tileQualifies[DCOLS][DROWS], aTileQualified, fastForward;
     
     aTileQualified = false;
     fastForward = false;
@@ -2016,13 +2016,13 @@ void colorFlash(const color *theColor, unsigned long reqTerrainFlags,
 
 // x and y are global coordinates, not within the playing square
 void funkyFade(cellDisplayBuffer displayBuf[COLS][ROWS], const color *colorStart,
-               const color *colorEnd, short stepCount, short x, short y, boolean invert) {
+               const color *colorEnd, short stepCount, short x, short y, bool invert) {
     short i, j, n, weight;
     double x2, y2, weightGrid[COLS][ROWS][3], percentComplete;
     color tempColor, colorMid, foreColor, backColor;
     uchar tempChar;
     short **distanceMap;
-    boolean fastForward;
+    bool fastForward;
     
     assureCosmeticRNG;
     
@@ -2217,16 +2217,16 @@ void displayLoops() {
     waitForAcknowledgment();
 }
 
-void exploreKey(const boolean controlKey) {
+void exploreKey(const bool controlKey) {
     short x, y, finalX, finalY;
     short **exploreMap;
     enum directions dir;
-    boolean tooDark = false;
+    bool tooDark = false;
     
     // fight any adjacent enemies first
     dir = adjacentFightingDir();
     if (dir == NO_DIRECTION) {
-        for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+        for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
             x = player.xLoc + nbDirs[dir][0];
             y = player.yLoc + nbDirs[dir][1];
             if (coordinatesAreInMap(x, y)
@@ -2243,7 +2243,7 @@ void exploreKey(const boolean controlKey) {
             exploreMap = allocGrid();
             getExploreMap(exploreMap, false);
             do {
-                dir = nextStep(exploreMap, x, y, NULL, false);
+                dir = (directions)nextStep(exploreMap, x, y, NULL, false);
                 if (dir != NO_DIRECTION) {
                     x += nbDirs[dir][0];
                     y += nbDirs[dir][1];
@@ -2271,8 +2271,8 @@ void exploreKey(const boolean controlKey) {
     }
 }
 
-boolean pauseBrogue(short milliseconds) {
-    boolean interrupted;
+bool pauseBrogue(short milliseconds) {
+    bool interrupted;
     
     commitDraws();
     if (rogue.playbackMode && rogue.playbackFastForward) {
@@ -2285,9 +2285,9 @@ boolean pauseBrogue(short milliseconds) {
     return interrupted;
 }
 
-void nextBrogueEvent(rogueEvent *returnEvent, boolean textInput, boolean colorsDance, boolean realInputEvenInPlayback) {
+void nextBrogueEvent(rogueEvent *returnEvent, bool textInput, bool colorsDance, bool realInputEvenInPlayback) {
     rogueEvent recordingInput;
-    boolean repeatAgain;
+    bool repeatAgain;
     short pauseDuration;
     
     returnEvent->eventType = EVENT_ERROR;
@@ -2330,7 +2330,7 @@ void nextBrogueEvent(rogueEvent *returnEvent, boolean textInput, boolean colorsD
 
 void executeMouseClick(rogueEvent *theEvent) {
     short x, y;
-    boolean autoConfirm;
+    bool autoConfirm;
     x = theEvent->param1;
     y = theEvent->param2;
     autoConfirm = theEvent->controlKey;
@@ -2352,7 +2352,7 @@ void executeMouseClick(rogueEvent *theEvent) {
     }
 }
 
-void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKey) {
+void executeKeystroke(signed long keystroke, bool controlKey, bool shiftKey) {
     char path[BROGUE_FILENAME_MAX];
     short direction = -1;
     
@@ -2596,13 +2596,13 @@ void executeKeystroke(signed long keystroke, boolean controlKey, boolean shiftKe
     rogue.cautiousMode = false;
 }
 
-boolean getInputTextString(char *inputText,
+bool getInputTextString(char *inputText,
                            const char *prompt,
                            short maxLength,
                            const char *defaultEntry,
                            const char *promptSuffix,
                            short textEntryType,
-                           boolean useDialogBox) {
+                           bool useDialogBox) {
     short charNum, i, x, y;
     char keystroke, suffix[100];
     const short textEntryBounds[TEXT_INPUT_TYPES][2] = {{' ', '~'}, {' ', '~'}, {'0', '9'}};
@@ -2691,7 +2691,7 @@ void displayCenteredAlert(char *message) {
 
 // Flashes a message on the screen starting at (x, y) lasting for the given time and with the given colors.
 void flashMessage(char *message, short x, short y, int time, color *fColor, color *bColor) {
-    boolean fastForward;
+    bool fastForward;
     int     i, j, messageLength, percentComplete, previousPercentComplete;
     color backColors[COLS], backColor, foreColor;
     cellDisplayBuffer dbufs[COLS];
@@ -2776,7 +2776,7 @@ void waitForKeystrokeOrMouseClick() {
     } while (theEvent.eventType != KEYSTROKE && theEvent.eventType != MOUSE_UP);
 }
 
-boolean confirm(char *prompt, boolean alsoDuringPlayback) {
+bool confirm(char *prompt, bool alsoDuringPlayback) {
     short retVal;
     brogueButton buttons[2] = {{{0}}};
     cellDisplayBuffer rbuf[COLS][ROWS];
@@ -2823,7 +2823,7 @@ void clearMonsterFlashes() {
     
 }
 
-void displayMonsterFlashes(boolean flashingEnabled) {
+void displayMonsterFlashes(bool flashingEnabled) {
     creature *monst;
     short x[100], y[100], strength[100], count = 0;
     color *flashColor[100];
@@ -2862,7 +2862,7 @@ void dequeueEvent() {
 
 void displayMessageArchive() {
     short i, j, k, reverse, fadePercent, totalMessageCount, currentMessageCount;
-    boolean fastForward;
+    bool fastForward;
     cellDisplayBuffer dbuf[COLS][ROWS], rbuf[COLS][ROWS];
     
     // Count the number of lines in the archive.
@@ -2927,7 +2927,7 @@ void displayMessageArchive() {
 // Clears the message area and prints the given message in the area.
 // It will disappear when messages are refreshed and will not be archived.
 // This is primarily used to display prompts.
-void temporaryMessage(char *msg, boolean requireAcknowledgment) {
+void temporaryMessage(char *msg, bool requireAcknowledgment) {
     char message[COLS];
     short i, j;
     
@@ -2953,7 +2953,7 @@ void temporaryMessage(char *msg, boolean requireAcknowledgment) {
     restoreRNG;
 }
 
-void messageWithColor(char *msg, color *theColor, boolean requireAcknowledgment) {
+void messageWithColor(char *msg, color *theColor, bool requireAcknowledgment) {
     char buf[COLS*2] = "";
     short i;
     
@@ -2981,7 +2981,7 @@ void flavorMessage(char *msg) {
     }
 }
 
-void messageWithoutCaps(char *msg, boolean requireAcknowledgment) {
+void messageWithoutCaps(char *msg, bool requireAcknowledgment) {
     short i;
     if (!msg[0]) {
         return;
@@ -3022,7 +3022,7 @@ void messageWithoutCaps(char *msg, boolean requireAcknowledgment) {
 }
 
 
-void message(const char *msg, boolean requireAcknowledgment) {
+void message(const char *msg, bool requireAcknowledgment) {
     char text[COLS*20], *msgPtr;
     short i, lines;
     
@@ -3100,7 +3100,7 @@ void displayMoreSign() {
 // Does NOT check string lengths, so it could theoretically write over the null terminator.
 // Returns the new insertion point.
 short encodeMessageColor(char *msg, short i, const color *theColor) {
-    boolean needTerminator = false;
+    bool needTerminator = false;
     color col = *theColor;
     
     assureCosmeticRNG;
@@ -3249,15 +3249,15 @@ enum entityDisplayTypes {
 // FocusedEntityMustGoFirst should usually be false when called externally. This is because
 // we won't know if it will fit on the screen in normal order until we try.
 // So if we try and fail, this function will call itself again, but with this set to true.
-void refreshSideBar(short focusX, short focusY, boolean focusedEntityMustGoFirst) {
+void refreshSideBar(short focusX, short focusY, bool focusedEntityMustGoFirst) {
     short printY, oldPrintY, shortestDistance, i, j, k, px, py, x, y, displayEntityCount, indirectVision;
     creature *monst, *closestMonst;
     item *theItem, *closestItem;
     char buf[COLS];
     void *entityList[ROWS] = {0}, *focusEntity = NULL;
-    enum entityDisplayTypes entityType[ROWS] = {0}, focusEntityType = EDT_NOTHING;
+    enum entityDisplayTypes entityType[ROWS] = {(entityDisplayTypes)0}, focusEntityType = EDT_NOTHING;
     short terrainLocationMap[ROWS][2];
-    boolean gotFocusedEntityOnScreen = (focusX >= 0 ? false : true);
+    bool gotFocusedEntityOnScreen = (focusX >= 0 ? false : true);
     char addedEntity[DCOLS][DROWS];
     short oldRNG;
     
@@ -3485,7 +3485,7 @@ void printString(const char *theString, short x, short y, color *foreColor, colo
 
 // Inserts line breaks into really long words. Optionally adds a hyphen, but doesn't do anything
 // clever regarding hyphen placement. Plays nicely with color escapes.
-void breakUpLongWordsIn(char *sourceText, short width, boolean useHyphens) {
+void breakUpLongWordsIn(char *sourceText, short width, bool useHyphens) {
     char buf[COLS * ROWS * 2] = "";
     short i, m, nextChar, wordWidth;
     //const short maxLength = useHyphens ? width - 1 : width;
@@ -3614,7 +3614,7 @@ short printStringWithWrapping(char *theString, short x, short y, short width, co
     return py;
 }
 
-char nextKeyPress(boolean textInput) {
+char nextKeyPress(bool textInput) {
     rogueEvent theEvent;
     do {
         nextBrogueEvent(&theEvent, textInput, false, false);
@@ -3862,7 +3862,7 @@ void printDiscoveriesScreen() {
 //  overlayDisplayBuffer(rbuf, NULL);
 //}
 
-void printHighScores(boolean hiliteMostRecent) {
+void printHighScores(bool hiliteMostRecent) {
     short i, hiliteLineNum, maxLength = 0, leftOffset;
     rogueHighScoresEntry list[HIGH_SCORES_COUNT] = {{0}};
     char buf[DCOLS*3];
@@ -3980,7 +3980,7 @@ void printSeed() {
     message(buf, false);    
 }
 
-void printProgressBar(short x, short y, const char barLabel[COLS], long amtFilled, long amtMax, color *fillColor, boolean dim) {
+void printProgressBar(short x, short y, const char barLabel[COLS], long amtFilled, long amtMax, color *fillColor, bool dim) {
     char barText[] = "                    "; // string length is 20
     short i, labelOffset;
     color currentFillColor, textColor, progressBarColor, darkenedBarColor;
@@ -4057,12 +4057,12 @@ short estimatedArmorValue() {
 }
 
 // returns the y-coordinate after the last line printed
-short printMonsterInfo(creature *monst, short y, boolean dim, boolean highlight) {
+short printMonsterInfo(creature *monst, short y, bool dim, bool highlight) {
     char buf[COLS * 2], buf2[COLS * 2], monstName[COLS], tempColorEscape[5], grayColorEscape[5];
     uchar monstChar;
     color monstForeColor, monstBackColor, healthBarColor, tempColor;
     short initialY, i, j, highlightStrength, displayedArmor, percent;
-    boolean inPath;
+    bool inPath;
     short oldRNG;
     
     const char hallucinationStrings[14][COLS] = {
@@ -4373,12 +4373,12 @@ void describeHallucinatedItem(char *buf) {
 }
 
 // Returns the y-coordinate after the last line printed.
-short printItemInfo(item *theItem, short y, boolean dim, boolean highlight) {
+short printItemInfo(item *theItem, short y, bool dim, bool highlight) {
     char name[COLS * 3];
     uchar itemChar;
     color itemForeColor, itemBackColor;
     short initialY, i, j, highlightStrength, lineCount;
-    boolean inPath;
+    bool inPath;
     short oldRNG;
     
     if (y >= ROWS - 1) {
@@ -4435,11 +4435,11 @@ short printItemInfo(item *theItem, short y, boolean dim, boolean highlight) {
 }
 
 // Returns the y-coordinate after the last line printed.
-short printTerrainInfo(short x, short y, short py, const char *description, boolean dim, boolean highlight) {
+short printTerrainInfo(short x, short y, short py, const char *description, bool dim, bool highlight) {
     uchar displayChar;
     color foreColor, backColor;
     short initialY, i, j, highlightStrength, lineCount;
-    boolean inPath;
+    bool inPath;
     char name[DCOLS*2];
     color textColor;
     short oldRNG;
@@ -4627,7 +4627,7 @@ void printMonsterDetails(creature *monst, cellDisplayBuffer rbuf[COLS][ROWS]) {
 // Returns the key of an action to take, if any; otherwise -1.
 unsigned long printCarriedItemDetails(item *theItem,
                                       short x, short y, short width,
-                                      boolean includeButtons,
+                                      bool includeButtons,
                                       cellDisplayBuffer rbuf[COLS][ROWS]) {
     char textBuf[COLS * 100], goldColorEscape[5] = "", whiteColorEscape[5] = "";
     brogueButton buttons[20] = {{{0}}};

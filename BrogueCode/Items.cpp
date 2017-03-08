@@ -443,7 +443,7 @@ void coolHeatMapAt(unsigned short heatMap[DCOLS][DROWS], short x, short y, unsig
 
 // Returns false if no place could be found.
 // That should happen only if the total heat is zero.
-boolean getItemSpawnLoc(unsigned short heatMap[DCOLS][DROWS], short *x, short *y, unsigned long *totalHeat) {
+bool getItemSpawnLoc(unsigned short heatMap[DCOLS][DROWS], short *x, short *y, unsigned long *totalHeat) {
     unsigned long randIndex;
     unsigned short currentHeat;
     short i, j;
@@ -691,7 +691,7 @@ void populateItems(short upstairsX, short upstairsY) {
 
 // Name of this function is a bit misleading -- basically returns true iff the item will stack without consuming an extra slot
 // i.e. if it's a throwing weapon with a sibling already in your pack. False for potions and scrolls.
-boolean itemWillStackWithPack(item *theItem) {
+bool itemWillStackWithPack(item *theItem) {
     item *tempItem;
     if (!(theItem->quiverNumber)) {
         return false;
@@ -894,7 +894,7 @@ short numberOfItemsInPack() {
 }
 
 char nextAvailableInventoryCharacter() {
-    boolean charTaken[26];
+    bool charTaken[26];
     short i;
     item *theItem;
     char c;
@@ -934,7 +934,7 @@ void checkForDisenchantment(item *theItem) {
     }
 }
 
-boolean itemIsSwappable(const item *theItem) {
+bool itemIsSwappable(const item *theItem) {
     if ((theItem->category & CAN_BE_SWAPPED)
         && theItem->quiverNumber == 0) {
         
@@ -944,7 +944,7 @@ boolean itemIsSwappable(const item *theItem) {
     }
 }
 
-void swapItemToEnchantLevel(item *theItem, short newEnchant, boolean enchantmentKnown) {
+void swapItemToEnchantLevel(item *theItem, short newEnchant, bool enchantmentKnown) {
     short x, y, charmPercent;
     char buf1[COLS * 3], buf2[COLS * 3];
     
@@ -1000,7 +1000,7 @@ void swapItemToEnchantLevel(item *theItem, short newEnchant, boolean enchantment
     }
 }
 
-boolean enchantLevelKnown(const item *theItem) {
+bool enchantLevelKnown(const item *theItem) {
     if ((theItem->category & STAFF)
         && (theItem->flags & ITEM_MAX_CHARGES_KNOWN)) {
         
@@ -1018,10 +1018,10 @@ short effectiveEnchantLevel(const item *theItem) {
     }
 }
 
-boolean swapItemEnchants(const short machineNumber) {
+bool swapItemEnchants(const short machineNumber) {
     item *lockedItem, *tempItem;
     short i, j, oldEnchant;
-    boolean enchantmentKnown;
+    bool enchantmentKnown;
     
     lockedItem = NULL;
     for (i = 0; i < DCOLS; i++) {
@@ -1141,7 +1141,7 @@ void updateFloorItems() {
     }
 }
 
-boolean inscribeItem(item *theItem) {
+bool inscribeItem(item *theItem) {
     char itemText[30], buf[COLS * 3], nameOfItem[COLS * 3], oldInscription[COLS];
     
     strcpy(oldInscription, theItem->inscription);
@@ -1163,7 +1163,7 @@ boolean inscribeItem(item *theItem) {
     }
 }
 
-boolean itemCanBeCalled(item *theItem) {
+bool itemCanBeCalled(item *theItem) {
     if (theItem->category & (WEAPON|ARMOR|SCROLL|RING|POTION|STAFF|WAND|CHARM)) {
         return true;
     } else if ((theItem->category & (POTION | SCROLL))
@@ -1275,7 +1275,7 @@ void call(item *theItem) {
 // If baseColor is provided, then the suffix will be in gray, flavor portions of the item name (e.g. a "pink" potion,
 //  a "sandalwood" staff, a "ruby" ring) will be in dark purple, and the Amulet of Yendor and lumenstones will be in yellow.
 //  BaseColor itself will be the color that the name reverts to outside of these colored portions.
-void itemName(item *theItem, char *root, boolean includeDetails, boolean includeArticle, color *baseColor) {
+void itemName(item *theItem, char *root, bool includeDetails, bool includeArticle, color *baseColor) {
     char buf[DCOLS * 5], pluralization[10], article[10] = "",
     grayEscapeSequence[5], purpleEscapeSequence[5], yellowEscapeSequence[5], baseEscapeSequence[5];
     color tempColor;
@@ -1625,7 +1625,7 @@ itemTable *tableForItemCategory(enum itemCategory theCat, short *kindCount) {
     return returnedTable;
 }
 
-boolean isVowelish(char *theChar) {
+bool isVowelish(char *theChar) {
     short i;
     
     while (*theChar == COLOR_ESCAPE) {
@@ -1729,7 +1729,7 @@ float enchantIncrement(item *theItem) {
     }
 }
 
-boolean itemIsCarried(item *theItem) {
+bool itemIsCarried(item *theItem) {
     item *tempItem;
     
     for (tempItem = packItems->nextItem; tempItem != NULL; tempItem = tempItem->nextItem) {
@@ -1770,7 +1770,7 @@ short apparentRingBonus(const enum ringKind kind) {
 
 void itemDetails(char *buf, item *theItem) {
     char buf2[1000], buf3[1000], theName[500], goodColorEscape[20], badColorEscape[20], whiteColorEscape[20];
-    boolean singular, carried;
+    bool singular, carried;
     float enchant;
     short nextLevelState = 0, temp;
     float accuracyChange, damageChange, current, currentDamage, newDamage;
@@ -2616,7 +2616,7 @@ void itemDetails(char *buf, item *theItem) {
     }
 }
 
-boolean displayMagicCharForItem(item *theItem) {
+bool displayMagicCharForItem(item *theItem) {
     if (!(theItem->flags & ITEM_MAGIC_DETECTED)
         || (theItem->category & PRENAMED_CATEGORY)) {
         return false;
@@ -2628,8 +2628,8 @@ boolean displayMagicCharForItem(item *theItem) {
 char displayInventory(unsigned short categoryMask,
                       unsigned long requiredFlags,
                       unsigned long forbiddenFlags,
-                      boolean waitForAcknowledge,
-                      boolean includeButtons) {
+                      bool waitForAcknowledge,
+                      bool includeButtons) {
     item *theItem;
     short i, j, m, maxLength = 0, itemNumber, itemCount, equippedItemCount;
     short extraLineCount = 0;
@@ -2637,7 +2637,7 @@ char displayInventory(unsigned short categoryMask,
     char buf[COLS*3];
     char theKey;
     rogueEvent theEvent;
-    boolean magicDetected, repeatDisplay;
+    bool magicDetected, repeatDisplay;
     short highlightItemLine, itemSpaceRemaining;
     cellDisplayBuffer dbuf[COLS][ROWS];
     cellDisplayBuffer rbuf[COLS][ROWS];
@@ -2985,7 +2985,7 @@ char displayInventory(unsigned short categoryMask,
 
 short numberOfMatchingPackItems(unsigned short categoryMask,
                                 unsigned long requiredFlags, unsigned long forbiddenFlags,
-                                boolean displayErrors) {
+                                bool displayErrors) {
     item *theItem;
     short matchingItemCount = 0;
     
@@ -3071,7 +3071,7 @@ void strengthCheck(item *theItem) {
     }
 }
 
-boolean canEquip(item *theItem) {
+bool canEquip(item *theItem) {
     item *previouslyEquippedItem = NULL;
     
     if (theItem->category & WEAPON) {
@@ -3203,7 +3203,7 @@ void equip(item *theItem) {
 // (1) it's a key (has ITEM_IS_KEY flag),
 // (2) its originDepth matches the depth, and
 // (3) either its key (x, y) location matches (x, y), or its machine number matches the machine number at (x, y).
-boolean keyMatchesLocation(item *theItem, short x, short y) {
+bool keyMatchesLocation(item *theItem, short x, short y) {
     short i;
     
     if ((theItem->flags & ITEM_IS_KEY)
@@ -3376,7 +3376,7 @@ short getLineCoordinates(short listOfCoordinates[][2], const short originLoc[2],
 // Takes into account the caster's knowledge; i.e. won't be blocked by monsters
 // that the caster is not aware of.
 void getImpactLoc(short returnLoc[2], const short originLoc[2], const short targetLoc[2],
-                  const short maxDistance, const boolean returnLastEmptySpace) {
+                  const short maxDistance, const bool returnLastEmptySpace) {
     short coords[DCOLS + 1][2];
     short i, n;
     creature *monst;
@@ -3415,7 +3415,7 @@ void getImpactLoc(short returnLoc[2], const short originLoc[2], const short targ
 
 // Returns true if the two coordinates are unobstructed and diagonally adjacent,
 // but their two common neighbors are obstructed and at least one blocks diagonal movement.
-boolean impermissibleKinkBetween(short x1, short y1, short x2, short y2) {
+bool impermissibleKinkBetween(short x1, short y1, short x2, short y2) {
     brogueAssert(coordinatesAreInMap(x1, y1));
     brogueAssert(coordinatesAreInMap(x2, y2));
     if (cellHasTerrainFlag(x1, y1, T_OBSTRUCTS_PASSABILITY)
@@ -3441,9 +3441,9 @@ boolean impermissibleKinkBetween(short x1, short y1, short x2, short y2) {
     return true;
 }
 
-boolean tunnelize(short x, short y) {
+bool tunnelize(short x, short y) {
     enum dungeonLayers layer;
-    boolean didSomething = false;
+    bool didSomething = false;
     creature *monst;
     short x2, y2;
     enum directions dir;
@@ -3603,7 +3603,7 @@ void weaken(creature *monst, short maxDuration) {
 }
 
 // True if the creature polymorphed; false if not.
-boolean polymorph(creature *monst) {
+bool polymorph(creature *monst) {
     short previousDamageTaken, healthFraction, newMonsterIndex;
     
     if (monst == &player || (monst->info.flags & (MONST_INANIMATE | MONST_INVULNERABLE))) {
@@ -3703,7 +3703,7 @@ void haste(creature *monst, short turns) {
     }
 }
 
-void heal(creature *monst, short percent, boolean panacea) {
+void heal(creature *monst, short percent, bool panacea) {
     char buf[COLS], monstName[COLS];
     monst->currentHP = MIN(monst->info.maxHP, monst->currentHP + percent * monst->info.maxHP / 100);
     if (panacea) {
@@ -3958,8 +3958,8 @@ void crystalize(short radius) {
     refreshSideBar(-1, -1, false);
 }
 
-boolean imbueInvisibility(creature *monst, short duration) {
-    boolean autoID = false;
+bool imbueInvisibility(creature *monst, short duration) {
+    bool autoID = false;
     
     if (monst && !(monst->info.flags & (MONST_INANIMATE | MONST_INVISIBLE | MONST_INVULNERABLE))) {
         if (monst == &player || monst->creatureState == MONSTER_ALLY) {
@@ -3975,7 +3975,7 @@ boolean imbueInvisibility(creature *monst, short duration) {
     return autoID;
 }
 
-boolean projectileReflects(creature *attacker, creature *defender) {
+bool projectileReflects(creature *attacker, creature *defender) {
     short prob;
     float netReflectionLevel;
     
@@ -4012,9 +4012,9 @@ boolean projectileReflects(creature *attacker, creature *defender) {
 // Alters listOfCoordinates to describe reflected path,
 // which diverges from the existing path at kinkCell,
 // and then returns the path length of the reflected path.
-short reflectBolt(short targetX, short targetY, short listOfCoordinates[][2], short kinkCell, boolean retracePath) {
+short reflectBolt(short targetX, short targetY, short listOfCoordinates[][2], short kinkCell, bool retracePath) {
     short k, target[2], origin[2], newPath[DCOLS][2], newPathLength, failsafe, finalLength;
-    boolean needRandomTarget;
+    bool needRandomTarget;
     
     needRandomTarget = (targetX < 0 || targetY < 0
                         || (targetX == listOfCoordinates[kinkCell][0] && targetY == listOfCoordinates[kinkCell][1]));
@@ -4132,13 +4132,13 @@ enum boltType boltForItem(item *theItem) {
 // *autoID will be set to true. (AutoID can be null.)
 // If the effect causes the level's lighting or vision to change, *lightingChanged
 // will be set to true. (LightingChanged can be null.)
-boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
-                   boolean boltInView, boolean alreadyReflected,
-                   boolean *autoID, boolean *lightingChanged) {
+bool updateBolt(bolt *theBolt, creature *caster, short x, short y,
+                   bool boltInView, bool alreadyReflected,
+                   bool *autoID, bool *lightingChanged) {
     char buf[COLS], monstName[COLS];
     creature *monst; // Creature being hit by the bolt, if any.
     creature *newMonst; // Utility variable for plenty
-    boolean terminateBolt = false;
+    bool terminateBolt = false;
     
     if (lightingChanged) {
         *lightingChanged = false;
@@ -4474,7 +4474,7 @@ boolean updateBolt(bolt *theBolt, creature *caster, short x, short y,
 // Pass in true for alreadyReflected if the bolt has already reflected off of something.
 // If the effect is visible enough for the player to identify the shooting item,
 // *autoID will be set to true. (AutoID can be null.)
-void detonateBolt(bolt *theBolt, creature *caster, short x, short y, boolean *autoID) {
+void detonateBolt(bolt *theBolt, creature *caster, short x, short y, bool *autoID) {
     dungeonFeature feat;
     short i, x2, y2;
     creature *monst;
@@ -4559,16 +4559,16 @@ void detonateBolt(bolt *theBolt, creature *caster, short x, short y, boolean *au
 }
 
 // returns whether the bolt effect should autoID any staff or wand it came from, if it came from a staff or wand
-boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideDetails) {
+bool zap(short originLoc[2], short targetLoc[2], bolt *theBolt, bool hideDetails) {
     short listOfCoordinates[MAX_BOLT_LENGTH][2];
     short i, j, k, x, y, x2, y2, numCells, blinkDistance, boltLength, initialBoltLength, lights[DCOLS][DROWS][3];
     creature *monst = NULL, *shootingMonst;
     char buf[COLS], monstName[COLS];
-    boolean autoID = false;
-    boolean lightingChanged = false;
-    boolean fastForward = false;
-    boolean alreadyReflected = false;
-    boolean boltInView;
+    bool autoID = false;
+    bool lightingChanged = false;
+    bool fastForward = false;
+    bool alreadyReflected = false;
+    bool boltInView;
     const color *boltColor;
     
     uchar theChar;
@@ -4702,7 +4702,7 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
                         applyColorAugment(&foreColor, boltColor, MAX(0, 100 - k * 100 / (boltLength)));
                         applyColorAugment(&backColor, boltColor, MAX(0, 100 - k * 100 / (boltLength)));
                     }
-                    const boolean displayChar = (k == 0 || (theBolt->flags & BF_DISPLAY_CHAR_ALONG_LENGTH));
+                    const bool displayChar = (k == 0 || (theBolt->flags & BF_DISPLAY_CHAR_ALONG_LENGTH));
                     if (displayChar) {
                         if (theBolt->foreColor) {
                             foreColor = *(theBolt->foreColor);
@@ -4894,16 +4894,16 @@ boolean zap(short originLoc[2], short targetLoc[2], bolt *theBolt, boolean hideD
 }
 
 // Relies on the sidebar entity list. If one is already selected, select the next qualifying. Otherwise, target the first qualifying.
-boolean nextTargetAfter(short *returnX,
+bool nextTargetAfter(short *returnX,
                         short *returnY,
                         short targetX,
                         short targetY,
-                        boolean targetEnemies,
-                        boolean targetAllies,
-                        boolean targetItems,
-                        boolean targetTerrain,
-                        boolean requireOpenPath,
-                        boolean reverseDirection) {
+                        bool targetEnemies,
+                        bool targetAllies,
+                        bool targetItems,
+                        bool targetTerrain,
+                        bool requireOpenPath,
+                        bool reverseDirection) {
     short i, n, targetCount, newX, newY;
     short selectedIndex = 0;
     creature *monst;
@@ -4970,7 +4970,7 @@ boolean nextTargetAfter(short *returnX,
 }
 
 // Returns how far it went before hitting something.
-short hiliteTrajectory(short coordinateList[DCOLS][2], short numCells, boolean eraseHiliting, boolean passThroughMonsters, const color *hiliteColor) {
+short hiliteTrajectory(short coordinateList[DCOLS][2], short numCells, bool eraseHiliting, bool passThroughMonsters, const color *hiliteColor) {
     short x, y, i;
     creature *monst;
     
@@ -5004,19 +5004,19 @@ short hiliteTrajectory(short coordinateList[DCOLS][2], short numCells, boolean e
 }
 
 // Event is optional. Returns true if the event should be executed by the parent function.
-boolean moveCursor(boolean *targetConfirmed,
-                   boolean *canceled,
-                   boolean *tabKey,
+bool moveCursor(bool *targetConfirmed,
+                   bool *canceled,
+                   bool *tabKey,
                    short targetLoc[2],
                    rogueEvent *event,
                    buttonState *state,
-                   boolean colorsDance,
-                   boolean keysMoveCursor,
-                   boolean targetCanLeaveMap) {
+                   bool colorsDance,
+                   bool keysMoveCursor,
+                   bool targetCanLeaveMap) {
     signed long keystroke;
     short moveIncrement;
     short buttonInput;
-    boolean cursorMovementCommand, again, movementKeystroke, sidebarHighlighted;
+    bool cursorMovementCommand, again, movementKeystroke, sidebarHighlighted;
     rogueEvent theEvent;
     short oldRNG;
     
@@ -5232,16 +5232,16 @@ void pullMouseClickDuringPlayback(short loc[2]) {
 }
 
 // Return true if a target is chosen, or false if canceled.
-boolean chooseTarget(short returnLoc[2],
+bool chooseTarget(short returnLoc[2],
                      short maxDistance,
-                     boolean stopAtTarget,
-                     boolean autoTarget,
-                     boolean targetAllies,
-                     boolean passThroughCreatures,
+                     bool stopAtTarget,
+                     bool autoTarget,
+                     bool targetAllies,
+                     bool passThroughCreatures,
                      const color *trajectoryColor) {
     short originLoc[2], targetLoc[2], oldTargetLoc[2], coordinates[DCOLS][2], numCells, i, distance, newX, newY;
     creature *monst;
-    boolean canceled, targetConfirmed, tabKey, cursorInTrajectory, focusedOnSomething = false;
+    bool canceled, targetConfirmed, tabKey, cursorInTrajectory, focusedOnSomething = false;
     rogueEvent event = {0};
     short oldRNG;
     color trajColor = *trajectoryColor;
@@ -5478,9 +5478,9 @@ void autoIdentify(item *theItem) {
 }
 
 // returns whether the item disappeared
-boolean hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item *theItem) {
+bool hitMonsterWithProjectileWeapon(creature *thrower, creature *monst, item *theItem) {
     char buf[DCOLS], theItemName[DCOLS], targetName[DCOLS], armorRunicString[DCOLS];
-    boolean thrownWeaponHit;
+    bool thrownWeaponHit;
     item *equippedWeapon;
     short damage;
     
@@ -5562,7 +5562,7 @@ void throwItem(item *theItem, creature *thrower, short targetLoc[2], short maxDi
     uchar displayChar;
     color foreColor, backColor, multColor;
     short dropLoc[2];
-    boolean hitSomethingSolid = false, fastForward = false;
+    bool hitSomethingSolid = false, fastForward = false;
     enum dungeonLayers layer;
     
     theItem->flags |= ITEM_PLAYER_AVOIDS; // Avoid thrown items, unless it's a weapon that misses a monster.
@@ -5749,7 +5749,7 @@ void throwCommand(item *theItem) {
     char buf[COLS], theName[COLS];
     unsigned char command[10];
     short maxDistance, zapTarget[2], originLoc[2], quantity;
-    boolean autoTarget;
+    bool autoTarget;
     
     command[0] = THROW_KEY;
     if (theItem == NULL) {
@@ -5879,11 +5879,11 @@ void relabel(item *theItem) {
 // If the blink trajectory lands in lava based on the player's knowledge, abort.
 // If the blink trajectory might land in lava based on the player's knowledge,
 // prompt for confirmation.
-boolean playerCancelsBlinking(const short originLoc[2], const short targetLoc[2], const short maxDistance) {
+bool playerCancelsBlinking(const short originLoc[2], const short targetLoc[2], const short maxDistance) {
     short coordinates[DCOLS][2], impactLoc[2];
     short numCells, i, x, y;
-    boolean certainDeath = false;
-    boolean possibleDeath = false;
+    bool certainDeath = false;
+    bool possibleDeath = false;
     unsigned long tFlags;
     
     if (rogue.playbackMode) {
@@ -5939,11 +5939,11 @@ boolean playerCancelsBlinking(const short originLoc[2], const short targetLoc[2]
     return false;
 }
 
-boolean useStaffOrWand(item *theItem, boolean *commandsRecorded) {
+bool useStaffOrWand(item *theItem, bool *commandsRecorded) {
     char buf[COLS], buf2[COLS];
     unsigned char command[10];
     short zapTarget[2], originLoc[2], maxDistance, c;
-    boolean autoTarget, targetAllies, autoID, boltKnown, passThroughCreatures, confirmedTarget;
+    bool autoTarget, targetAllies, autoID, boltKnown, passThroughCreatures, confirmedTarget;
     bolt theBolt;
     color trajectoryHiliteColor;
     
@@ -6138,9 +6138,9 @@ void useCharm(item *theItem) {
     }
 }
 
-void apply(item *theItem, boolean recordCommands) {
+void apply(item *theItem, bool recordCommands) {
     char buf[COLS * 3], buf2[COLS * 3];
-    boolean commandsRecorded, revealItemType;
+    bool commandsRecorded, revealItemType;
     unsigned char command[10] = "";
     short c;
     
@@ -6367,7 +6367,7 @@ short chooseVorpalEnemy() {
     return lotteryDraw(frequencies, getMonsterClassCount());
 }
 
-void describeMonsterClass(char *buf, const short classID, boolean conjunctionAnd) {
+void describeMonsterClass(char *buf, const short classID, bool conjunctionAnd) {
     short i;
     char buf2[50];
     monsterClass *monsterClassCatalog = getMonsterClassCatalog();
@@ -6431,7 +6431,7 @@ void readScroll(item *theItem) {
     short i, j, x, y, numberOfMonsters = 0;
     item *tempItem;
     creature *monst;
-    boolean hadEffect = false;
+    bool hadEffect = false;
     char buf[COLS * 3], buf2[COLS * 3];
     
     rogue.featRecord[FEAT_ARCHIVIST] = false;
@@ -6684,8 +6684,8 @@ void detectMagicOnItem(item *theItem) {
 void drinkPotion(item *theItem) {
     item *tempItem = NULL;
     creature *monst = NULL;
-    boolean hadEffect = false;
-    boolean hadEffect2 = false;
+    bool hadEffect = false;
+    bool hadEffect2 = false;
     char buf[1000] = "";
     
     brogueAssert(rogue.RNG == RNG_SUBSTANTIVE);
@@ -6986,7 +6986,7 @@ void unequip(item *theItem) {
     playerTurnEnded();
 }
 
-boolean canDrop() {
+bool canDrop() {
     if (cellHasTerrainFlag(player.xLoc, player.yLoc, T_OBSTRUCTS_ITEMS)) {
         return false;
     }
@@ -7035,7 +7035,7 @@ item *promptForItemOfType(unsigned short category,
                           unsigned long requiredFlags,
                           unsigned long forbiddenFlags,
                           char *prompt,
-                          boolean allowInventoryActions) {
+                          bool allowInventoryActions) {
     char keystroke;
     item *theItem;
     
@@ -7157,7 +7157,7 @@ void recalculateEquipmentBonuses() {
     }
 }
 
-void equipItem(item *theItem, boolean force) {
+void equipItem(item *theItem, bool force) {
     item *previouslyEquippedItem = NULL;
     
     if ((theItem->category & RING) && (theItem->flags & ITEM_EQUIPPED)) {
@@ -7208,7 +7208,7 @@ void equipItem(item *theItem, boolean force) {
     return;
 }
 
-void unequipItem(item *theItem, boolean force) {
+void unequipItem(item *theItem, bool force) {
     
     if (theItem == NULL || !(theItem->flags & ITEM_EQUIPPED)) {
         return;
@@ -7313,7 +7313,7 @@ void updatePlayerRegenerationDelay() {
     // DEBUG printf("\nTurnsForFull: %i; regenPerTurn: %i; (thousandths of) turnsBetweenRegen: %i", turnsForFull, player.regenPerTurn, player.info.turnsBetweenRegen);
 }
 
-boolean removeItemFromChain(item *theItem, item *theChain) {
+bool removeItemFromChain(item *theItem, item *theChain) {
     item *previousItem;
     
     for (previousItem = theChain;

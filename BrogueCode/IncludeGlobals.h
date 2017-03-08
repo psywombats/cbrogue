@@ -45,7 +45,7 @@ extern item *monsterItemsHopper;
 extern short numberOfWaypoints;
 
 extern char displayedMessage[MESSAGE_LINES][COLS];
-extern boolean messageConfirmed[3];
+extern bool messageConfirmed[3];
 extern char combatText[COLS];
 extern short messageArchivePosition;
 extern char messageArchive[MESSAGE_ARCHIVE_LINES][COLS*2];
@@ -261,3 +261,6 @@ extern const char armorRunicNames[NUMBER_ARMOR_ENCHANT_KINDS][30];
 extern const char monsterBehaviorFlagDescriptions[32][COLS];
 extern const char monsterAbilityFlagDescriptions[32][COLS];
 extern const char monsterBookkeepingFlagDescriptions[32][COLS];
+
+// C++ utils
+

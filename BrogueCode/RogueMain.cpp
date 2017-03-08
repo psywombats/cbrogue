@@ -43,7 +43,7 @@ void executeEvent(rogueEvent *theEvent) {
     }
 }
 
-boolean fileExists(const char *pathname) {
+bool fileExists(const char *pathname) {
     FILE *openedFile;
     openedFile = fopen(pathname, "rb");
     if (openedFile) {
@@ -56,7 +56,7 @@ boolean fileExists(const char *pathname) {
 
 // Player specifies a file; if all goes well, put it into path and return true.
 // Otherwise, return false.
-boolean chooseFile(char *path, char *prompt, char *defaultName, char *suffix) {
+bool chooseFile(char *path, char *prompt, char *defaultName, char *suffix) {
     
     if (getInputTextString(path,
                            prompt,
@@ -77,10 +77,10 @@ boolean chooseFile(char *path, char *prompt, char *defaultName, char *suffix) {
 // If the file exists, copy it into currentFilePath. (Otherwise return false.)
 // Then, strip off the suffix, replace it with ANNOTATION_SUFFIX,
 // and if that file exists, copy that into annotationPathname. Return true.
-boolean openFile(const char *path) {
+bool openFile(const char *path) {
     short i;
     char buf[BROGUE_FILENAME_MAX];
-    boolean retval;
+    bool retval;
     
     if (fileExists(path)) {
         
@@ -211,7 +211,7 @@ void generateFontFiles() {
 void initializeRogue(unsigned long seed) {
     short i, j, k;
     item *theItem;
-    boolean playingback, playbackFF, playbackPaused;
+    bool playingback, playbackFF, playbackPaused;
     short oldRNG;
     
     // generate libtcod font bitmap
@@ -243,7 +243,7 @@ void initializeRogue(unsigned long seed) {
     
     initRecording();
     
-    levels = malloc(sizeof(levelData) * (DEEPEST_LEVEL+1));
+    levels = (levelData *) malloc(sizeof(levelData) * (DEEPEST_LEVEL+1));
     levels[0].upStairsLoc[0] = (DCOLS - 1) / 2 - 1;
     levels[0].upStairsLoc[1] = DROWS - 2;
     
@@ -595,13 +595,13 @@ void startLevel(short oldLevelNumber, short stairDirection) {
     unsigned long oldSeed;
     item *theItem;
     short loc[2], i, j, x, y, px, py, flying, dir;
-    boolean placedPlayer;
+    bool placedPlayer;
     creature *monst;
     enum dungeonLayers layer;
     unsigned long timeAway;
     short **mapToStairs;
     short **mapToPit;
-    boolean connectingStairsDiscovered;
+    bool connectingStairsDiscovered;
     
     if (oldLevelNumber == DEEPEST_LEVEL && stairDirection != -1) {
         return;
@@ -696,7 +696,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
                 // Remember visible cells upon exiting.
                 storeMemories(i, j);
             }
-            for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+            for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                 levels[oldLevelNumber - 1].mapStorage[i][j].layers[layer] = pmap[i][j].layers[layer];
             }
             levels[oldLevelNumber - 1].mapStorage[i][j].volume = pmap[i][j].volume;
@@ -783,7 +783,7 @@ void startLevel(short oldLevelNumber, short stairDirection) {
         
         for (i=0; i<DCOLS; i++) {
             for (j=0; j<DROWS; j++) {
-                for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+                for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
                     pmap[i][j].layers[layer] = levels[rogue.depthLevel - 1].mapStorage[i][j].layers[layer];
                 }
                 pmap[i][j].volume = levels[rogue.depthLevel - 1].mapStorage[i][j].volume;
@@ -1042,12 +1042,12 @@ void freeEverything() {
     levels = NULL;
 }
 
-void gameOver(char *killedBy, boolean useCustomPhrasing) {
+void gameOver(char *killedBy, bool useCustomPhrasing) {
     short i, y;
     char buf[200], highScoreText[200], buf2[200];
     rogueHighScoresEntry theEntry;
     cellDisplayBuffer dbuf[COLS][ROWS];
-    boolean playback;
+    bool playback;
     rogueEvent theEvent;
     item *theItem;
     
@@ -1183,13 +1183,13 @@ void gameOver(char *killedBy, boolean useCustomPhrasing) {
     rogue.gameHasEnded = true;
 }
 
-void victory(boolean superVictory) {
+void victory(bool superVictory) {
     char buf[COLS*3], victoryVerb[20];
     item *theItem;
     short i, j, gemCount = 0;
     unsigned long totalValue = 0;
     rogueHighScoresEntry theEntry;
-    boolean qualified, isPlayback;
+    bool qualified, isPlayback;
     cellDisplayBuffer dbuf[COLS][ROWS];
     
     flushBufferToFile();

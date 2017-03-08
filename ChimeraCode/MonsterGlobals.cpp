@@ -122,72 +122,72 @@ monsterClass *getMonsterClassCatalog() {
     return monsterClassCatalog;
 }
 
-int getRatTrapMonsterId() {
+short getRatTrapMonsterId() {
     return MK_RAT;
 }
 
-int getWarrenBossMonsterId() {
+short getWarrenBossMonsterId() {
     return MK_GOBLIN_CHIEFTAN;
 }
 
-int getVampireBossMonsterId() {
+short getVampireBossMonsterId() {
     return MK_VAMPIRE;
 }
 
-int getWingedGuardianMonsterId() {
+short getWingedGuardianMonsterId() {
     return MK_WINGED_GUARDIAN;
 }
 
-int getGuardianMonsterId() {
+short getGuardianMonsterId() {
     return MK_GUARDIAN;
 }
 
-int getSentinelMonsterId() {
+short getSentinelMonsterId() {
     return MK_SENTINEL;
 }
 
-int getWardenMonsterId() {
+short getWardenMonsterId() {
     return MK_WARDEN_OF_YENDOR;
 }
 
-int getMirrorMonsterId() {
+short getMirrorMonsterId() {
     return MK_MIRRORED_TOTEM;
 }
 
-int getWebberMonsterId() {
+short getWebberMonsterId() {
     return MK_SPIDER;
 }
 
-int getDiggerMonsterId() {
+short getDiggerMonsterId() {
     return MK_UNDERWORM;
 }
 
-int getSparkMonsterId() {
+short getSparkMonsterId() {
     return MK_SPARK_TURRET;
 }
 
-int getUndeadMonsterId() {
+short getUndeadMonsterId() {
     return MK_ZOMBIE;
 }
 
-int getInvisibleMonsterId() {
+short getInvisibleMonsterId() {
     return MK_PHANTOM;
 }
 
-int getSpectralImageMonsterId() {
+short getSpectralImageMonsterId() {
     return MK_SPECTRAL_IMAGE;
 }
 
-int getConjurationMonsterId() {
+short getConjurationMonsterId() {
     return MK_SPECTRAL_BLADE;
 }
 
-int getCharmSummonMonsterId() {
+short getCharmSummonMonsterId() {
     return MK_CHARM_GUARDIAN;
 }
 
 void ensureCatalogsInitialized() {
-    static boolean catalogInitialized = false;
+    static bool catalogInitialized = false;
     if (catalogInitialized) {
         return;
     }

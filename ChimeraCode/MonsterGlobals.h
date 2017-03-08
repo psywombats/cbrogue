@@ -28,21 +28,21 @@ int getMonsterClassCount();
 int getHordeCatalogCount();
 
 // individual monsters needed for machines etc
-int getRatTrapMonsterId();
-int getWarrenBossMonsterId();
-int getVampireBossMonsterId();
-int getWingedGuardianMonsterId();
-int getGuardianMonsterId();
-int getSentinelMonsterId();
-int getWardenMonsterId();
-int getMirrorMonsterId();
-int getWebberMonsterId();
-int getDiggerMonsterId();
-int getSparkMonsterId();
-int getUndeadMonsterId();
-int getInvisibleMonsterId();
-int getSpectralImageMonsterId();
-int getConjurationMonsterId();
-int getCharmSummonMonsterId();
+short getRatTrapMonsterId();
+short getWarrenBossMonsterId();
+short getVampireBossMonsterId();
+short getWingedGuardianMonsterId();
+short getGuardianMonsterId();
+short getSentinelMonsterId();
+short getWardenMonsterId();
+short getMirrorMonsterId();
+short getWebberMonsterId();
+short getDiggerMonsterId();
+short getSparkMonsterId();
+short getUndeadMonsterId();
+short getInvisibleMonsterId();
+short getSpectralImageMonsterId();
+short getConjurationMonsterId();
+short getCharmSummonMonsterId();
 
 #endif /* MonsterGlobals_h */

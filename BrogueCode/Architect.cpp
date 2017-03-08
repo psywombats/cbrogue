@@ -29,14 +29,14 @@
 short topBlobMinX, topBlobMinY, blobWidth, blobHeight;
 
 #ifdef BROGUE_ASSERTS // otherwise handled as a macro in rogue.h
-boolean cellHasTerrainFlag(short x, short y, unsigned long flagMask) {
+bool cellHasTerrainFlag(short x, short y, unsigned long flagMask) {
     assert(coordinatesAreInMap(x, y));
     return ((flagMask) & terrainFlags((x), (y)) ? true : false);
 }
 #endif
 
-boolean checkLoopiness(short x, short y) {
-    boolean inString;
+bool checkLoopiness(short x, short y) {
+    bool inString;
     short newX, newY, dir, sdir;
     short numStrings, maxStringLength, currentStringLength;
     
@@ -171,10 +171,10 @@ short passableArcCount(short x, short y) {
 }
 
 // locates all loops and chokepoints
-void analyzeMap(boolean calculateChokeMap) {
+void analyzeMap(bool calculateChokeMap) {
     short i, j, i2, j2, dir, newX, newY, oldX, oldY, passableArcCount, cellCount;
     char grid[DCOLS][DROWS], passMap[DCOLS][DROWS];
-    boolean designationSurvives;
+    bool designationSurvives;
     
     // first find all of the loops
     rogue.staleLoopMap = false;
@@ -378,9 +378,9 @@ void addLoops(short **grid, short minimumPathingDistance) {
 // Assumes (startX, startY) is in the machine.
 // Returns true if everything went well, and false if we ran into a machine component
 // that was already there, as we don't want to build a machine around it.
-boolean addTileToMachineInteriorAndIterate(char interior[DCOLS][DROWS], short startX, short startY) {
+bool addTileToMachineInteriorAndIterate(char interior[DCOLS][DROWS], short startX, short startY) {
     short dir, newX, newY;
-    boolean goodSoFar = true;
+    bool goodSoFar = true;
     
     interior[startX][startY] = true;
     
@@ -419,7 +419,7 @@ void copyMap(pcell from[DCOLS][DROWS], pcell to[DCOLS][DROWS]) {
     }
 }
 
-boolean itemIsADuplicate(item *theItem, item **spawnedItems, short itemCount) {
+bool itemIsADuplicate(item *theItem, item **spawnedItems, short itemCount) {
     short i;
     if (theItem->category & (STAFF | WAND | POTION | SCROLL | RING | WEAPON | ARMOR | CHARM)) {
         for (i = 0; i < itemCount; i++) {
@@ -433,7 +433,7 @@ boolean itemIsADuplicate(item *theItem, item **spawnedItems, short itemCount) {
     return false;
 }
 
-boolean blueprintQualifies(short i, unsigned long requiredMachineFlags) {
+bool blueprintQualifies(short i, unsigned long requiredMachineFlags) {
     if (getBlueprintCatalog()[i].depthRange[0] > rogue.depthLevel
         || getBlueprintCatalog()[i].depthRange[1] < rogue.depthLevel
                 // Must have the required flags:
@@ -470,7 +470,7 @@ void abortItemsAndMonsters(item *spawnedItems[MACHINES_BUFFER_LENGTH], creature 
     }
 }
 
-boolean cellIsFeatureCandidate(short x, short y,
+bool cellIsFeatureCandidate(short x, short y,
                                short originX, short originY,
                                short distanceBound[2],
                                char interior[DCOLS][DROWS],
@@ -569,7 +569,7 @@ boolean cellIsFeatureCandidate(short x, short y,
 }
 
 
-void addLocationToKey(item *theItem, short x, short y, boolean disposableHere) {
+void addLocationToKey(item *theItem, short x, short y, bool disposableHere) {
     short i;
     
     for (i=0; i < KEY_ID_MAXIMUM && (theItem->keyLoc[i].x || theItem->keyLoc[i].machine); i++);
@@ -578,7 +578,7 @@ void addLocationToKey(item *theItem, short x, short y, boolean disposableHere) {
     theItem->keyLoc[i].disposableHere = disposableHere;
 }
 
-void addMachineNumberToKey(item *theItem, short machineNumber, boolean disposableHere) {
+void addMachineNumberToKey(item *theItem, short machineNumber, bool disposableHere) {
     short i;
     
     for (i=0; i < KEY_ID_MAXIMUM && (theItem->keyLoc[i].x || theItem->keyLoc[i].machine); i++);
@@ -587,7 +587,7 @@ void addMachineNumberToKey(item *theItem, short machineNumber, boolean disposabl
 }
 
 void expandMachineInterior(char interior[DCOLS][DROWS], short minimumInteriorNeighbors) {
-    boolean madeChange;
+    bool madeChange;
     short nbcount, newX, newY, i, j, layer;
     enum directions dir;
     
@@ -645,9 +645,9 @@ void expandMachineInterior(char interior[DCOLS][DROWS], short minimumInteriorNei
     } while (madeChange);
 }
 
-boolean fillInteriorForVestibuleMachine(char interior[DCOLS][DROWS], short bp, short originX, short originY) {
+bool fillInteriorForVestibuleMachine(char interior[DCOLS][DROWS], short bp, short originX, short originY) {
     short **distanceMap, **costMap, qualifyingTileCount, totalFreq, sRows[DROWS], sCols[DCOLS], i, j, k;
-    boolean success = true;
+    bool success = true;
     
     zeroOutGrid(interior);
     
@@ -934,7 +934,7 @@ void prepareInteriorWithMachineFlags(char interior[DCOLS][DROWS], short originX,
 
 // Returns true if the machine got built; false if it was aborted.
 // If empty array parentSpawnedItems or parentSpawnedMonsters is given, will pass those back for deletion if necessary.
-boolean buildAMachine(enum machineTypes bp,
+bool buildAMachine(enum machineTypes bp,
                       short originX, short originY,
                       unsigned long requiredMachineFlags,
                       item *adoptiveItem,
@@ -948,9 +948,9 @@ boolean buildAMachine(enum machineTypes bp,
     personalSpace, failsafe, locationFailsafe,
     machineNumber;
     const unsigned long alternativeFlags[2] = {MF_ALTERNATIVE, MF_ALTERNATIVE_2};
-    boolean success;
+    bool success;
     
-    // Our boolean grids:
+    // Our bool grids:
     //  Interior:       This is the master grid for the machine. All area inside the machine are set to true.
     //  Occupied:       This keeps track of what is within the personal space of a previously built feature in the same machine.
     //  Candidates:     This is calculated at the start of each feature, and is true where that feature is eligible for building.
@@ -958,7 +958,7 @@ boolean buildAMachine(enum machineTypes bp,
     //  ViewMap:        Used for features with MF_IN_VIEW_OF_ORIGIN, to calculate which cells are in view of the origin.
     char interior[DCOLS][DROWS], occupied[DCOLS][DROWS], candidates[DCOLS][DROWS], blockingMap[DCOLS][DROWS], viewMap[DCOLS][DROWS];
     
-    boolean DFSucceeded, terrainSucceeded, generateEverywhere, skipFeature[20], chooseBP, chooseLocation, tryAgain;
+    bool DFSucceeded, terrainSucceeded, generateEverywhere, skipFeature[20], chooseBP, chooseLocation, tryAgain;
     
     pcell levelBackup[DCOLS][DROWS];
     
@@ -1710,7 +1710,7 @@ void addMachines() {
 // Add terrain, DFs and flavor machines. Includes traps, torches, funguses, flavor machines, etc.
 // If buildAreaMachines is true, build ONLY the autogenerators that include machines.
 // If false, build all EXCEPT the autogenerators that include machines.
-void runAutogenerators(boolean buildAreaMachines) {
+void runAutogenerators(bool buildAreaMachines) {
     short AG, count, x, y, i;
     const autoGenerator *gen;
     char grid[DCOLS][DROWS];
@@ -1788,7 +1788,7 @@ void runAutogenerators(boolean buildAreaMachines) {
 // Knock down the boundaries between similar lakes where possible.
 void cleanUpLakeBoundaries() {
     short i, j, x, y, failsafe, layer;
-    boolean reverse, madeChange;
+    bool reverse, madeChange;
     unsigned long subjectFlags;
     
     reverse = true;
@@ -1845,7 +1845,7 @@ void cleanUpLakeBoundaries() {
 
 void removeDiagonalOpenings() {
     short i, j, k, x1, y1, x2, layer;
-    boolean diagonalCornerRemoved;
+    bool diagonalCornerRemoved;
     
     do {
         diagonalCornerRemoved = false;
@@ -1905,7 +1905,7 @@ void designCavern(short **grid, short minWidth, short maxWidth, short minHeight,
     short destX, destY;
     short caveX, caveY, caveWidth, caveHeight;
     short fillX, fillY;
-    boolean foundFillPoint = false;
+    bool foundFillPoint = false;
     short **blobGrid;
     blobGrid = allocGrid();
     
@@ -2089,7 +2089,7 @@ void chooseRandomDoorSites(short **roomMap, short doorSites[4][2]) {
     short i, j, k, newX, newY;
     enum directions dir;
     short **grid;
-    boolean doorSiteFailed;
+    bool doorSiteFailed;
     
     grid = allocGrid();
     copyGrid(grid, roomMap);
@@ -2139,7 +2139,7 @@ void attachHallwayTo(short **grid, short doorSites[4][2]) {
     short i, x, y, newX, newY, dirs[4];
     short length;
     enum directions dir, dir2;
-    boolean allowObliqueHallwayExit;
+    bool allowObliqueHallwayExit;
     
     // Pick a direction.
     fillSequentialList(dirs, 4);
@@ -2206,7 +2206,7 @@ void attachHallwayTo(short **grid, short doorSites[4][2]) {
 //      6. Cavern (the kind that fills a level)
 //      7. Entrance room (the big upside-down T room at the start of depth 1)
 
-void designRandomRoom(short **grid, boolean attachHallway, short doorSites[4][2],
+void designRandomRoom(short **grid, bool attachHallway, short doorSites[4][2],
                       const short roomTypeFrequencies[ROOM_TYPE_COUNT]) {
     short randIndex, i, sum;
     enum directions dir;
@@ -2276,7 +2276,7 @@ void designRandomRoom(short **grid, boolean attachHallway, short doorSites[4][2]
     }
 }
 
-boolean roomFitsAt(short **dungeonMap, short **roomMap, short roomToDungeonX, short roomToDungeonY) {
+bool roomFitsAt(short **dungeonMap, short **roomMap, short roomToDungeonX, short roomToDungeonY) {
     short xRoom, yRoom, xDungeon, yDungeon, i, j;
     
     for (xRoom = 0; xRoom < DCOLS; xRoom++) {
@@ -2412,9 +2412,9 @@ void carveDungeon(short **grid) {
 //    temporaryMessage("How does this finished level look?", true);
 }
 
-void finishWalls(boolean includingDiagonals) {
+void finishWalls(bool includingDiagonals) {
     short i, j, x1, y1;
-    boolean foundExposure;
+    bool foundExposure;
     enum directions dir;
     
     for (i=0; i<DCOLS; i++) {
@@ -2520,8 +2520,8 @@ void lakeFloodFill(short x, short y, short **floodMap, short **grid, short **lak
     }
 }
 
-boolean lakeDisruptsPassability(short **grid, short **lakeMap, short dungeonToGridX, short dungeonToGridY) {
-    boolean result;
+bool lakeDisruptsPassability(short **grid, short **lakeMap, short dungeonToGridX, short dungeonToGridY) {
+    bool result;
     short i, j, x, y;
     short **floodMap;
     
@@ -2717,10 +2717,10 @@ void clearLevel() {
 
 // Scans the map in random order looking for a good place to build a bridge.
 // If it finds one, it builds a bridge there, halts and returns true.
-boolean buildABridge() {
+bool buildABridge() {
     short i, j, k, l, i2, j2, nCols[DCOLS], nRows[DROWS];
     short bridgeRatioX, bridgeRatioY;
-    boolean foundExposure;
+    bool foundExposure;
     
     bridgeRatioX = (short) (100 + (100 + 100 * rogue.depthLevel / 9) * rand_range(10, 20) / 10);
     bridgeRatioY = (short) (100 + (400 + 100 * rogue.depthLevel / 18) * rand_range(10, 20) / 10);
@@ -3069,7 +3069,7 @@ short connectCell(short x, short y, short zoneLabel, char blockingMap[DCOLS][DRO
 // (without changing the stored zone sizes). If two or more zones now touch, then we block.
 // At that point, return the size in cells of the smallest of all of the touching regions
 // (or just 1, i.e. true, if countRegionSize is false). If no zones touch, then we don't block, and we return zero, i.e. false.
-short levelIsDisconnectedWithBlockingMap(char blockingMap[DCOLS][DROWS], boolean countRegionSize) {
+short levelIsDisconnectedWithBlockingMap(char blockingMap[DCOLS][DROWS], bool countRegionSize) {
     char zoneMap[DCOLS][DROWS];
     short i, j, dir, zoneSizes[200], zoneCount, smallestQualifyingZoneSize, borderingZone;
 
@@ -3140,16 +3140,16 @@ void resetDFMessageEligibility() {
     }
 }
 
-boolean fillSpawnMap(enum dungeonLayers layer,
+bool fillSpawnMap(enum dungeonLayers layer,
                      enum tileType surfaceTileType,
                      char spawnMap[DCOLS][DROWS],
-                     boolean blockedByOtherLayers,
-                     boolean refresh,
-                     boolean superpriority) {
+                     bool blockedByOtherLayers,
+                     bool refresh,
+                     bool superpriority) {
     short i, j;
     creature *monst;
     item *theItem;
-    boolean accomplishedSomething;
+    bool accomplishedSomething;
     
     accomplishedSomething = false;
     
@@ -3212,13 +3212,13 @@ boolean fillSpawnMap(enum dungeonLayers layer,
 
 void spawnMapDF(short x, short y,
                 enum tileType propagationTerrain,
-                boolean requirePropTerrain,
+                bool requirePropTerrain,
                 short startProb,
                 short probDec,
                 char spawnMap[DCOLS][DROWS]) {
     
     short i, j, dir, t, x2, y2;
-    boolean madeChange;
+    bool madeChange;
     
     spawnMap[x][y] = t = 1; // incremented before anything else happens
     
@@ -3289,11 +3289,11 @@ void evacuateCreatures(char blockingMap[DCOLS][DROWS]) {
 }
 
 // returns whether the feature was successfully generated (false if we aborted because of blocking)
-boolean spawnDungeonFeature(short x, short y, dungeonFeature *feat, boolean refreshCell, boolean abortIfBlocking) {
+bool spawnDungeonFeature(short x, short y, dungeonFeature *feat, bool refreshCell, bool abortIfBlocking) {
     short i, j, layer;
     char blockingMap[DCOLS][DROWS];
-    boolean blocking;
-    boolean succeeded;
+    bool blocking;
+    bool succeeded;
     creature *monst;
     
     if ((feat->flags & DFF_RESURRECT_ALLY)
@@ -3430,7 +3430,7 @@ boolean spawnDungeonFeature(short x, short y, dungeonFeature *feat, boolean refr
 void restoreMonster(creature *monst, short **mapToStairs, short **mapToPit) {
     short i, *x, *y, turnCount;//, loc[2];
     creature *leader;
-    boolean foundLeader = false;
+    bool foundLeader = false;
     short **theMap;
     enum directions dir;
     
@@ -3513,7 +3513,7 @@ void restoreItem(item *theItem) {
 
 // Returns true iff the location is a plain wall, three of the four cardinal neighbors are walls, the remaining cardinal neighbor
 // is not a pathing blocker, the two diagonals between the three cardinal walls are also walls, and none of the eight neighbors are in machines.
-boolean validStairLoc(short x, short y) {
+bool validStairLoc(short x, short y) {
     short newX, newY, dir, neighborWallCount;
     
     if (x < 1 || x >= DCOLS - 1 || y < 1 || y >= DROWS - 1 || pmap[x][y].layers[DUNGEON] != WALL) {
@@ -3725,7 +3725,7 @@ void initializeLevel() {
 // no creatures, items or stairs and with either a matching liquid and dungeon type
 // or at least one layer of type terrainType.
 // A dungeon, liquid type of -1 will match anything.
-boolean randomMatchingLocation(short *x, short *y, short dungeonType, short liquidType, short terrainType) {
+bool randomMatchingLocation(short *x, short *y, short dungeonType, short liquidType, short terrainType) {
     short failsafeCount = 0;
     do {
         failsafeCount++;

@@ -174,7 +174,7 @@ void antiAlias(unsigned char mask[COLS][ROWS]) {
 #define MENU_TITLE_WIDTH    77
 #define MENU_TITLE_HEIGHT   19
 
-void initializeMenuFlames(boolean includeTitle,
+void initializeMenuFlames(bool includeTitle,
                           const color *colors[COLS][(ROWS + MENU_FLAME_ROW_PADDING)],
                           color colorStorage[COLS],
                           signed short colorSources[MENU_FLAME_COLOR_SOURCE_COUNT][4],
@@ -266,7 +266,7 @@ void titleMenu() {
     const color *colors[COLS][(ROWS + MENU_FLAME_ROW_PADDING)];
     color colorStorage[COLS];
     unsigned char mask[COLS][ROWS];
-    boolean controlKeyWasDown = false;
+    bool controlKeyWasDown = false;
     
     short i, b, x, y, button;
     buttonState state;
@@ -401,7 +401,7 @@ void dialogAlert(char *message) {
     overlayDisplayBuffer(rbuf, NULL);
 }
 
-boolean stringsExactlyMatch(const char *string1, const char *string2) {
+bool stringsExactlyMatch(const char *string1, const char *string2) {
     short i;
     for (i=0; string1[i] && string2[i]; i++) {
         if (string1[i] != string2[i]) {
@@ -413,11 +413,11 @@ boolean stringsExactlyMatch(const char *string1, const char *string2) {
 
 #define FILES_ON_PAGE_MAX               (MIN(26, ROWS - 7)) // Two rows (top and bottom) for flames, two rows for border, one for prompt, one for heading.
 #define MAX_FILENAME_DISPLAY_LENGTH     53
-boolean dialogChooseFile(char *path, const char *suffix, const char *prompt) {
+bool dialogChooseFile(char *path, const char *suffix, const char *prompt) {
     short i, j, count, x, y, width, height, suffixLength, pathLength, maxPathLength, currentPageStart;
     brogueButton buttons[FILES_ON_PAGE_MAX + 2];
     fileEntry *files;
-    boolean retval = false, again;
+    bool retval = false, again;
     cellDisplayBuffer dbuf[COLS][ROWS], rbuf[COLS][ROWS];
     color *dialogColor = &interfaceBoxColor;
     char *membuf;
@@ -669,7 +669,7 @@ void mainBrogueJunction() {
     char path[BROGUE_FILENAME_MAX], buf[100], seedDefault[100];
     char maxSeed[20];
     short i, j, k;
-    boolean seedTooBig;
+    bool seedTooBig;
     
     // clear screen and display buffer
     for (i=0; i<COLS; i++) {

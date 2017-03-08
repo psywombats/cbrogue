@@ -102,7 +102,7 @@ static CGColorSpaceRef _colorSpace;
     theRect = [theWindow contentRectForFrameRect:[theWindow frame]];
     theWidth = theRect.size.width;
     theHeight = theRect.size.height;
-    theSize = min(FONT_SIZE * theWidth / (HORIZ_PX * kCOLS), FONT_SIZE * theHeight / (VERT_PX * kROWS));
+    theSize = MIN(FONT_SIZE * theWidth / (HORIZ_PX * kCOLS), FONT_SIZE * theHeight / (VERT_PX * kROWS));
     //NSLog(@"Start theSize=%d (w=%d, h=%d)", theSize, theWidth, theHeight);
     do {
         [theAttributes setObject:[NSFont fontWithName:[theMainDisplay basicFontName] size:theSize] forKey:NSFontAttributeName];
@@ -113,7 +113,7 @@ static CGColorSpaceRef _colorSpace;
     // Now theSize is one more than what was passed in to fontWithName:size:.  Also need to subtract 1 to get to the
     // last box that fit.
     //    [theMainDisplay setHorizPixels:(theWidth / kCOLS) vertPixels:(theHeight / kROWS) fontSize:max(theSize - 2, 9)];
-    [theMainDisplay setHorizWindow:theWidth vertWindow:theHeight fontSize:max(theSize - 2, 9)];
+    [theMainDisplay setHorizWindow:theWidth vertWindow:theHeight fontSize:MAX(theSize - 2, 9)];
     //NSLog(@"End theSize=%d (w=%d, h=%d)  (tW/kC=%f, tH/kR=%f)", theSize, theWidth, theHeight, (theWidth / (float)kCOLS), (theHeight / (float)kROWS));
     [theAttributes release];
 }
@@ -173,7 +173,7 @@ void pausingTimerStartsNow() {
 }
 
 // Returns true if the player interrupted the wait with a keystroke; otherwise false.
-boolean pauseForMilliseconds(short milliseconds) {
+bool pauseForMilliseconds(short milliseconds) {
     NSEvent *theEvent;
     NSDate *targetDate;//, *currentDate;
     //    NSComparisonResult theCompare;
@@ -218,7 +218,7 @@ boolean pauseForMilliseconds(short milliseconds) {
     return false;
 }
 
-void nextKeyOrMouseEvent(rogueEvent *returnEvent, __unused boolean textInput, boolean colorsDance) {
+void nextKeyOrMouseEvent(rogueEvent *returnEvent, __unused bool textInput, bool colorsDance) {
     //UNUSED(textInput);
     NSEvent *theEvent;
     NSEventType theEventType;
@@ -307,11 +307,11 @@ void nextKeyOrMouseEvent(rogueEvent *returnEvent, __unused boolean textInput, bo
     [pool drain];
 }
 
-boolean controlKeyIsDown() {
+bool controlKeyIsDown() {
     return (([[NSApp currentEvent] modifierFlags] & NSControlKeyMask) ? true : false);
 }
 
-boolean shiftKeyIsDown() {
+bool shiftKeyIsDown() {
     return (([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) ? true : false);
 }
 
@@ -368,7 +368,7 @@ short getHighScoresList(rogueHighScoresEntry returnList[HIGH_SCORES_COUNT]) {
     NSDate *mostRecentDate;
     short i, j, maxIndex, mostRecentIndex;
     long maxScore;
-    boolean scoreTaken[HIGH_SCORES_COUNT];
+    bool scoreTaken[HIGH_SCORES_COUNT];
     
     // no scores have been taken
     for (i=0; i<HIGH_SCORES_COUNT; i++) {
@@ -413,7 +413,7 @@ short getHighScoresList(rogueHighScoresEntry returnList[HIGH_SCORES_COUNT]) {
 // returns whether the score qualified for the list.
 // This function ignores the date passed to it in theEntry and substitutes the current
 // date instead.
-boolean saveHighScore(rogueHighScoresEntry theEntry) {
+bool saveHighScore(rogueHighScoresEntry theEntry) {
     NSMutableArray *scoresArray, *textArray, *datesArray;
     NSNumber *newScore;
     NSString *newText;

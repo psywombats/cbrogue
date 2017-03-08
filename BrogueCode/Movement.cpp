@@ -27,7 +27,7 @@
 
 void playerRuns(short direction) {
     short newX, newY, dir;
-    boolean cardinalPassability[4];
+    bool cardinalPassability[4];
     
     rogue.disturbed = (player.status[STATUS_CONFUSED] ? true : false);
     
@@ -68,11 +68,11 @@ void playerRuns(short direction) {
     updateFlavorText();
 }
 
-enum dungeonLayers highestPriorityLayer(short x, short y, boolean skipGas) {
+enum dungeonLayers highestPriorityLayer(short x, short y, bool skipGas) {
     short bestPriority = 10000;
     enum dungeonLayers tt, best;
     
-    for (tt = 0; tt < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(tt)) {
+    for (tt = (dungeonLayers)0; tt < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(tt)) {
         if (tt == GAS && skipGas) {
             continue;
         }
@@ -87,7 +87,7 @@ enum dungeonLayers highestPriorityLayer(short x, short y, boolean skipGas) {
 enum dungeonLayers layerWithTMFlag(short x, short y, unsigned long flag) {
     enum dungeonLayers layer;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+    for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & flag) {
             return layer;
         }
@@ -98,7 +98,7 @@ enum dungeonLayers layerWithTMFlag(short x, short y, unsigned long flag) {
 enum dungeonLayers layerWithFlag(short x, short y, unsigned long flag) {
     enum dungeonLayers layer;
     
-    for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+    for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
         if (tileCatalog[pmap[x][y].layers[layer]].flags & flag) {
             return layer;
         }
@@ -139,10 +139,10 @@ void describedItemName(item *theItem, char *buf) {
 void describeLocation(char *buf, short x, short y) {
     creature *monst;
     item *theItem, *magicItem;
-    boolean standsInTerrain;
-    boolean subjectMoving;
-    boolean prepositionLocked = false;
-    boolean monsterDormant;
+    bool standsInTerrain;
+    bool subjectMoving;
+    bool prepositionLocked = false;
+    bool monsterDormant;
     
     char subject[COLS * 3];
     char verb[COLS * 3];
@@ -391,7 +391,7 @@ void useKeyAt(item *theItem, short x, short y) {
     short layer, i;
     creature *monst;
     char buf[COLS], buf2[COLS], terrainName[COLS], preposition[10];
-    boolean disposable;
+    bool disposable;
     
     strcpy(terrainName, "unknown terrain"); // redundant failsafe
     for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
@@ -442,7 +442,7 @@ void useKeyAt(item *theItem, short x, short y) {
     }
 }
 
-short randValidDirectionFrom(creature *monst, short x, short y, boolean respectAvoidancePreferences) {
+short randValidDirectionFrom(creature *monst, short x, short y, bool respectAvoidancePreferences) {
     short i, newX, newY, validDirectionCount = 0, randIndex;
     
     brogueAssert(rogue.RNG == RNG_SUBSTANTIVE);
@@ -498,7 +498,7 @@ void vomit(creature *monst) {
 void moveEntrancedMonsters(enum directions dir) {
     creature *monst, *nextMonst;
     
-    dir = oppositeDirection(dir);
+    dir = (directions)oppositeDirection(dir);
     
     for (monst = monsters->nextCreature; monst != NULL; monst = nextMonst) {
         nextMonst = monst->nextCreature;
@@ -538,7 +538,7 @@ void freeCaptive(creature *monst) {
     message(buf, false);
 }
 
-boolean freeCaptivesEmbeddedAt(short x, short y) {
+bool freeCaptivesEmbeddedAt(short x, short y) {
     creature *monst;
     
     if (pmap[x][y].flags & HAS_MONSTER) {
@@ -555,7 +555,7 @@ boolean freeCaptivesEmbeddedAt(short x, short y) {
 }
 
 // Do we need confirmation so we don't accidently hit an acid mound?
-boolean abortAttackAgainstAcidicTarget(creature *hitList[8]) {
+bool abortAttackAgainstAcidicTarget(creature *hitList[8]) {
     short i;
     char monstName[COLS], weaponName[COLS];
     char buf[COLS*3];
@@ -593,12 +593,13 @@ boolean abortAttackAgainstAcidicTarget(creature *hitList[8]) {
 // the player opted not to attack an acid mound (in which case the whole turn
 // should be aborted), as opposed to there being no valid whip attack available
 // (in which case the player/monster should move instead).
-boolean handleWhipAttacks(creature *attacker, enum directions dir, boolean *aborted) {
+bool handleWhipAttacks(creature *attacker, enum directions dir, bool *aborted) {
     bolt theBolt;
     creature *defender, *hitList[8] = {0};
     short strikeLoc[2], originLoc[2], targetLoc[2];
     
-    const char boltChar[DIRECTION_COUNT] = "||~~\\//\\";
+    // DIRECTION_COUNT?
+    const char boltChar[10] = "||~~\\//\\";
     
     brogueAssert(dir > NO_DIRECTION && dir < DIRECTION_COUNT);
     
@@ -663,7 +664,7 @@ void buildFlailHitList(const short x, const short y, const short newX, const sho
     }
 }
 
-boolean diagonalBlocked(const short x1, const short y1, const short x2, const short y2, const boolean limitToPlayerKnowledge) {
+bool diagonalBlocked(const short x1, const short y1, const short x2, const short y2, const bool limitToPlayerKnowledge) {
     unsigned long tFlags;
     if (x1 == x2 || y1 == y2) {
         return false; // If it's not a diagonal, it's not diagonally blocked.
@@ -681,11 +682,11 @@ boolean diagonalBlocked(const short x1, const short y1, const short x2, const sh
 
 // Called whenever the player voluntarily tries to move in a given direction.
 // Can be called from movement keys, exploration, or auto-travel.
-boolean playerMoves(short direction) {
+bool playerMoves(short direction) {
     short initialDirection = direction, i, layer;
     short x = player.xLoc, y = player.yLoc;
     short newX, newY, newestX, newestY;
-    boolean playerMoved = false, alreadyRecorded = false, whipAttackAborted = false, anyAttackHit = false;
+    bool playerMoved = false, alreadyRecorded = false, whipAttackAborted = false, anyAttackHit = false;
     creature *defender = NULL, *tempMonst = NULL, *hitList[16] = {NULL};
     char monstName[COLS];
     char buf[COLS*3];
@@ -759,7 +760,7 @@ boolean playerMoves(short direction) {
                     alreadyRecorded = true;
                 }
                 message(tileCatalog[pmap[newX][newY].layers[layer]].flavorText, false);
-                promoteTile(newX, newY, layer, false);
+                promoteTile(newX, newY, (dungeonLayers)layer, false);
                 playerTurnEnded();
                 return true;
             }
@@ -771,7 +772,7 @@ boolean playerMoves(short direction) {
                     // Don't interrupt exploration with this message.
                     message("you struggle but cannot free yourself.", false);
                 }
-                moveEntrancedMonsters(direction);
+                moveEntrancedMonsters((directions)direction);
                 if (!alreadyRecorded) {
                     recordKeystroke(directionKeys[initialDirection], false, false);
                     alreadyRecorded = true;
@@ -862,19 +863,19 @@ boolean playerMoves(short direction) {
                 }
                 
                 playerRecoversFromAttacking(anyAttackHit);
-                moveEntrancedMonsters(direction);
+                moveEntrancedMonsters((directions)direction);
                 playerTurnEnded();
                 return true;
             }
         }
         
-        if (handleWhipAttacks(&player, direction, &whipAttackAborted)) {
+        if (handleWhipAttacks(&player, (directions)direction, &whipAttackAborted)) {
             if (!alreadyRecorded) {
                 recordKeystroke(directionKeys[initialDirection], false, false);
                 alreadyRecorded = true;
             }
             playerRecoversFromAttacking(true);
-            moveEntrancedMonsters(direction);
+            moveEntrancedMonsters((directions)direction);
             playerTurnEnded();
             return true;
         } else if (whipAttackAborted) { // Canceled an attack against an acid mound.
@@ -897,7 +898,7 @@ boolean playerMoves(short direction) {
                             alreadyRecorded = true;
                         }
                         sprintf(buf, "you struggle but %s is holding your legs!", monstName);
-                        moveEntrancedMonsters(direction);
+                        moveEntrancedMonsters((directions)direction);
                         message(buf, false);
                         playerTurnEnded();
                         return true;
@@ -1038,7 +1039,7 @@ boolean playerMoves(short direction) {
             if (monsterShouldFall(&player)) {
                 player.bookkeepingFlags |= MB_IS_FALLING;
             }
-            moveEntrancedMonsters(direction);
+            moveEntrancedMonsters((directions)direction);
             
             // Perform a lunge or flail attack if appropriate.
             for (i=0; i<16; i++) {
@@ -1076,9 +1077,9 @@ boolean playerMoves(short direction) {
 // replaced in Dijkstra.c:
 /*
 // returns true if the cell value changed
-boolean updateDistanceCell(short **distanceMap, short x, short y) {
+bool updateDistanceCell(short **distanceMap, short x, short y) {
     short dir, newX, newY;
-    boolean somethingChanged = false;
+    bool somethingChanged = false;
     
     if (distanceMap[x][y] >= 0 && distanceMap[x][y] < 30000) {
         for (dir=0; dir< DIRECTION_COUNT; NEXT_DIR(dir)) {
@@ -1095,10 +1096,10 @@ boolean updateDistanceCell(short **distanceMap, short x, short y) {
     return somethingChanged;
 }
 
-void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allowDiagonals) {
+void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], bool allowDiagonals) {
     short i, j, maxDir;
     enum directions dir;
-    boolean somethingChanged;
+    bool somethingChanged;
     
     maxDir = (allowDiagonals ? 8 : 4);
     
@@ -1228,7 +1229,7 @@ void dequeue(short *x, short *y, short *val, distanceQueue *dQ) {
     
 }
 
-void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allowDiagonals) {
+void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], bool allowDiagonals) {
     short i, j, maxDir, val;
     enum directions dir;
     distanceQueue dQ;
@@ -1277,7 +1278,7 @@ void dijkstraScan(short **distanceMap, char passMap[DCOLS][DROWS], boolean allow
 /*
 void calculateDistances(short **distanceMap, short destinationX, short destinationY, unsigned long blockingTerrainFlags, creature *traveler) {
     short i, j;
-    boolean somethingChanged;
+    bool somethingChanged;
     
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
@@ -1316,18 +1317,18 @@ void calculateDistances(short **distanceMap, short destinationX, short destinati
 // Always rolls downhill on the distance map.
 // If monst is provided, do not return a direction pointing to
 // a cell that the monster avoids.
-short nextStep(short **distanceMap, short x, short y, creature *monst, boolean preferDiagonals) {
+short nextStep(short **distanceMap, short x, short y, creature *monst, bool preferDiagonals) {
     short newX, newY, bestScore;
     enum directions dir, bestDir;
     creature *blocker;
-    boolean blocked;
+    bool blocked;
     
     brogueAssert(coordinatesAreInMap(x, y));
     
     bestScore = 0;
     bestDir = NO_DIRECTION;
     
-    for (dir = (preferDiagonals ? 7 : 0);
+    for (dir = (directions)(preferDiagonals ? 7 : 0);
          (preferDiagonals ? dir >= 0 : dir < DIRECTION_COUNT);
          (preferDiagonals ? ((directions)((int)dir - 1)) : NEXT_DIR(dir))) {
         
@@ -1362,9 +1363,9 @@ short nextStep(short **distanceMap, short x, short y, creature *monst, boolean p
     return bestDir;
 }
 
-void displayRoute(short **distanceMap, boolean removeRoute) {
+void displayRoute(short **distanceMap, bool removeRoute) {
     short currentX = player.xLoc, currentY = player.yLoc, dir, newX, newY;
-    boolean advanced;
+    bool advanced;
     
     if (distanceMap[player.xLoc][player.yLoc] < 0 || distanceMap[player.xLoc][player.yLoc] == 30000) {
         return;
@@ -1441,7 +1442,7 @@ void travelRoute(short path[1000][2], short steps) {
 
 void travelMap(short **distanceMap) {
     short currentX = player.xLoc, currentY = player.yLoc, dir, newX, newY;
-    boolean advanced;
+    bool advanced;
     
     rogue.disturbed = false;
     rogue.automationActive = true;
@@ -1477,7 +1478,7 @@ void travelMap(short **distanceMap) {
     updateFlavorText();
 }
 
-void travel(short x, short y, boolean autoConfirm) {
+void travel(short x, short y, bool autoConfirm) {
     short **distanceMap, i;
     rogueEvent theEvent;
     unsigned short staircaseConfirmKey;
@@ -1584,7 +1585,7 @@ void populateGenericCostMap(short **costMap) {
 
 void getLocationFlags(const short x, const short y,
                       unsigned long *tFlags, unsigned long *TMFlags, unsigned long *cellFlags,
-                      const boolean limitToPlayerKnowledge) {
+                      const bool limitToPlayerKnowledge) {
     if (limitToPlayerKnowledge
         && (pmap[x][y].flags & (DISCOVERED | MAGIC_MAPPED))
         && !playerCanSee(x, y)) {
@@ -1708,7 +1709,7 @@ enum directions adjacentFightingDir() {
     enum directions dir;
     creature *monst;
     
-    for (dir = 0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
+    for (dir = (directions)0; dir < DIRECTION_COUNT; NEXT_DIR(dir)) {
         newX = player.xLoc + nbDirs[dir][0];
         newY = player.yLoc + nbDirs[dir][1];
         monst = monsterAtLoc(newX, newY);
@@ -1726,7 +1727,7 @@ enum directions adjacentFightingDir() {
 
 #define exploreGoalValue(x, y)  (0 - abs((x) - DCOLS / 2) / 3 - abs((x) - DCOLS / 2) / 4)
 
-void getExploreMap(short **map, boolean headingToStairs) {// calculate explore map
+void getExploreMap(short **map, bool headingToStairs) {// calculate explore map
     short i, j;
     short **costMap;
     item *theItem;
@@ -1772,10 +1773,10 @@ void getExploreMap(short **map, boolean headingToStairs) {// calculate explore m
     freeGrid(costMap);
 }
 
-boolean explore(short frameDelay) {
+bool explore(short frameDelay) {
     short **distanceMap;
     short path[1000][2], steps;
-    boolean madeProgress, headingToStairs;
+    bool madeProgress, headingToStairs;
     enum directions dir;
     creature *monst;
     
@@ -1844,7 +1845,7 @@ boolean explore(short frameDelay) {
         hilitePath(path, steps, false);
         
         // take a step
-        dir = nextStep(distanceMap, player.xLoc, player.yLoc, NULL, false);
+        dir = (directions)nextStep(distanceMap, player.xLoc, player.yLoc, NULL, false);
         
         if (!headingToStairs && rogue.autoPlayingLevel && dir == NO_DIRECTION) {
             headingToStairs = true;
@@ -1873,8 +1874,8 @@ boolean explore(short frameDelay) {
     return madeProgress;
 }
 
-void autoPlayLevel(boolean fastForward) {
-    boolean madeProgress;
+void autoPlayLevel(bool fastForward) {
+    bool madeProgress;
     
     rogue.autoPlayingLevel = true;
     
@@ -1932,7 +1933,7 @@ short directionOfKeypress(unsigned short ch) {
     }
 }
 
-boolean startFighting(enum directions dir, boolean tillDeath) {
+bool startFighting(enum directions dir, bool tillDeath) {
     short x, y, expectedDamage;
     creature *monst;
     
@@ -1962,7 +1963,7 @@ boolean startFighting(enum directions dir, boolean tillDeath) {
     return rogue.disturbed;
 }
 
-boolean isDisturbed(short x, short y) {
+bool isDisturbed(short x, short y) {
     short i;
     creature *monst;
     for (i=0; i< DIRECTION_COUNT; i++) {
@@ -1986,7 +1987,7 @@ void discover(short x, short y) {
     dungeonFeature *feat;
     if (cellHasTMFlag(x, y, TM_IS_SECRET)) {
         
-        for (layer = 0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
+        for (layer = (dungeonLayers)0; layer < NUMBER_TERRAIN_LAYERS; NEXT_LAYER(layer)) {
             if (tileCatalog[pmap[x][y].layers[layer]].mechFlags & TM_IS_SECRET) {
                 feat = &dungeonFeatureCatalog[tileCatalog[pmap[x][y].layers[layer]].discoverType];
                 pmap[x][y].layers[layer] = (layer == DUNGEON ? FLOOR : NOTHING);
@@ -2002,9 +2003,9 @@ void discover(short x, short y) {
 }
 
 // returns true if found anything
-boolean search(short searchStrength) {
+bool search(short searchStrength) {
     short i, j, radius, x, y, percent;
-    boolean foundSomething = false;
+    bool foundSomething = false;
     
     radius = searchStrength / 10;
     x = player.xLoc;
@@ -2032,8 +2033,8 @@ boolean search(short searchStrength) {
     return foundSomething;
 }
 
-boolean proposeOrConfirmLocation(short x, short y, char *failureMessage) {
-    boolean retval = false;
+bool proposeOrConfirmLocation(short x, short y, char *failureMessage) {
+    bool retval = false;
     if (player.xLoc == x && player.yLoc == y) {
         message("you are already there.", false);
     } else if (pmap[x][y].flags & (DISCOVERED | MAGIC_MAPPED)) {
@@ -2049,8 +2050,8 @@ boolean proposeOrConfirmLocation(short x, short y, char *failureMessage) {
     return retval;
 }
 
-boolean useStairs(short stairDirection) {
-    boolean succeeded = false;
+bool useStairs(short stairDirection) {
+    bool succeeded = false;
     //cellDisplayBuffer fromBuf[COLS][ROWS], toBuf[COLS][ROWS];
     
     if (stairDirection == 1) {
@@ -2108,7 +2109,7 @@ void storeMemories(const short x, const short y) {
     pmap[x][y].rememberedTerrain = pmap[x][y].layers[highestPriorityLayer(x, y, false)];
 }
 
-void updateFieldOfViewDisplay(boolean updateDancingTerrain, boolean refreshDisplay) {
+void updateFieldOfViewDisplay(bool updateDancingTerrain, bool refreshDisplay) {
     short i, j;
     item *theItem;
     char buf[COLS*3], name[COLS*3];
@@ -2251,14 +2252,14 @@ void betweenOctant1andN(short *x, short *y, short x0, short y0, short n) {
     }
 }
 
-// Returns a boolean grid indicating whether each square is in the field of view of (xLoc, yLoc).
+// Returns a bool grid indicating whether each square is in the field of view of (xLoc, yLoc).
 // forbiddenTerrain is the set of terrain flags that will block vision (but the blocking cell itself is
 // illuminated); forbiddenFlags is the set of map flags that will block vision.
 // If cautiousOnWalls is set, we will not illuminate blocking tiles unless the tile one space closer to the origin
 // is visible to the player; this is to prevent lights from illuminating a wall when the player is on the other
 // side of the wall.
 void getFOVMask(char grid[DCOLS][DROWS], short xLoc, short yLoc, float maxRadius,
-                unsigned long forbiddenTerrain, unsigned long forbiddenFlags, boolean cautiousOnWalls) {
+                unsigned long forbiddenTerrain, unsigned long forbiddenFlags, bool cautiousOnWalls) {
     short i;
     
     for (i=1; i<=8; i++) {
@@ -2270,13 +2271,13 @@ void getFOVMask(char grid[DCOLS][DROWS], short xLoc, short yLoc, float maxRadius
 // This is a custom implementation of recursive shadowcasting.
 void scanOctantFOV(char grid[DCOLS][DROWS], short xLoc, short yLoc, short octant, float maxRadius,
                    short columnsRightFromOrigin, long startSlope, long endSlope, unsigned long forbiddenTerrain,
-                   unsigned long forbiddenFlags, boolean cautiousOnWalls) {
+                   unsigned long forbiddenFlags, bool cautiousOnWalls) {
     
     if (columnsRightFromOrigin >= maxRadius) return;
     
     short i, a, b, iStart, iEnd, x, y, x2, y2; // x and y are temporary variables on which we do the octant transform
     long newStartSlope, newEndSlope;
-    boolean cellObstructed;
+    bool cellObstructed;
     
     newStartSlope = startSlope;
     
@@ -2297,7 +2298,7 @@ void scanOctantFOV(char grid[DCOLS][DROWS], short xLoc, short yLoc, short octant
     x = xLoc + columnsRightFromOrigin;
     y = yLoc + iStart;
     betweenOctant1andN(&x, &y, xLoc, yLoc, octant);
-    boolean currentlyLit = coordinatesAreInMap(x, y) && !(cellHasTerrainFlag(x, y, forbiddenTerrain) ||
+    bool currentlyLit = coordinatesAreInMap(x, y) && !(cellHasTerrainFlag(x, y, forbiddenTerrain) ||
                                                           (pmap[x][y].flags & forbiddenFlags));
     for (i = iStart; i <= iEnd; i++) {
         x = xLoc + columnsRightFromOrigin;

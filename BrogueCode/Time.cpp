@@ -89,7 +89,7 @@ void updatePlayerUnderwaterness() {
     }
 }
 
-boolean monsterShouldFall(creature *monst) {
+bool monsterShouldFall(creature *monst) {
     return (!(monst->status[STATUS_LEVITATING])
             && cellHasTerrainFlag(monst->xLoc, monst->yLoc, T_AUTO_DESCENT)
             && !cellHasTerrainFlag(monst->xLoc, monst->yLoc, T_ENTANGLES | T_OBSTRUCTS_PASSABILITY)
@@ -515,7 +515,7 @@ void applyGradualTileEffectsToCreature(creature *monst, short ticks) {
 
 void updateClairvoyance() {
     short i, j, clairvoyanceRadius, dx, dy;
-    boolean cursed;
+    bool cursed;
     unsigned long cFlags;
     
     for (i=0; i<DCOLS; i++) {
@@ -564,7 +564,7 @@ void updateClairvoyance() {
 void updateTelepathy() {
     short i, j;
     creature *monst;
-    boolean grid[DCOLS][DROWS];
+    bool grid[DCOLS][DROWS];
     
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
@@ -701,7 +701,7 @@ void discoverCell(const short x, const short y) {
     }
 }
 
-void updateVision(boolean refreshDisplay) {
+void updateVision(bool refreshDisplay) {
     short i, j;
     char grid[DCOLS][DROWS];
     item *theItem;
@@ -1028,7 +1028,7 @@ void activateMachine(short machineNumber) {
     }
 }
 
-boolean circuitBreakersPreventActivation(short machineNumber) {
+bool circuitBreakersPreventActivation(short machineNumber) {
     short i, j;
     for (i=0; i<DCOLS; i++) {
         for (j=0; j<DROWS; j++) {
@@ -1042,7 +1042,7 @@ boolean circuitBreakersPreventActivation(short machineNumber) {
     return false;
 }
 
-void promoteTile(short x, short y, enum dungeonLayers layer, boolean useFireDF) {
+void promoteTile(short x, short y, enum dungeonLayers layer, bool useFireDF) {
     short i, j;
     enum dungeonFeatureTypes DFType;
     floorTileType *tile;
@@ -1083,9 +1083,9 @@ void promoteTile(short x, short y, enum dungeonLayers layer, boolean useFireDF) 
     }
 }
 
-boolean exposeTileToElectricity(short x, short y) {
+bool exposeTileToElectricity(short x, short y) {
     enum dungeonLayers layer;
-    boolean promotedSomething = false;
+    bool promotedSomething = false;
     
     if (!cellHasTMFlag(x, y, TM_PROMOTES_ON_ELECTRICITY)) {
         return false;
@@ -1099,12 +1099,12 @@ boolean exposeTileToElectricity(short x, short y) {
     return promotedSomething;
 }
 
-boolean exposeTileToFire(short x, short y, boolean alwaysIgnite) {
+bool exposeTileToFire(short x, short y, bool alwaysIgnite) {
     enum dungeonLayers layer;
     short ignitionChance = 0, bestExtinguishingPriority = 1000, explosiveNeighborCount = 0;
     short newX, newY;
     enum directions dir;
-    boolean fireIgnited = false, explosivePromotion = false;
+    bool fireIgnited = false, explosivePromotion = false;
     
     if (!cellHasTerrainFlag(x, y, T_IS_FLAMMABLE)) {
         return false;
@@ -1360,7 +1360,7 @@ void updateEnvironment() {
     long promoteChance;
     enum dungeonLayers layer;
     floorTileType *tile;
-    boolean isVolumetricGas = false;
+    bool isVolumetricGas = false;
     
     monstersFall();
     
@@ -1803,7 +1803,7 @@ void extinguishFireOnCreature(creature *monst) {
 void monsterEntersLevel(creature *monst, short n) {
     creature *prevMonst;
     char monstName[COLS], buf[COLS];
-    boolean pit = false;
+    bool pit = false;
     
     // place traversing monster near the stairs on this level
     if (monst->bookkeepingFlags & MB_APPROACHING_DOWNSTAIRS) {
@@ -2016,7 +2016,7 @@ void decrementPlayerStatus() {
 
 void autoRest() {
     short i = 0;
-    boolean initiallyEmbedded; // Stop as soon as we're free from crystal.
+    bool initiallyEmbedded; // Stop as soon as we're free from crystal.
     
     rogue.disturbed = false;
     rogue.automationActive = true;
@@ -2071,7 +2071,7 @@ void synchronizePlayerTimeState() {
     rogue.ticksTillUpdateEnvironment = player.ticksUntilTurn;
 }
 
-void playerRecoversFromAttacking(boolean anAttackHit) {
+void playerRecoversFromAttacking(bool anAttackHit) {
     if (player.ticksUntilTurn >= 0) {
         // Don't do this if the player's weapon of speed just fired.
         if (rogue.weapon && (rogue.weapon->flags & ITEM_ATTACKS_HIT_SLOWLY) && anAttackHit) {
@@ -2092,7 +2092,7 @@ void playerTurnEnded() {
     short soonestTurn, damage, turnsRequiredToShore, turnsToShore;
     char buf[COLS], buf2[COLS];
     creature *monst, *monst2, *nextMonst;
-    boolean fastForward = false;
+    bool fastForward = false;
     short oldRNG;
     
     brogueAssert(rogue.RNG == RNG_SUBSTANTIVE);

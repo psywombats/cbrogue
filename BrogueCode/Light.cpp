@@ -52,13 +52,13 @@ void logLights() {
 }
 
 // Returns true if any part of the light hit cells that are in the player's field of view.
-boolean paintLight(lightSource *theLight, short x, short y, boolean isMinersLight, boolean maintainShadows) {
+bool paintLight(lightSource *theLight, short x, short y, bool isMinersLight, bool maintainShadows) {
     short i, j, k;
     short colorComponents[3], randComponent, lightMultiplier;
     short fadeToPercent;
     double radius;
     char grid[DCOLS][DROWS];
-    boolean dispelShadows, overlappedFieldOfView;
+    bool dispelShadows, overlappedFieldOfView;
     
     brogueAssert(rogue.RNG == RNG_SUBSTANTIVE);
     
@@ -277,7 +277,7 @@ void updateLighting() {
     }
 }
 
-boolean playerInDarkness() {
+bool playerInDarkness() {
     return (tmap[player.xLoc][player.yLoc].light[0] + 10 < minersLightColor.red
             && tmap[player.xLoc][player.yLoc].light[1] + 10 < minersLightColor.green
             && tmap[player.xLoc][player.yLoc].light[2] + 10 < minersLightColor.blue);
@@ -315,9 +315,9 @@ void createFlare(short x, short y, enum lightType lightIndex) {
     rogue.flareCount++;
 }
 
-boolean flareIsActive(flare *theFlare) {
-    const boolean increasing = (theFlare->coeffChangeAmount > 0);
-    boolean active = true;
+bool flareIsActive(flare *theFlare) {
+    const bool increasing = (theFlare->coeffChangeAmount > 0);
+    bool active = true;
     
     if (theFlare->turnNumber > 0 && theFlare->turnNumber < rogue.absoluteTurnNumber - 1) {
         active = false;
@@ -335,7 +335,7 @@ boolean flareIsActive(flare *theFlare) {
 }
 
 // Returns true if the flare is still active; false if it's not.
-boolean updateFlare(flare *theFlare) {
+bool updateFlare(flare *theFlare) {
     if (!flareIsActive(theFlare)) {
         return false;
     }
@@ -345,8 +345,8 @@ boolean updateFlare(flare *theFlare) {
 }
 
 // Returns whether it overlaps with the field of view.
-boolean drawFlareFrame(flare *theFlare) {
-    boolean inView;
+bool drawFlareFrame(flare *theFlare) {
+    bool inView;
     lightSource tempLight = *(theFlare->light);
     color tempColor = *(tempLight.lightColor);
     
@@ -365,7 +365,7 @@ boolean drawFlareFrame(flare *theFlare) {
 // Frees the flares as they expire.
 void animateFlares(flare **flares, short count) {
     short lights[DCOLS][DROWS][3];
-    boolean inView, fastForward, atLeastOneFlareStillActive;
+    bool inView, fastForward, atLeastOneFlareStillActive;
     short i; // i iterates through the flare list
     
     brogueAssert(rogue.RNG == RNG_SUBSTANTIVE);

@@ -33,7 +33,7 @@ struct pdsLink {
 };
 
 struct pdsMap {
-    boolean eightWays;
+    bool eightWays;
 
     pdsLink front;
     pdsLink links[DCOLS * DROWS];
@@ -93,7 +93,7 @@ void pdsUpdate(pdsMap *map) {
     }
 }
 
-void pdsClear(pdsMap *map, short maxDistance, boolean eightWays) {
+void pdsClear(pdsMap *map, short maxDistance, bool eightWays) {
     short i;
     
     map->eightWays = eightWays;
@@ -152,7 +152,7 @@ void pdsSetCosts(pdsMap *map, short **costMap) {
     }
 }
 
-void pdsBatchInput(pdsMap *map, short **distanceMap, short **costMap, short maxDistance, boolean eightWays) {
+void pdsBatchInput(pdsMap *map, short **distanceMap, short **costMap, short maxDistance, bool eightWays) {
     short i, j;
     pdsLink *left, *right;
 
@@ -238,7 +238,7 @@ void pdsInvalidate(pdsMap *map, short maxDistance) {
     pdsBatchInput(map, NULL, NULL, maxDistance, map->eightWays);
 }
 
-void dijkstraScan(short **distanceMap, short **costMap, boolean useDiagonals) {
+void dijkstraScan(short **distanceMap, short **costMap, bool useDiagonals) {
     static pdsMap map;
 
     pdsBatchInput(&map, distanceMap, costMap, 30000, useDiagonals);
@@ -249,8 +249,8 @@ void calculateDistances(short **distanceMap,
                         short destinationX, short destinationY,
                         unsigned long blockingTerrainFlags,
                         creature *traveler,
-                        boolean canUseSecretDoors,
-                        boolean eightWays) {
+                        bool canUseSecretDoors,
+                        bool eightWays) {
     creature *monst;
     static pdsMap map;
 
