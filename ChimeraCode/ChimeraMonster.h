@@ -20,17 +20,19 @@ class Ability;
 
 enum GenerateFlag : int {
     AQUATIC             = 1 << 1,
-    ANIMAL              = 1 << 2,
-    SUPPORTS_CLASS      = 1 << 3,
-    PACK_MEMBER         = 1 << 4,
-    SHAMANISTIC         = 1 << 5,
-    WIZARDLY            = 1 << 6,
-    INSECTOID           = 1 << 7,
-    ARMED               = 1 << 8,
-    AMORPHOUS           = 1 << 9,
-    BURSTS              = 1 << 10,
-    KAMIKAZE            = 1 << 11,
-    THIEVING            = 1 << 12,
+    AQUATIC_ONLY        = 1 << 2,
+    ANIMAL              = 1 << 3,
+    SUPPORTS_CLASS      = 1 << 4,
+    PACK_MEMBER         = 1 << 5,
+    SHAMANISTIC         = 1 << 6,
+    WIZARDLY            = 1 << 7,
+    INSECTOID           = 1 << 8,
+    ARMED               = 1 << 9,
+    AMORPHOUS           = 1 << 10,
+    BURSTS              = 1 << 11,
+    KAMIKAZE            = 1 << 12,
+    THIEVING            = 1 << 13,
+    THIEVING_ONLY       = 1 << 14,
 };
 
 enum class RegenSpeedType {

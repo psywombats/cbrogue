@@ -45,18 +45,24 @@ void MonsterGenerator::generate() {
     int fodderCount = 3;
     int mookCount = rand_range(6, 7);
     int maxMookDL = AMULET_LEVEL + 5;
+    int maxAquaDL = AMULET_LEVEL + 7;
     int fodderGroupHordes = 1;
     int mookGroupHordes = 2;
     int kamikazeMonstersCount = 3;
     int thiefMonstersCount = 2;
+    int aquaMonstersCount = 3;
     
+    for (int i = 0; i < 2; i += 1) {
     int roll = rand_range(0, 100);
-    if (roll < 33) {
-        mookGroupHordes += 1;
-    } else if (roll < 33) {
-        kamikazeMonstersCount += 1;
-    } else {
-        thiefMonstersCount += 1;
+        if (roll < 33) {
+            mookGroupHordes += 1;
+        } else if (roll < 60) {
+            kamikazeMonstersCount += 1;
+        } else if (roll < 81) {
+            aquaMonstersCount += 1;
+        } else {
+            thiefMonstersCount += 1;
+        }
     }
 
     int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
@@ -68,7 +74,7 @@ void MonsterGenerator::generate() {
     // Step 2: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
         Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING));
+            return body->dangerLevel <= 3 && !(body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY));
         });
         if (body == NULL) {
             continue;
@@ -83,7 +89,7 @@ void MonsterGenerator::generate() {
             if (!(body->flags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
                 return false;
             }
-            if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING)) {
+            if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY)) {
                 return false;
             }
             int dl = body->dangerLevel;
@@ -289,6 +295,9 @@ void MonsterGenerator::generate() {
             Body *body = matchingBody([](const Body *body) {
                 return body->genFlags & THIEVING;
             });
+            if (body == NULL) {
+                continue;
+            }
             monster = new ChimeraMonster(*body);
         } else {
             ChimeraMonster &mook = mookMonsters[rand_range(0, mookMonsters.size() - 3)];
@@ -324,10 +333,112 @@ void MonsterGenerator::generate() {
         horde.purpose = HordePurposeType::THIEF;
         horde.extraRange = -1;
     }
+    
+    // Step 12: Aqua patrols
+    for (int i = 0; i < aquaMonstersCount; i += 1) {
+        int minDL = i * (maxAquaDL / aquaMonstersCount) - 3;
+        int maxDL = (i+1) * (maxAquaDL / aquaMonstersCount) + 1;
+        if (rand_percent(80)) {
+            // custom aqua
+            Body *body = matchingBody([i, minDL, maxDL](const Body *body) {
+                return (body->genFlags & GenerateFlag::AQUATIC_ONLY) > 0  && body->dangerLevel >= minDL && body->dangerLevel <= maxDL;
+            });
+            if (body == NULL) {
+                continue;
+            }
+            ChimeraMonster &monster = this->newMonster(*body);
+            Horde &horde = this->newHorde(monster);
+            horde.purpose = HordePurposeType::AQUA;
+            horde.extraRange = MAX(0, (3-i));
+            
+            if (rand_percent(70)) {
+                // let's make a group for it
+                if (rand_percent(60)) {
+                    // a simple group
+                    Horde &horde = this->newHorde(monster);
+                    horde.addMember(monster, 2, 4);
+                    horde.extraRange = 1;
+                } else {
+                    // a fancy group
+                    ChimeraMonster *soloMonster = new ChimeraMonster(monster);
+                    ChimeraMonster *groupMonster = new ChimeraMonster(monster);
+                    groupMonster->genFlags |= GenerateFlag::PACK_MEMBER;
+                    Ability *soloAbility = matchingAbility([soloMonster](const Ability *ability) {
+                        if (!(ability->requiredFlags & GenerateFlag::AQUATIC)) {
+                            if (rand_percent(50)) return false;
+                        }
+                        return ability->validForMonster(*soloMonster);
+                    });
+                    Ability *groupAbility = matchingAbility([groupMonster](const Ability *ability) {
+                        if (!(ability->requiredFlags & GenerateFlag::AQUATIC)) {
+                            if (rand_percent(50)) return false;
+                        }
+                        return ability->validForMonster(*groupMonster);
+                    });
+                    if (soloAbility == NULL || groupAbility == NULL) {
+                        delete groupMonster;
+                        delete soloMonster;
+                        continue;
+                    }
+                    this->monsters.push_back(groupMonster);
+                    this->monsters.push_back(soloMonster);
+                    groupMonster->applyAbility(*groupAbility);
+                    soloMonster->applyAbility(*soloAbility);
+                    Horde &monoHorde = this->newHorde(*soloMonster);
+                    monoHorde.addMember(*soloMonster, rand_range(1, 2), 2);
+                    monoHorde.purpose = HordePurposeType::AQUA;
+                    Horde &groupHorde = this->newHorde(*groupMonster);
+                    groupHorde.addMember(*soloMonster, 1, 2);
+                    groupHorde.addMember(monster, 1, 2);
+                    groupHorde.purpose = HordePurposeType::AQUA;
+                }
+            } else {
+                // let's make a variant of it
+                ChimeraMonster variantMonster = this->newMonster(monster);
+                Ability *ability = matchingAbility([variantMonster](const Ability *ability) {
+                    if (!(ability->requiredFlags & GenerateFlag::AQUATIC)) {
+                        if (rand_percent(50)) return false;
+                    }
+                    return ability->validForMonster(variantMonster);
+                });
+                variantMonster.applyAbility(*ability);
+                Horde &groupHorde = this->newHorde(variantMonster);
+                groupHorde.addMember(monster, 0, 2);
+                groupHorde.extraRange = 1;
+            }
+        } else {
+            // convert a mook if possible
+            minDL -= 2;
+            maxDL += 1;
+            ChimeraMonster *monster = NULL;
+            for (ChimeraMonster &mook : mookMonsters) {
+                if (mook.genFlags & GenerateFlag::AQUATIC) {
+                    if (mook.dangerLevel < minDL || mook.dangerLevel > maxDL) {
+                        continue;
+                    }
+                    Ability *ability = matchingAbility([mook](const Ability *ability) {
+                        return ability->validForMonster(mook) && (ability->requiredFlags & GenerateFlag::AQUATIC);
+                    });
+                    if (ability == NULL) {
+                        continue;
+                    }
+                    monster = new ChimeraMonster(mook);
+                    monster->applyAbility(*ability);
+                }
+            }
+            if (monster == NULL) {
+                i -= 1;
+                continue;
+            }
+            this->monsters.push_back(monster);
+            Horde &horde = this->newHorde(*monster);
+            horde.purpose = HordePurposeType::AQUA;
+            horde.extraRange = 1;
+        }
+    }
 
     std::string report = debugReport();
-    printf(report.c_str());
-    printf("\n");
+    std::cout << report;
     return;
 }
 

@@ -718,6 +718,102 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->forbiddenFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::INSECTOID);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "river";
+    ability->colorOverride = &brown;
+    ability->dangerBoost = -3;
+    ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER);
+    ability->requiredFlags = (GenerateFlag::AQUATIC);
+    ability->forbiddenFlags = (GenerateFlag::AQUATIC_ONLY);
+    ability->rarityPercent = 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "electric";
+    ability->colorOverride = &yellow;
+    ability->dangerBoost = 3;
+    ability->bolts = {BOLT_SPARK};
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->rarityPercent = 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "razortooth";
+    ability->colorMod = ColorModFlavor::COMBAT;
+    ability->dangerBoost = 3;
+    ability->minDamageBoost = 2;
+    ability->maxDamageBoost = 4;
+    ability->hpBoost = 5;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->rarityPercent = 75;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "stinging";
+    ability->colorMod = ColorModFlavor::POISONOUS;
+    ability->dangerBoost = 3;
+    ability->abilFlags = MA_POISONS;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->rarityPercent = 75;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "tentacle";
+    ability->colorMod = ColorModFlavor::COMBAT;
+    ability->dangerBoost = 3;
+    ability->abilFlags = MA_SEIZES;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->rarityPercent = 75;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "silverback";
+    ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->dangerBoost = 4;
+    ability->flags = MONST_FLEES_NEAR_DEATH;
+    ability->defense = DefenseType::HIGH;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC);
+    ability->rarityPercent = 75;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "swarm";
+    ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->dangerBoost = 3;
+    ability->flags = MONST_FLEES_NEAR_DEATH;
+    ability->defense = DefenseType::HIGH;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::PACK_MEMBER | GenerateFlag::ANIMAL);
+    ability->rarityPercent = 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "caller";
+    ability->colorOverride = &yellow;
+    ability->dangerBoost = 5;
+    ability->bolts = {BOLT_HEALING, BOLT_DISCORD};
+    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::PACK_MEMBER);
+    ability->rarityPercent = 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "spearfisher";
+    ability->colorMod = ColorModFlavor::POISONOUS;
+    ability->dangerBoost = 4;
+    ability->abilFlags = MA_CAUSES_WEAKNESS;
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ARMED);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "elder";
+    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->dangerBoost = 5;
+    ability->bolts = {BOLT_DISCORD, BOLT_SLOW_2};
+    ability->defense = DefenseType::LOW;
+    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::SUPPORTS_CLASS);
+    abilities.push_back(ability);
 
     return abilities;
 }

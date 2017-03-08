@@ -74,8 +74,10 @@ hordeType Horde::convertToStruct() {
         i += 1;
     }
 
-    applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_FIRE, LAVA);
-    applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_WATER, DEEP_WATER);
+    if (leader.flags & MONST_SUBMERGES) {
+        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_FIRE, LAVA);
+        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_WATER, DEEP_WATER);
+    }
     
     return hordeStruct;
 }
@@ -106,14 +108,14 @@ int Horde::calculateDL() const {
         if (this->purpose == HordePurposeType::FODDER) {
             danger += 2;
         } else {
-            danger += MAX(3, this->members.front()->member.dangerLevel / 2);
+            danger += MIN(3, this->members.front()->member.dangerLevel / 3);
         }
     }
     if (this->members.size() >= 2) {
         if (this->purpose == HordePurposeType::FODDER) {
             danger += 2;
         } else {
-            danger += MAX(3, this->members.front()->member.dangerLevel / 2);
+            danger += MIN(3, this->members.front()->member.dangerLevel / 2);
         }
     }
     return danger;
@@ -122,13 +124,13 @@ int Horde::calculateDL() const {
 int Horde::minDL() const {
     int danger = this->calculateDL();
     int dangerDelta = this->dangerDelta();
-    return MAX(1, danger - dangerDelta);
+    return MIN(MAX(1, danger - dangerDelta), DEEPEST_LEVEL);
 }
 
 int Horde::maxDL() const {
     int danger = this->calculateDL();
     int dangerDelta = this->dangerDelta();
-    return MIN(DEEPEST_LEVEL-1, danger + dangerDelta);
+    return MIN(MIN(DEEPEST_LEVEL-1, danger + dangerDelta), DEEPEST_LEVEL);
 }
 
 int Horde::dangerDelta() const {

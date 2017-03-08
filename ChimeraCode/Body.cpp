@@ -213,8 +213,10 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 4;
     body->hp = 55;
     body->regenSpeed = RegenSpeedType::FAST;
-    body->dangerLevel = 12;
-    body->genFlags = (GenerateFlag::AMORPHOUS);
+    body->dangerLevel = 14;
+    body->abilFlags = MA_SEIZES;
+    body->flags = MONST_IMMUNE_TO_WATER;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS);
     body->rarityPercent = 33;
     bodies.push_back(body);
 
@@ -254,7 +256,7 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
 
     body = new Body();
-    body->baseName = "wight";
+    body->baseName = "skeleton";
     body->baseColor = &white;
     body->minDamage = 3;
     body->maxDamage = 9;
@@ -272,7 +274,8 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 50;
     body->defense = DefenseType::LOW;
     body->dangerLevel = 10;
-    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
+    body->flags = MONST_IMMUNE_TO_WATER;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
     body->rarityPercent = 33;
     bodies.push_back(body);
 
@@ -284,6 +287,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 30;
     body->dangerLevel = 9;
     body->abilFlags = (MA_TRANSFERENCE);
+    body->gender = GenderType::BOTH;
     body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     body->rarityPercent = 25;
     bodies.push_back(body);
@@ -307,6 +311,8 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 11;
     body->hp = 75;
     body->dangerLevel = 13;
+    body->flags = MONST_IMMUNE_TO_WATER;
+    body->gender = GenderType::MALE_ONLY;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::WIZARDLY);
     bodies.push_back(body);
 
@@ -434,6 +440,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "spore crab";
+    body->baseChar = 'C';
     body->baseColor = &brown;
     body->minDamage = 0;
     body->maxDamage = 0;
@@ -450,6 +457,7 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 0;
     body->hp = 15;
     body->dangerLevel = 6;
+    body->gender = GenderType::BOTH;
     body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
     body->rarityPercent = 33;
     bodies.push_back(body);
@@ -461,7 +469,7 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 3;
     body->hp = 12;
     body->dangerLevel = 2;
-    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::THIEVING_ONLY | GenerateFlag::ANIMAL);
     body->rarityPercent = 75;
     bodies.push_back(body);
     
@@ -474,7 +482,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 5;
     body->defense = DefenseType::HIGH;
     body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
-    body->rarityPercent = 33;
+    body->rarityPercent = 25;
     bodies.push_back(body);
     
     body = new Body();
@@ -497,17 +505,109 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 10;
     body->dangerLevel = 4;
     body->flags = (MONST_FLIES | MONST_FLITS);
-    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::THIEVING_ONLY | GenerateFlag::ANIMAL);
+    body->rarityPercent = 66;
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "demonspawn";
+    body->baseName = "quasit";
     body->baseColor = &white;
     body->minDamage = 4;
     body->maxDamage = 9;
     body->hp = 35;
     body->dangerLevel = 8;
-    body->genFlags = (GenerateFlag::SUPPORTS_CLASS);
+    body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::THIEVING);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "turtle";
+    body->baseColor = &brown;
+    body->minDamage = 2;
+    body->maxDamage = 6;
+    body->hp = 18;
+    body->dangerLevel = 5;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
+    body->regenSpeed = RegenSpeedType::FAST;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "eel";
+    body->baseColor = &brown;
+    body->minDamage = 3;
+    body->maxDamage = 7;
+    body->hp = 18;
+    body->dangerLevel = 9;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES | MONST_FLITS);
+    body->regenSpeed = RegenSpeedType::FAST;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "pirahna";
+    body->baseColor = &darkRed;
+    body->minDamage = 13;
+    body->maxDamage = 17;
+    body->hp = 25;
+    body->dangerLevel = 15;
+    body->defense = DefenseType::HIGH;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES | MONST_FLITS);
+    body->regenSpeed = RegenSpeedType::FAST;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "shark";
+    body->baseColor = &white;
+    body->minDamage = 13;
+    body->maxDamage = 17;
+    body->hp = 40;
+    body->dangerLevel = 15;
+    body->defense = DefenseType::HIGH;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "mollusk";
+    body->baseColor = &brown;
+    body->minDamage = 17;
+    body->maxDamage = 25;
+    body->hp = 120;
+    body->dangerLevel = 26;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ANIMAL);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "merman";
+    body->baseColor = &darkGreen;
+    body->minDamage = 3;
+    body->maxDamage = 6;
+    body->hp = 18;
+    body->dangerLevel = 8;
+    body->gender = GenderType::MALE_ONLY;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES | MONST_FLEES_NEAR_DEATH);
+    body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ARMED);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "sea monk";
+    body->baseChar = 'M';
+    body->baseColor = &darkGray;
+    body->minDamage = 9;
+    body->maxDamage = 16;
+    body->hp = 50;
+    body->dangerLevel = 17;
+    body->gender = GenderType::MALE_ONLY;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->attackSpeed = AttackSpeedType::SLOW;
+    body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
+    body->regenSpeed = RegenSpeedType::FAST;
+    body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ARMED | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     bodies.push_back(body);
 
     return bodies;
