@@ -11,10 +11,15 @@ Ability::Ability() :
         hpBoost(0),
         requiredFlags(0),
         flags(0),
+        forbiddenFlags(0),
         abilFlags(0),
         dangerBoost(0),
         minDamageBoost(0),
         maxDamageBoost(0),
+        featureKamikaze(DF_NONE),
+        featurePeriodic(DF_NONE),
+        featureMessage(""),
+        featurePeriodicPercent(0),
         regenSpeed(RegenSpeedType::NORMAL),
         moveSpeed(MoveSpeedType::NORMAL),
         attackSpeed(AttackSpeedType::NORMAL),
@@ -22,6 +27,7 @@ Ability::Ability() :
         defense(DefenseType::NORMAL),
         namePrefix(""),
         nameSuffix(""),
+        colorOverride(NULL),
         colorMod(ColorModFlavor::NONE),
         inUse(false) {
 
@@ -52,7 +58,6 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
     if (this->defense != DefenseType::NORMAL) {
         monster.defense = this->defense;
     }
-
     if (this->namePrefix.size() > 0) {
         monster.name = this->namePrefix + " " + monster.name;
     }
@@ -66,8 +71,22 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 
     monster.flags |= this->flags;
     monster.abilFlags |= this->abilFlags;
-
-    monster.displayColor = this->blendColor(monster.displayColor);
+    
+    if (this->featureKamikaze != DF_NONE) {
+        monster.feature = this->featureKamikaze;
+        monster.flags |= (MA_DF_ON_DEATH);
+        monster.featureMessage = this->featureMessage;
+    } else if (this->featurePeriodic != DF_NONE) {
+        monster.feature = this->featurePeriodic;
+        monster.featurePeriodicPercent = this->featurePeriodicPercent;
+        monster.featureMessage = this->featureMessage;
+    }
+    
+    if (colorOverride == NULL) {
+        monster.displayColor = this->blendColor(monster.displayColor);
+    } else {
+        monster.displayColor = this->colorOverride;
+    }
 
     this->inUse = true;
 }
@@ -76,11 +95,21 @@ bool Ability::validForMonster(const ChimeraMonster &monster) const {
     if ((this->requiredFlags & monster.genFlags) != this->requiredFlags) {
         return false;
     }
+    if ((this->forbiddenFlags & monster.genFlags) > 0) {
+        return false;
+    }
+    if ((this->featureKamikaze != DF_NONE || this->featurePeriodic != DF_NONE) && monster.feature != DF_NONE) {
+        return false;
+    }
     if ((monster.flags & this->flags) > 0) {
         // this means we'd generate something stupid like a "winged bat" or "mounted horseman"
         return false;
     }
     if (monster.defense == DefenseType::DEFENSELESS && this->defense != DefenseType::NORMAL) {
+        return false;
+    }
+    if (this->dangerBoost + monster.dangerLevel > 32) {
+        // no one would see this monstrosity, it's probably like an explosive horror or something
         return false;
     }
 
@@ -168,16 +197,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "champion";
-    ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 3;
-    ability->hpBoost = 8;
-    ability->minDamageBoost = 3;
-    ability->maxDamageBoost = 5;
-    ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
-    abilities.push_back(ability);
-
-    ability = new Ability();
     ability->nameSuffix = "bulwark";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 2;
@@ -225,7 +244,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "webweaver";
-    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->colorOverride = &white;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_SPIDERWEB};
     ability->requiredFlags = GenerateFlag::INSECTOID;
@@ -234,7 +253,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "mystic";
-    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->colorOverride = &goblinMysticColor;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_SHIELDING};
     ability->hpBoost = -4;
@@ -257,7 +276,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "mounted";
-    ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->colorOverride = &tanColor;
     ability->dangerBoost = 8;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
     ability->hpBoost = -4;
@@ -300,7 +319,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "priest";
-    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->colorOverride = &darPriestessColor;
     ability->dangerBoost = 7;
     ability->bolts = {BOLT_SPARK, BOLT_HEALING, BOLT_NEGATION, BOLT_HASTE};
     ability->hpBoost = -4;
@@ -326,7 +345,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "battlemage";
-    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->colorOverride = &darMageColor;
     ability->dangerBoost = 6;
     ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
     ability->hpBoost = -4;
@@ -417,14 +436,14 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->namePrefix = "fire";
+    ability->namePrefix = "lava";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 4;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_FIERY);
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->namePrefix = "lava";
+    ability->namePrefix = "cinder";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 1;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_SUBMERGES);
@@ -441,7 +460,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "water";
-    ability->colorMod = ColorModFlavor::COMBAT;
+    ability->colorOverride = &lightBlue;
     ability->dangerBoost = 2;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
     ability->requiredFlags = (GenerateFlag::INSECTOID);
@@ -481,7 +500,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "rainbow";
-    ability->colorMod = ColorModFlavor::POISONOUS;
+    ability->colorOverride = &rainbow;
     ability->dangerBoost = 5;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_HIT_HALLUCINATE);
@@ -489,17 +508,20 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "vampire";
-    ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->colorOverride = &gray;
     ability->dangerBoost = 4;
     ability->requiredFlags = (GenerateFlag::ANIMAL);
     ability->abilFlags = (MA_TRANSFERENCE);
+    abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "grappler";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+    ability->forbiddenFlags = (GenerateFlag::WIZARDLY);
     ability->abilFlags = (MA_SEIZES);
+    abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "sticky";
@@ -507,6 +529,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 3;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_SEIZES);
+    abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "venemous";
@@ -514,6 +537,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::ANIMAL);
     ability->abilFlags = (MA_POISONS);
+    abilities.push_back(ability);
 
     ability = new Ability();
     ability->namePrefix = "deadly";
@@ -521,14 +545,88 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 5;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_CAUSES_WEAKNESS);
+    abilities.push_back(ability);
 
     ability = new Ability();
     ability->namePrefix = "acid";
-    ability->colorMod = ColorModFlavor::POISONOUS;
+    ability->colorOverride = &acidBackColor;
     ability->dangerBoost = 6;
     ability->requiredFlags = (GenerateFlag::AMORPHOUS);
     ability->abilFlags = (MA_HIT_DEGRADE_ARMOR);
     ability->flags = (MONST_DEFEND_DEGRADE_WEAPON);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "caustic";
+    ability->colorOverride = &poisonGasColor;
+    ability->dangerBoost = 6;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_BLOAT_DEATH;
+    ability->featureMessage = "bursts, leaving behind an expanding cloud of caustic gas!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "pit";
+    ability->colorOverride = &lightBlue;
+    ability->dangerBoost = 6;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_HOLE_POTION;
+    ability->featureMessage = "bursts, causing the floor underneath $HIMHER to disappear!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "explosive";
+    ability->colorOverride = &orange;
+    ability->dangerBoost = 17;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_BLOAT_EXPLOSION;
+    ability->featureMessage = "detonates with terrifying force!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "infested";
+    ability->colorOverride = &lichenColor;
+    ability->dangerBoost = 15;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_MUTATION_LICHEN;
+    ability->featureMessage = "bursts, filling the air with a cloud of fungal spores!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "fire";
+    ability->colorOverride = &red;
+    ability->dangerBoost = 8;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_INCINERATION_POTION;
+    ability->featureMessage = "detonates into an immense conflagration!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "shattering";
+    ability->colorOverride = &teal;
+    ability->dangerBoost = 4;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_SHATTERING_SPELL;
+    ability->featureMessage = "bursts, releasing a wave of turquoise radiation! The walls begin to shimmer.";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "stink";
+    ability->colorOverride = &teal;
+    ability->dangerBoost = 14;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_DEWAR_METHANE;
+    ability->featureMessage = "bursts, and an offensive odor accompanies the hiss of escaping methane!";
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "gassy";
+    ability->colorOverride = &confusionGasColor;
+    ability->dangerBoost = 15;
+    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->featureKamikaze = DF_CONFUSION_GAS_CLOUD_POTION;
+    ability->featureMessage = "bursts, and the air starts to shimmer and sparkle!";
+    abilities.push_back(ability);
 
     return abilities;
 }

@@ -47,6 +47,7 @@ void MonsterGenerator::generate() {
     int maxMookDL = AMULET_LEVEL + 5;
     int fodderGroupHordes = 1;
     int mookGroupHordes = 3;
+    int kamikazeMonstersCount = 3;
 
     int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
     int specialistMookClasses = rand_range(3, 4);
@@ -57,7 +58,7 @@ void MonsterGenerator::generate() {
     // Step 2: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
         Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3;
+            return body->dangerLevel <= 3 && !(body->genFlags & GenerateFlag::KAMIKAZE);
         });
         if (body == NULL) {
             continue;
@@ -70,6 +71,9 @@ void MonsterGenerator::generate() {
     for (int i = 0; i < mookCount; i += 1) {
         Body *body = matchingBody([maxMookDL, mookCount, i](const Body *body) {
             if (!(body->flags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
+                return false;
+            }
+            if (body->genFlags & GenerateFlag::KAMIKAZE) {
                 return false;
             }
             int dl = body->dangerLevel;
@@ -233,6 +237,37 @@ void MonsterGenerator::generate() {
                 horde.addMember(monster2, 1, 1);
             }
         }
+    }
+    
+    // Step 10: Kamikaze fun
+    std::vector<std::reference_wrapper<ChimeraMonster>> kamikazes;
+    Body *kamikazeBody = matchingBody([](const Body *body) {
+        return body->genFlags & KAMIKAZE;
+    });
+    for (int i = 0; i < kamikazeMonstersCount; i += 1) {
+        ChimeraMonster &monster = this->newMonster(*kamikazeBody);
+        Ability *burst = matchingAbility([i, kamikazeMonstersCount, kamikazeBody](const Ability *ability) {
+            if (!ability->validForMonster(monster)) {
+                return false;
+            }
+            int minDL = i * (AMULET_LEVEL / kamikazeMonstersCount) - 1;
+            int maxDL = (i+1) * (AMULET_LEVEL / kamikazeMonstersCount) + 4;
+            int dl = (ability->dangerBoost + kamikazeBody->dangerLevel);
+            return (ability->requiredFlags & GenerateFlag::BURSTS) > 0 && dl >= minDL && dl <= maxDL;
+        });
+        if (burst != NULL) {
+            monster.applyAbility(*burst);
+            kamikazes.push_back(monster);
+            Horde &horde = this->newHorde(monster);
+            horde.purpose = HordePurposeType::SPECIAL;
+        }
+    }
+    int duplicateGroupIndex = rand_range(0, MAX(0, kamikazeMonstersCount - 1));
+    if ((unsigned long)duplicateGroupIndex < kamikazes.size()) {
+        ChimeraMonster &monster = kamikazes[duplicateGroupIndex];
+        Horde &horde = this->newHorde(monster);
+        horde.addMember(monster, 2, 2);
+        horde.purpose = HordePurposeType::SPECIAL;
     }
 
     std::string report = debugReport();

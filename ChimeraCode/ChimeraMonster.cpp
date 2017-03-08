@@ -23,6 +23,10 @@ ChimeraMonster::ChimeraMonster(Body &body) :
         accuracy(AccuracyType::NORMAL),
         defense(DefenseType::NORMAL),
         bloodType(DF_NONE),
+        feature(DF_NONE),
+        featureKamikaze(false),
+        featurePeriodicPercent(0),
+        featureMessage(""),
         damage({0, 0, 0}),
         displayColor(&black),
         lightType(NO_LIGHT),
@@ -120,11 +124,23 @@ creatureType ChimeraMonster::convertToStruct() {
         // TODO: do this more smartlier
         creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
     }
+    
+    creatureStruct.DFType = this->feature;
+    memcpy(&creatureStruct.DFMessage, this->featureMessage.c_str(), this->featureMessage.length()+1);
+    creatureStruct.DFChance = this->featurePeriodicPercent;
+    
+    if (this->bloodType == DF_NONE) {
+        if ((this->genFlags & GenerateFlag::ANIMAL) > 0) {
+            this->bloodType = DF_RED_BLOOD;
+        } else if ((this->genFlags & GenerateFlag::INSECTOID) > 0) {
+            this->bloodType = DF_WORM_BLOOD;
+        } else if ((this->genFlags & GenerateFlag::AMORPHOUS) > 0) {
+            this->bloodType = DF_GREEN_BLOOD;
+        }
+    }
 
     // TODO
     //short DFChance;                     // percent chance to spawn the dungeon feature per awake turn
-    //enum dungeonFeatureTypes DFType;    // kind of dungeon feature
-    //unsigned long abilityFlags;
     //char summonMessage[DCOLS * 2];
 
     return creatureStruct;

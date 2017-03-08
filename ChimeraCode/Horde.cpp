@@ -92,9 +92,25 @@ hordeType Horde::convertToStruct() {
         i += 1;
     }
 
-    // TODO: spawnsIn
-
+    applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_FIRE, LAVA);
+    applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_WATER, DEEP_WATER);
+    
     return hordeStruct;
+}
+
+void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile) {
+    if ((this->leader.flags & flag > 0)) {
+        bool spawnsSpecial = true;
+        for (HordeMember *member : this->members) {
+            if ((member->member.flags & flag) == 0) {
+                spawnsSpecial = false;
+                break;
+            }
+        }
+        if (spawnsSpecial) {
+            hordeStruct.spawnsIn = tile;
+        }
+    }
 }
 
 int Horde::calculateDL() const {

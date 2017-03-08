@@ -51,6 +51,12 @@ public:
     AttackSpeedType attackSpeed;
     AccuracyType accuracy;
     DefenseType defense;
+    
+    // feature
+    dungeonFeatureTypes featureKamikaze;
+    dungeonFeatureTypes featurePeriodic;
+    std::string featureMessage;
+    int featurePeriodicPercent;
 
     // flags
     std::vector<boltType> bolts;
@@ -61,10 +67,12 @@ public:
     std::string namePrefix;
     std::string nameSuffix;
     ColorModFlavor colorMod;
+    const color *colorOverride;
 
     // generation
     bool inUse;
     unsigned long requiredFlags;    // bitset of GenerateFlag
+    unsigned long forbiddenFlags;   // bitset of GenerateFlag
 
     static std::vector<Ability *> loadModifierAbilities();
 

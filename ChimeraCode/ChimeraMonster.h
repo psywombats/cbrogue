@@ -19,15 +19,17 @@ class Body;
 class Ability;
 
 enum GenerateFlag : int {
-    AQUATIC            = 1 << 1,
-    ANIMAL            = 1 << 2,
-    SUPPORTS_CLASS    = 1 << 3,
-    PACK_MEMBER        = 1 << 4,
-    SHAMANISTIC        = 1 << 5,
-    WIZARDLY        = 1 << 6,
-    INSECTOID        = 1 << 7,
-    ARMED            = 1 << 8,
-    AMORPHOUS        = 1 << 9,
+    AQUATIC             = 1 << 1,
+    ANIMAL              = 1 << 2,
+    SUPPORTS_CLASS      = 1 << 3,
+    PACK_MEMBER         = 1 << 4,
+    SHAMANISTIC         = 1 << 5,
+    WIZARDLY            = 1 << 6,
+    INSECTOID           = 1 << 7,
+    ARMED               = 1 << 8,
+    AMORPHOUS           = 1 << 9,
+    BURSTS              = 1 << 10,
+    KAMIKAZE            = 1 << 11,
 };
 
 enum class RegenSpeedType {
@@ -110,6 +112,12 @@ public:
     RegenSpeedType regenSpeed;
     MoveSpeedType moveSpeed;
     AttackSpeedType attackSpeed;
+    
+    // feature
+    dungeonFeatureTypes feature;
+    std::string featureMessage;
+    bool featureKamikaze;
+    int featurePeriodicPercent;
 
     // flags
     std::vector<boltType> bolts;

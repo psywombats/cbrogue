@@ -197,7 +197,7 @@ extern const color sentinelColor;
 extern const color goblinMysticColor;
 extern const color ifritColor;
 extern const color phoenixColor;
-
+extern const color lichenColor;
 
 extern color goodMessageColor;
 extern color badMessageColor;

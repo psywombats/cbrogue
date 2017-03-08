@@ -177,7 +177,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 15;
     body->accuracy = AccuracyType::INACCURATE;
     body->dangerLevel = 2;
-    body->genFlags = (GenerateFlag::AMORPHOUS);
+    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
     bodies.push_back(body);
 
     body = new Body();
@@ -267,7 +267,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 50;
     body->defense = DefenseType::LOW;
     body->dangerLevel = 10;
-    body->genFlags = (GenerateFlag::AMORPHOUS);
+    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
     bodies.push_back(body);
 
     body = new Body();
@@ -383,7 +383,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 120;
     body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
     body->dangerLevel = 28;
-    body->genFlags = (GenerateFlag::AMORPHOUS);
+    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
     bodies.push_back(body);
 
     body = new Body();
@@ -406,6 +406,38 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 6;
     body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
     body->genFlags = (GenerateFlag::AMORPHOUS);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "bloat";
+    body->baseColor = &darkPurple;
+    body->minDamage = 0;
+    body->maxDamage = 0;
+    body->hp = 4;
+    body->dangerLevel = 1;
+    body->flags = (MONST_FLIES | MONST_FLITS);
+    body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "spore crab";
+    body->baseColor = &brown;
+    body->minDamage = 0;
+    body->maxDamage = 0;
+    body->hp = 2;
+    body->dangerLevel = 3;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "bomb goblin";
+    body->baseColor = &brown;
+    body->minDamage = 0;
+    body->maxDamage = 0;
+    body->hp = 15;
+    body->dangerLevel = 5;
+    body->genFlags = (GenerateFlag::BURSTS | GenerateFlag::KAMIKAZE);
     bodies.push_back(body);
 
     return bodies;

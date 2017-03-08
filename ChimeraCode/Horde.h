@@ -52,6 +52,7 @@ private:
     std::list<HordeMember *> members;
 
     int calculateDL() const;
+    void applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile);
 };
 
 class HordeMember {
