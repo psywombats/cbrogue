@@ -13,6 +13,8 @@ std::set<std::reference_wrapper<uchar>> Body::usedChars = std::set<std::referenc
 
 Body::Body() :
         hp(0),
+        baseName(""),
+        flavor(""),
         baseChar('?'),
         rarityPercent(50),
         genFlags(0),
@@ -21,6 +23,7 @@ Body::Body() :
         baseColor(&brown),
         inUse(false),
         singleUse(true),
+        light(NO_LIGHT),
         gender(GenderType::NONE),
         dangerLevel(0),
         periodicFeature(DF_NONE),
@@ -53,6 +56,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.name = this->baseName;
     monster.gender = this->gender;
     monster.displayColor = this->baseColor;
+    monster.lightType = this->light;
 
     monster.dangerLevel = this->dangerLevel;
 
@@ -94,6 +98,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "rat";
+    body->flavor = "The rat is a scavenger of the shallows, perpetually in search of decaying animal matter.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
@@ -105,6 +110,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "kobold";
+    body->flavor = "The kobold is a lizardlike humanoid of the upper dungeon.";
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
@@ -118,6 +124,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "snake";
+    body->flavor = "The common cave snake may be small, but it packs a painful (if not venemous) bite.";
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -129,6 +136,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "jackal";
+    body->flavor = "The jackal prowls the caverns for intruders to rend with $HISHER powerful jaws.";
     body->baseColor = &tanColor;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -142,6 +150,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "hyena";
+    body->flavor = "The hyena is an opportunistic predator, stalking the halls by itself or in packs.";
     body->baseColor = &tanColor;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -155,6 +164,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "goblin";
+    body->flavor = "A filthy little primate, the tribalistic goblin often travels in packs.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -170,6 +180,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "orc";
+    body->flavor = "The orc is a piglike humanoid endemic to the middle dungeon, where $HESHE is a part of a primitive society.";
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 3;
@@ -182,6 +193,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "acolyte";
+    body->flavor = "Wreathed from head to toe in filthy robes, it is difficult to tell if the acolyte underneath is human at all.";
     body->baseChar = 'A';
     body->baseColor = &darkGray;
     body->blood = DF_RED_BLOOD;
@@ -196,6 +208,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "frog";
+    body->flavor = "Seeking shelter from the elements, the frog is often found searching the dungeon for bodies of water.";
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -208,6 +221,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "bat";
+    body->flavor = "Often hunting in packs, leathery wings and keen senses guide the vampire bat unerringly to $HISHER prey.";
     body->baseColor = &gray;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -221,6 +235,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "mound";
+    body->flavor = "The mound squelches softly across the ground, seeking anything $HESHE can find for a meal.";
     body->baseColor = &green;
     body->baseChar = 'a';
     body->blood = DF_GREEN_BLOOD;
@@ -235,6 +250,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "millipede";
+    body->flavor = "This giant millipede is covered in a array of ever-flailing legs.";
     body->baseColor = &darkYellow;
     body->blood = DF_GREEN_BLOOD;
     body->minDamage = 4;
@@ -248,6 +264,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "ogre";
+    body->flavor = "This lumbering creature carries an enormous club that $HESHE can swing with incredible force.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 9;
@@ -261,6 +278,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "monster";
+    body->flavor = "This shambling creature is covered in mats of moldy, muddy fur, its arms outstretched in front of it.";
     body->baseColor = &darkGreen;
     body->blood = DF_GREEN_BLOOD;
     body->minDamage = 3;
@@ -275,6 +293,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "arachnid";
+    body->flavor = "The arachnid's eight skittering legs propel its malformed, chitinous body across the dungeon floor.";
     body->baseChar = 's';
     body->baseColor = &darkYellow;
     body->minDamage = 3;
@@ -289,6 +308,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "wisp";
+    body->flavor = "Little more than a gout of flame, the wisp pulses in time to an ethereal rhythm";
     body->baseChar = '*';
     body->baseColor = &white;
     body->blood = DF_ASH_BLOOD;
@@ -302,6 +322,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "wraith";
+    body->flavor = "The wraith's hollow eye sockets stare hungrily at the world from $HISHER emaciated frame, $HISHER nails groping ceaselessly for a fresh victim.";
     body->baseChar = 'W';
     body->baseColor = &gray;
     body->blood = DF_ECTOPLASM_BLOOD;
@@ -315,6 +336,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "skeleton";
+    body->flavor = "With $HISHER skull frozen in a rictus of death, the skeleton is a malevolent pile of bones held together by rusty wire and evil magic.";
     body->baseChar = 'z';
     body->baseColor = &white;
     body->blood = DF_BONES;
@@ -327,6 +349,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "blob";
+    body->flavor = "The blob is a hungry, gelatinous mass that can take quite the beating, perhaps because of its lack of any discernible features.";
     body->baseColor = &darkPurple;
     body->blood = DF_PURPLE_BLOOD;
     body->minDamage = 5;
@@ -340,6 +363,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "vampire";
+    body->flavor = "The vampire lives a solitary life deep underground, consuming any warm-blooded creature unfortunate to venture near $HISHER lair.";
     body->baseChar = 'V';
     body->baseColor = &gray;
     body->minDamage = 5;
@@ -354,6 +378,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "giant";
+    body->flavor = "This burly creature is almost too big to fit through the dungeon tunnels, and $HESHE seems to regenerate wounds as quickly as they occur.";
     body->baseChar = 'G';
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
@@ -368,6 +393,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "lizardman";
+    body->flavor = "Half reptile and half human, the lizardmen live in the bellies of lakes or else deep underground caves. They do not take kindly to visitors.";
     body->baseColor = &green;
     body->blood = DF_GREEN_BLOOD;
     body->minDamage = 7;
@@ -380,6 +406,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "dar";
+    body->flavor = "An elf of the deep, the dar defends $HISHER home with crystal-hewn weaponry and wicked magic.";
     body->baseColor = &darkBlue;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 3;
@@ -391,7 +418,8 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
 
     body = new Body();
-    body->baseName = "horseman";
+    body->baseName = "centaur";
+    body->flavor = "Rider and steed in one, the centaur is often seen with a bow or other weapon, closing ground at frightening speed.";
     body->baseChar = 'C';
     body->baseColor = &darkYellow;
     body->blood = DF_RED_BLOOD;
@@ -407,6 +435,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "hyenaman";
+    body->flavor = "A vicious, furry humanoid with a doglike face, the hyenaman gallops across the dungeon on all-fours with all the speed of $HISHER animal counterpart.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 4;
@@ -417,11 +446,12 @@ std::vector<Body *> Body::loadBodies() {
     body->gender = GenderType::MALE_ONLY;
     body->genFlags = (GF_ANIMAL | GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
     body->flags = (MONST_FLEES_NEAR_DEATH);
-    body->rarityPercent = 33;
+    body->rarityPercent = 25;
     bodies.push_back(body);
 
     body = new Body();
     body->baseName = "worm";
+    body->flavor = "A strange and horrifying creature of the earth's deepest places, this worm stands man-high and delivers slow yet brutal blows to its prey.";
     body->baseChar = 'U';
     body->baseColor = &gray;
     body->blood = DF_WORM_BLOOD;
@@ -436,6 +466,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "fury";
+    body->flavor = "A creature of inchoate rage made flesh, the fury's moist wings beat loudly in the darkness.";
     body->baseColor = &darkRed;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 6;
@@ -451,6 +482,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "scorpion";
+    body->flavor = "A merciless predator of the dark, this collosal arachnid crushes $HISHER prey to bits in $HISHER might incisors.";
     body->baseChar = 'S';
     body->baseColor = &tanColor;
     body->minDamage = 25;
@@ -463,6 +495,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "horror";
+    body->flavor = "This seething, towering nightmare of bone and sinew slinks through the bowels of the world. The horror's regeneration and strength are unparalleled.";
     body->baseChar = 'H';
     body->baseColor = &darkPurple;
     body->blood = DF_PURPLE_BLOOD;
@@ -477,6 +510,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "wyrm";
+    body->flavor = "As collosal and brutal as $HESHE is old and wizened, the wyrm uses $HISHER mighty tail to beat down all who oppose $HIMHER.";
     body->baseChar = 'W';
     body->baseColor = &darkRed;
     body->blood = DF_RED_BLOOD;
@@ -492,6 +526,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "jelly";
+    body->flavor = "This mass of caustic pink goo slips across the ground in search of a warm meal.";
     body->baseColor = &darkGreen;
     body->blood = DF_GREEN_BLOOD;
     body->minDamage = 1;
@@ -499,11 +534,13 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 38;
     body->dangerLevel = 6;
     body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
-    body->genFlags = (GF_AMORPHOUS);
+    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS);
+    body->rarityPercent = 100;
     bodies.push_back(body);
     
     body = new Body();
     body->baseName = "bloat";
+    body->flavor = "A bladder of gas buoys the bloat through the air, $HISHER thin veinous membrane ready to rupture at the slightest stress.";
     body->baseColor = &darkPurple;
     body->blood = DF_PURPLE_BLOOD;
     body->minDamage = 0;
@@ -517,6 +554,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "spore crab";
+    body->flavor = "A drab, scuttling creature, the spore crab would be unremarkable if not for the ominous pustules protruding from its fragile shell...";
     body->baseChar = 'c';
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
@@ -530,6 +568,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "kamikaze dwarf";
+    body->flavor = "Bellowing prayers in some foreign tongue, this zealot dwarf charges across the ground with a backpack full of dangerous, reactive compounds.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 0;
@@ -543,6 +582,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "monkey";
+    body->flavor = "Mischievous trickster that $HESHE is, the monkey lives to steal shiny trinkets from passing adventurers.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
@@ -555,6 +595,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "ferret";
+    body->flavor = "The ferret is a mischevious weasel that makes $HISHER home in the grasses of the upper dungeon.";
     body->baseColor = &tanColor;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
@@ -568,12 +609,13 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "raven";
+    body->flavor = "A cloud of black feathers follow the raven. This particularly bloodthirsty strain of bird nests in the darkness and attacks much larger prey.";
     body->baseColor = &darkGray;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
     body->maxDamage = 6;
     body->hp = 20;
-    body->dangerLevel = 7;
+    body->dangerLevel = 6;
     body->flags = (MONST_FLIES | MONST_FLITS);
     body->genFlags = (GF_THIEVING | GF_ANIMAL);
     body->rarityPercent = 33;
@@ -581,6 +623,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "magpie";
+    body->flavor = "An unusual occupant of the dungeon, the magpie flits by in search of shiny treasure.";
     body->baseColor = &gray;
     body->minDamage = 1;
     body->maxDamage = 3;
@@ -593,6 +636,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "quasit";
+    body->flavor = "An unusual construction of bone and magic, the quasit is the construct of some more powerful entity of the lower depths.";
     body->baseColor = &white;
     body->blood = DF_ASH_BLOOD;
     body->minDamage = 4;
@@ -600,10 +644,12 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 35;
     body->dangerLevel = 8;
     body->genFlags = (GF_SUPPORTS_CLASS | GF_THIEVING);
+    body->flags = MONST_DIES_IF_NEGATED;
     bodies.push_back(body);
     
     body = new Body();
     body->baseName = "turtle";
+    body->flavor = "The gentle turtle is more than capable of defending its home waters from intruding threats.";
     body->baseColor = &brown;
     body->minDamage = 2;
     body->maxDamage = 6;
@@ -616,6 +662,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "eel";
+    body->flavor = "The eel slips silently through the subterranean lake, waiting for unsuspecting prey to set foot in $HISHER dark waters.";
     body->baseColor = &brown;
     body->minDamage = 3;
     body->maxDamage = 7;
@@ -629,6 +676,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "pirahna";
+    body->flavor = "The cave pirahna lacks any eyes, but relentlessly seeks out and rends any creature unfortunate enough to stumble into $HISHER territory.";
     body->baseColor = &darkRed;
     body->minDamage = 13;
     body->maxDamage = 17;
@@ -643,6 +691,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "shark";
+    body->flavor = "By the machinations of a sadist or the trick of a cruel subterranean lake scheme, this shark is now the angry inhabitant of an underground lake.";
     body->baseColor = &white;
     body->minDamage = 13;
     body->maxDamage = 17;
@@ -655,6 +704,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "mollusk";
+    body->flavor = "The mollusk's clublike tentacles and titanic bulk are obscured by the depths of the frigid waters $HESHE calls $HISHER home.";
     body->baseChar = 'M';
     body->baseColor = &brown;
     body->minDamage = 17;
@@ -667,19 +717,22 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "merman";
+    body->flavor = "This scaly humanoid chants warsongs and readies $HISHER trident to defend $HISHER lake.";
     body->baseColor = &darkGreen;
     body->minDamage = 3;
     body->maxDamage = 6;
     body->hp = 18;
     body->dangerLevel = 8;
     body->gender = GenderType::MALE_ONLY;
+    body->abilFlags = MA_ATTACKS_PENETRATE;
     body->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES | MONST_FLEES_NEAR_DEATH);
     body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
-    body->genFlags = (GF_AQUATIC | GF_AQUATIC_ONLY | GF_ARMED);
+    body->genFlags = (GF_AQUATIC | GF_AQUATIC_ONLY | GF_SHAMANISTIC);
     bodies.push_back(body);
     
     body = new Body();
     body->baseName = "sea monk";
+    body->flavor = "The sea monk is a mute, disfigured form that lurks beneath the surface of the water for a purpose known only to $HISHER ancient mind.";
     body->baseChar = '&';
     body->baseColor = &darkGray;
     body->minDamage = 9;
@@ -696,6 +749,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "totem";
+    body->flavor = "A $BASE with some amount of magical ability has imbued this wooden totem with shamanistic power.";
     body->baseChar = TOTEM_CHAR;
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
@@ -710,6 +764,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "obelisk";
+    body->flavor = "This sphere-topped pillar gleams menacingly in the darkness, a testament to the arcane power of the $BASE that crafted it.";
     body->baseChar = 0x03AA; // Ϊ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
@@ -724,6 +779,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "idol";
+    body->flavor = "A priest has constructed this idol in the image of some $BASE saint, and the statue's gem-studded eyes glimmer with malice from beyond.";
     body->baseChar = 0x03C7; // χ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
@@ -737,6 +793,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "phantom";
+    body->flavor = "The phantom slips through the dungeon invisibly in clear air, leaving behind glowing droplets of ectoplasm and the cries of $HISHER unsuspecting victims.";
     body->baseColor = &white;
     body->blood = DF_ECTOPLASM_BLOOD;
     body->minDamage = 12;
@@ -750,6 +807,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "ghost";
+    body->flavor = "Leaving no visible trace but drops of ectoplasm, the ghost stalks $HISHER living victims completely unsuspected.";
     body->baseColor = &white;
     body->blood = DF_ECTOPLASM_BLOOD;
     body->minDamage = 6;
@@ -758,7 +816,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 11;
     body->defense = DefenseType::HIGH;
     body->genFlags = (GF_NO_SPECIALS);
-    body->flags = MONST_INVISIBLE;
+    body->flags = (MONST_INVISIBLE);
     body->rarityPercent = 25;
     body->periodicFeatureChance = 15;
     body->periodicFeature = DF_ECTOPLASM_DROPLET;
@@ -766,6 +824,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "golem";
+    body->flavor = "A statue animated by an ancient and tireless magic, the golem does not regenerate and attacks with only moderate strength, but $HISHER stone form can withstand incredible damage.";
     body->baseChar = 'G';
     body->baseColor = &gray;
     body->blood = DF_RUBBLE_BLOOD;
@@ -780,6 +839,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "construct";
+    body->flavor = "Formed of clay by sculptor well-versed in the eldritch arts, this construct can absorb heavy damage for $HISHER master.";
     body->baseColor = &gray;
     body->baseChar = '&';
     body->blood = DF_RUBBLE_BLOOD;
@@ -795,6 +855,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "zombie";
+    body->flavor = "The zombie is the accursed product of an unholy ritual. Perpetually decaying flesh, hanging from $HISHER bones in shreds, releases a putrid and flammable stench.";
     body->baseColor = &vomitColor;
     body->baseChar = 'Z';
     body->blood = DF_ROT_GAS_BLOOD;
@@ -810,6 +871,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "ghoul";
+    body->flavor = "Emaciated and howling, the ghoul stalks the earth to rend the flesh from living victims. Malodorous flesh hanging from $HISHER gaunt form is enough to induce vomiting.";
     body->baseColor = &vomitColor;
     body->baseChar = 'z';
     body->blood = DF_ROT_GAS_BLOOD;
@@ -826,6 +888,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "revenant";
+    body->flavor = "This unholy ghast stalks the deep places of the earth without fear, impervious to conventional attacks.";
     body->baseColor = &ectoplasmColor;
     body->baseChar = 'R';
     body->minDamage = 15;
@@ -838,7 +901,8 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "spectre";
+    body->baseName = "specter";
+    body->flavor = "This indistinct, sorrowful form trails after the living from beyond, where it remains immune to conventional attack.";
     body->baseColor = &ectoplasmColor;
     body->baseChar = 'G';
     body->minDamage = 8;
@@ -854,6 +918,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "turret";
+    body->flavor = "This nefarious contraption is embedded in the wall to defend the area.";
     body->baseColor = &gray;
     body->baseChar = TURRET_CHAR;
     body->minDamage = 0;
@@ -870,6 +935,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "statue";
+    body->flavor = "The orb held aloft by this ancient statue sparkles in the dark.";
     body->baseColor = &white;
     body->baseChar = '&';
     body->blood = DF_RUBBLE_BLOOD;
@@ -887,6 +953,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "orb";
+    body->flavor = "Embedded in the wall is a seemingly innocent sphere of mirrored metal.";
     body->baseColor = &white;
     body->baseChar = 0x25CE; // ◎
     body->blood = DF_RUBBLE_BLOOD;

@@ -42,8 +42,10 @@ public:
 
     // flavor
     std::string baseName;
+    std::string flavor;
     uchar baseChar;
     const color *baseColor;
+    lightType light;
 
     // generation
     unsigned long genFlags;            // generateFlag bitset

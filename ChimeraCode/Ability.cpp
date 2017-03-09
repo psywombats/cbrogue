@@ -30,6 +30,9 @@ Ability::Ability() :
         nameSuffix(""),
         colorOverride(NULL),
         colorMod(ColorModFlavor::NONE),
+        light(NO_LIGHT),
+        flavorOverride(""),
+        flavorAddition(""),
         inUse(false) {
 
 }
@@ -87,6 +90,10 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
         monster.displayColor = this->blendColor(monster.displayColor);
     } else {
         monster.displayColor = this->colorOverride;
+    }
+    
+    if (this->light != NO_LIGHT) {
+        monster.lightType = this->light;
     }
 
     this->inUse = true;
@@ -412,6 +419,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "firebreathing";
     ability->colorMod = ColorModFlavor::FIRE;
+    ability->light = LAVA_LIGHT;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE};
     ability->hpBoost = -2;
@@ -424,6 +432,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "trickster";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
+    ability->light = IMP_LIGHT;
     ability->dangerBoost = 8;
     ability->bolts = {BOLT_NEGATION, BOLT_SLOW_2, BOLT_DISCORD, BOLT_SPARK};
     ability->hpBoost = -2;
@@ -461,22 +470,22 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 1;
     ability->flags = (MONST_FLEES_NEAR_DEATH);
+    ability->regenSpeed = RegenSpeedType::FAST;
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "pack";
-    ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 2;
-    ability->minDamageBoost = 1;
-    ability->maxDamageBoost = 2;
-    ability->flags = (MONST_FLEES_NEAR_DEATH);
-    ability->requiredFlags = (GF_ANIMAL | GF_PACK_MEMBER);
+    ability->namePrefix = "mirror";
+    ability->colorOverride = &beckonColor;
+    ability->dangerBoost = 3;
+    ability->flags = MONST_REFLECT_4;
+    ability->forbiddenFlags = (GF_SUPPORTS_CLASS | GF_ANIMAL);
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->namePrefix = "lava";
     ability->colorMod = ColorModFlavor::FIRE;
+    ability->light = SALAMANDER_LIGHT;
     ability->dangerBoost = 4;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_FIERY);
     abilities.push_back(ability);
@@ -494,7 +503,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 2;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
-    ability->requiredFlags = (GF_ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL | GF_AQUATIC);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -509,8 +519,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "spearman";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 1;
-    ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_PENETRATE);
+    ability->requiredFlags = (GF_ARMED);
+    ability->forbiddenFlags = (GF_PACK_MEMBER);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -540,6 +551,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "rainbow";
     ability->colorOverride = &rainbow;
+    ability->light = UNICORN_LIGHT;
     ability->dangerBoost = 5;
     ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_HIT_HALLUCINATE);
@@ -621,6 +633,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "explosive";
     ability->colorOverride = &orange;
+    ability->light = EXPLOSIVE_BLOAT_LIGHT;
     ability->dangerBoost = 17;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_BLOAT_EXPLOSION;
@@ -640,6 +653,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "fire";
     ability->colorOverride = &red;
+    ability->light = LAVA_LIGHT;
     ability->dangerBoost = 8;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_INCINERATION_POTION;
@@ -648,6 +662,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "shattering";
+    ability->light = SENTINEL_LIGHT;
     ability->colorOverride = &teal;
     ability->dangerBoost = 4;
     ability->requiredFlags = (GF_BURSTS);
@@ -695,6 +710,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "impish";
     ability->colorMod = ColorModFlavor::MOBILITY;
+    ability->light = IMP_LIGHT;
     ability->dangerBoost = 12;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
@@ -885,6 +901,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "onyx";
     ability->colorOverride = &black;
+    ability->light = DARKNESS_CLOUD_LIGHT;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_HASTE};
     ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
@@ -905,6 +922,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "spark";
     ability->colorOverride = &lightningColor;
+    ability->light = SPARK_TURRET_LIGHT;
     ability->dangerBoost = 14;
     ability->hpBoost = 50;
     ability->bolts = {BOLT_SPARK};
@@ -935,6 +953,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "flame";
     ability->colorOverride = &lavaForeColor;
+    ability->light = LAVA_LIGHT;
     ability->dangerBoost = 19;
     ability->minDamageBoost = 1;
     ability->maxDamageBoost = 2;
@@ -965,6 +984,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "hypnotic";
     ability->colorOverride = &white;
+    ability->light = SPECTRAL_BLADE_LIGHT;
     ability->dangerBoost = 18;
     ability->bolts = {BOLT_DISCORD};
     ability->requiredFlags = (GF_TURRET | GF_WIZARDLY);

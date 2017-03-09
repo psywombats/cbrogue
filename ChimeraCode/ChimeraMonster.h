@@ -91,6 +91,7 @@ class ChimeraMonster {
 public:
 
     ChimeraMonster(Body &body);
+    ChimeraMonster(Body &body, ChimeraMonster *baseMonster);
     virtual ~ChimeraMonster();
 
     /**
@@ -151,9 +152,11 @@ private:
 
     // generation
     std::list<std::reference_wrapper<Ability>> abilities;
+    ChimeraMonster *baseMonster;
 
     static std::string boltToString(boltType bolt);
     static std::string dungeonFeatureToString(dungeonFeatureTypes feature);
+    void replace(std::string &source, const std::string &token, const std::string &replacement);
 
     static int nextChimeraId;
 

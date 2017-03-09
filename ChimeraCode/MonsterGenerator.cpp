@@ -629,16 +629,16 @@ ChimeraMonster &MonsterGenerator::newMonster(Body &body) {
 }
 
 ChimeraMonster &MonsterGenerator::newMonster(const ChimeraMonster &baseMonster) {
+    bool wasSingleUse = baseMonster.body.singleUse;
+    baseMonster.body.singleUse = false;
     ChimeraMonster *monster = new ChimeraMonster(baseMonster);
     this->monsters.push_back(monster);
+    baseMonster.body.singleUse = wasSingleUse;
     return *monster;
 }
 
 Horde &MonsterGenerator::newHorde(const ChimeraMonster &monster) {
-    bool wasSingleUse = monster.body.singleUse;
-    monster.body.singleUse = false;
-    Horde *horde = new Horde(monster.body);
-    monster.body.singleUse = wasSingleUse;
+    Horde *horde = new Horde(monster);
     this->hordes.push_back(horde);
     return *horde;
 }

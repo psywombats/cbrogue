@@ -62,8 +62,11 @@ public:
     // flavor
     std::string namePrefix;
     std::string nameSuffix;
+    std::string flavorOverride;
+    std::string flavorAddition;
     ColorModFlavor colorMod;
     const color *colorOverride;
+    lightType light;
 
     // generation
     bool inUse;

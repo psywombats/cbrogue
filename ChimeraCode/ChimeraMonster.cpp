@@ -14,12 +14,13 @@
 
 int ChimeraMonster::nextChimeraId = 0;
 
-ChimeraMonster::ChimeraMonster(Body &body) :
+ChimeraMonster::ChimeraMonster(Body &newBody) :
         hp(0),
         genFlags(0),
         abilFlags(0),
         flags(0),
         displayChar('x'),
+        baseMonster(NULL),
         accuracy(AccuracyType::NORMAL),
         defense(DefenseType::NORMAL),
         bloodType(DF_NONE),
@@ -30,7 +31,7 @@ ChimeraMonster::ChimeraMonster(Body &body) :
         damage({0, 0, 0}),
         displayColor(&black),
         lightType(NO_LIGHT),
-        body(body),
+        body(newBody),
         dangerLevel(0),
         gender(GenderType::NONE),
         regenSpeed(RegenSpeedType::NORMAL),
@@ -44,6 +45,10 @@ ChimeraMonster::ChimeraMonster(Body &body) :
     ChimeraMonster::nextChimeraId += 1;
 
     body.applyToMonster(*this);
+}
+
+ChimeraMonster::ChimeraMonster(Body &body, ChimeraMonster *baseMonster) :  ChimeraMonster(body) {
+    this->baseMonster = baseMonster;
 }
 
 ChimeraMonster::~ChimeraMonster() {
@@ -315,7 +320,26 @@ short ChimeraMonster::attackSpeedToTicksPerAttack(AttackSpeedType speed) {
 }
 
 std::string ChimeraMonster::generateFlavor() {
-    return "a monster";
+    std::string flavor = body.flavor;
+    for (Ability &ability : abilities) {
+        if (ability.flavorOverride.length() > 0) {
+            flavor = ability.flavorOverride;
+        } else if (ability.flavorAddition.length() > 0) {
+            flavor += " " + ability.flavorAddition;
+        }
+    }
+    if (baseMonster != NULL) {
+        replace(flavor, "$BASE", baseMonster->name);
+    }
+    return flavor;
+}
+
+void ChimeraMonster::replace(std::string &source, const std::string &token, const std::string &replacement) {
+    size_t startPos = 0;
+    while ((startPos = source.find(token, startPos)) != std::string::npos) {
+        source.replace(startPos, token.length(), replacement);
+        startPos += replacement.length();
+    }
 }
 
 AbsorbFlavorType ChimeraMonster::generateAbsorbFlavor() {

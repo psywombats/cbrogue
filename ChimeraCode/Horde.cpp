@@ -8,11 +8,11 @@
 #include "Horde.h"
 #include "ChimeraMonster.h"
 
-Horde::Horde(const ChimeraMonster &leader) :
+Horde::Horde(const ChimeraMonster &newLeader) :
         purpose(HordePurposeType::GENERAL),
         extraRange(0),
         extraFrequency(0),
-        leader(leader) {
+        leader(newLeader) {
     this->members = std::list<HordeMember *>();
 }
 
