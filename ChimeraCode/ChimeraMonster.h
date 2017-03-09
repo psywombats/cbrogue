@@ -36,6 +36,7 @@ enum GenerateFlag : int {
     GF_TOTEM                = 1 << 15,
     GF_MOOKISH              = 1 << 16,
     GF_NO_SPECIALS          = 1 << 17,
+    GF_TURRET               = 1 << 18,
 };
 
 enum class RegenSpeedType {

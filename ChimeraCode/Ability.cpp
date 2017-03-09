@@ -890,6 +890,85 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     ability->rarityPercent = 12;
     abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "arrow";
+    ability->colorOverride = &black;
+    ability->dangerBoost = 9;
+    ability->bolts = {BOLT_DISTANCE_ATTACK};
+    ability->minDamageBoost = 2;
+    ability->maxDamageBoost = 6;
+    ability->requiredFlags = (GF_TURRET);
+    ability->forbiddenFlags = (GF_SHAMANISTIC | GF_WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "spark";
+    ability->colorOverride = &lightningColor;
+    ability->dangerBoost = 14;
+    ability->hpBoost = 50;
+    ability->bolts = {BOLT_SPARK};
+    ability->requiredFlags = (GF_TURRET);
+    ability->rarityPercent = 25;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "electric";
+    ability->colorOverride = &lightningColor;
+    ability->dangerBoost = 11;
+    ability->bolts = {BOLT_SPARK};
+    ability->requiredFlags = (GF_TURRET);
+    ability->rarityPercent = 25;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "acid";
+    ability->colorOverride = &acidBackColor;
+    ability->dangerBoost = 17;
+    ability->minDamageBoost = 1;
+    ability->maxDamageBoost = 2;
+    ability->accuracy = AccuracyType::ACCURATE;
+    ability->bolts = {BOLT_ACID_TURRET_ATTACK};
+    ability->requiredFlags = (GF_TURRET);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "flame";
+    ability->colorOverride = &lavaForeColor;
+    ability->dangerBoost = 19;
+    ability->minDamageBoost = 1;
+    ability->maxDamageBoost = 2;
+    ability->bolts = {BOLT_FIRE};
+    ability->requiredFlags = (GF_TURRET);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "dart";
+    ability->colorOverride = &centipedeColor;
+    ability->dangerBoost = 17;
+    ability->minDamageBoost = 1;
+    ability->maxDamageBoost = 2;
+    ability->accuracy = AccuracyType::ACCURATE;
+    ability->bolts = {BOLT_POISON_DART};
+    ability->requiredFlags = (GF_TURRET);
+    ability->forbiddenFlags = (GF_SHAMANISTIC | GF_WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "oppulent";
+    ability->colorOverride = &white;
+    ability->dangerBoost = 10;
+    ability->bolts = {BOLT_SLOW_2};
+    ability->requiredFlags = (GF_TURRET | GF_WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "hypnotic";
+    ability->colorOverride = &white;
+    ability->dangerBoost = 18;
+    ability->bolts = {BOLT_DISCORD};
+    ability->requiredFlags = (GF_TURRET | GF_WIZARDLY);
+    abilities.push_back(ability);
 
     return abilities;
 }

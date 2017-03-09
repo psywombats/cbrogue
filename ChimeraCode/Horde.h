@@ -22,13 +22,7 @@ enum class HordePurposeType {
     THIEF,
     AQUA,
     TOTEM,
-//    RESOURCE,
-//    WATER,
-//    GROUP,
-//    TOTEM,
-//    TURRET,
-//    STATUE,
-//    THIEF,
+    TURRET,
 };
 
 class Horde {

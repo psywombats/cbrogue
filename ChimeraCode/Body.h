@@ -49,6 +49,7 @@ public:
     unsigned long genFlags;            // generateFlag bitset
     int dangerLevel;
     int rarityPercent;
+    bool singleUse;
     bool inUse;
 
     // flavor

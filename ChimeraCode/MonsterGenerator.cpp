@@ -51,16 +51,19 @@ void MonsterGenerator::generate() {
     int thiefMonstersCount = 2;
     int aquaMonstersCount = 3;
     int totemsCount = 2;
+    int turretsCount = 4;
     
     for (int i = 0; i < 2; i += 1) {
     int roll = rand_range(0, 100);
-        if (roll < 40) {
+        if (roll < 33) {
             mookCount += 1;
-        } else if (roll < 60) {
+        } else if (roll < 50) {
+            turretsCount += 1;
+        } else if (roll < 65) {
             kamikazeMonstersCount += 1;
-        } else if (roll < 75) {
+        } else if (roll < 80) {
             thiefMonstersCount += 1;
-        } else if (roll < 90) {
+        } else if (roll < 92) {
             totemsCount += 1;
         } else {
             aquaMonstersCount += 1;
@@ -77,7 +80,7 @@ void MonsterGenerator::generate() {
     // Step 2: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
         Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM));
+            return body->dangerLevel <= 3 && !(body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET));
         });
         if (body == NULL) {
             continue;
@@ -90,7 +93,7 @@ void MonsterGenerator::generate() {
     // Step 3: Generate the vanilla mooks
     for (int i = 0; i < mookCount; i += 1) {
         Body *body = matchingBody([maxMookDL, mookCount, i, specialistOnlyMook](const Body *body) {
-            if (body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM)) {
+            if (body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET)) {
                 return false;
             }
             if (i == specialistOnlyMook && !(body->genFlags & GF_SUPPORTS_CLASS)) {
@@ -487,6 +490,7 @@ void MonsterGenerator::generate() {
         ChimeraMonster &totem = this->newMonster(*body);
         totem.name = mook.name;
         totem.genFlags |= mook.genFlags;
+        totem.displayColor = mook.displayColor;
         Ability *ability = matchingAbility([totem](const Ability *ability) {
             return ability->validForMonster(totem) && (ability->requiredFlags & GF_TOTEM);
         });
@@ -522,7 +526,28 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 14: Unique ability monsters
+    // Step 14: Turrets
+    for (int i = 0; i < turretsCount; i += 1) {
+        Body *body = matchingBody([](const Body *body) {
+            return (body->genFlags & GF_TURRET) > 0;
+        });
+        if (body == NULL) {
+            continue;
+        }
+        ChimeraMonster *turret = new ChimeraMonster(*body);
+        Ability *ability = matchingAbility([turret](const Ability *ability) {
+            return ability->validForMonster(*turret);
+        });
+        if (ability == NULL) {
+            delete turret;
+            continue;
+        }
+        this->monsters.push_back(turret);
+        turret->applyAbility(*ability);
+        Horde &horde = this->newHorde(*turret);
+        horde.purpose = HordePurposeType::TURRET;
+        horde.extraRange = -1;
+    }
     
     std::string report = debugReport();
     std::cout << report;

@@ -20,6 +20,7 @@ Body::Body() :
         abilFlags(0),
         baseColor(&brown),
         inUse(false),
+        singleUse(true),
         gender(GenderType::NONE),
         dangerLevel(0),
         periodicFeature(DF_NONE),
@@ -73,7 +74,9 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     Body::usedChars.insert(this->baseChar);
     monster.displayChar = this->baseChar;
 
-    this->inUse = true;
+    if (this->singleUse) {
+        this->inUse = true;
+    }
 
     monster.genFlags |= this->genFlags;
     monster.flags |= this->flags;
@@ -704,8 +707,8 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "statue";
-    body->baseChar = STATUE_CHAR;
+    body->baseName = "obelisk";
+    body->baseChar = 0x03AA; // Ϊ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
     body->attackSpeed = AttackSpeedType::TOTEM;
@@ -842,6 +845,56 @@ std::vector<Body *> Body::loadBodies() {
     body->genFlags = (GF_NO_SPECIALS);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     body->rarityPercent = 25;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "turret";
+    body->baseColor = &gray;
+    body->baseChar = TURRET_CHAR;
+    body->minDamage = 0;
+    body->maxDamage = 0;
+    body->hp = 30;
+    body->dangerLevel = 0;
+    body->defense = DefenseType::DEFENSELESS;
+    body->attackSpeed = AttackSpeedType::TURRET;
+    body->genFlags = (GF_TURRET);
+    body->flags = MONST_TURRET;
+    body->singleUse = false;
+    body->rarityPercent = 100;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "statue";
+    body->baseColor = &white;
+    body->baseChar = '&';
+    body->blood = DF_RUBBLE_BLOOD;
+    body->minDamage = 1;
+    body->maxDamage = 2;
+    body->hp = 50;
+    body->dangerLevel = 5;
+    body->defense = DefenseType::DEFENSELESS;
+    body->attackSpeed = AttackSpeedType::TURRET;
+    body->genFlags = (GF_TURRET | GF_SHAMANISTIC);
+    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
+    body->singleUse = false;
+    body->rarityPercent = 25;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "orb";
+    body->baseColor = &white;
+    body->baseChar = 0x25CE; // ◎
+    body->blood = DF_RUBBLE_BLOOD;
+    body->minDamage = 0;
+    body->maxDamage = 0;
+    body->hp = 40;
+    body->dangerLevel = 3;
+    body->defense = DefenseType::DEFENSELESS;
+    body->attackSpeed = AttackSpeedType::TURRET;
+    body->genFlags = (GF_TURRET | GF_WIZARDLY);
+    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
+    body->singleUse = false;
+    body->rarityPercent = 12;
     bodies.push_back(body);
     
     return bodies;

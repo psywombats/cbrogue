@@ -75,15 +75,16 @@ hordeType Horde::convertToStruct() {
             }
         }
     }
+    if (this->purpose == HordePurposeType::TURRET) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
+        hordeStruct.spawnsIn = WALL;
+    }
     
     if (this->purpose == HordePurposeType::AQUA) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NEVER_OOD);
     }
 
     hordeStruct.leaderType = leader.monsterId;
-
-    // TODO: machine flag
-    //hordeStruct->machine = MT_CAMP_AREA;
 
     hordeStruct.numberOfMemberTypes = this->members.size();
     int i = 0;
