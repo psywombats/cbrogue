@@ -215,7 +215,6 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::FAST;
     body->dangerLevel = 14;
     body->abilFlags = MA_SEIZES;
-    body->flags = MONST_IMMUNE_TO_WATER;
     body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS);
     body->rarityPercent = 33;
     bodies.push_back(body);
@@ -274,7 +273,6 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 50;
     body->defense = DefenseType::LOW;
     body->dangerLevel = 10;
-    body->flags = MONST_IMMUNE_TO_WATER;
     body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
     body->rarityPercent = 33;
     bodies.push_back(body);
@@ -311,7 +309,6 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 11;
     body->hp = 75;
     body->dangerLevel = 13;
-    body->flags = MONST_IMMUNE_TO_WATER;
     body->gender = GenderType::MALE_ONLY;
     body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::WIZARDLY);
     bodies.push_back(body);
@@ -363,7 +360,7 @@ std::vector<Body *> Body::loadBodies() {
     body->moveSpeed = MoveSpeedType::SLOW;
     body->attackSpeed = AttackSpeedType::SLOW;
     body->dangerLevel = 13;
-    body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID);
+    body->genFlags = (GenerateFlag::ANIMAL | GenerateFlag::INSECTOID | GenerateFlag::AQUATIC);
     bodies.push_back(body);
 
     body = new Body();
@@ -399,7 +396,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 120;
     body->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
     body->dangerLevel = 28;
-    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS);
+    body->genFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::BURSTS | GenerateFlag::AQUATIC);
     body->rarityPercent = 66;
     bodies.push_back(body);
 
@@ -407,11 +404,12 @@ std::vector<Body *> Body::loadBodies() {
     body->baseName = "dragon";
     body->baseColor = &darkRed;
     body->minDamage = 25;
-    body->maxDamage = 50;
-    body->hp = 150;
+    body->maxDamage = 45;
+    body->hp = 140;
     body->dangerLevel = 28;
     body->gender = GenderType::BOTH;
-    body->genFlags = (GenerateFlag::WIZARDLY);
+    body->genFlags = (GenerateFlag::WIZARDLY | GenerateFlag::AQUATIC);
+    body->abilFlags = MA_ATTACKS_ALL_ADJACENT;
     body->rarityPercent = 66;
     bodies.push_back(body);
 
@@ -470,7 +468,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 12;
     body->dangerLevel = 2;
     body->genFlags = (GenerateFlag::THIEVING | GenerateFlag::THIEVING_ONLY | GenerateFlag::ANIMAL);
-    body->rarityPercent = 75;
+    body->rarityPercent = 66;
     bodies.push_back(body);
     
     body = new Body();

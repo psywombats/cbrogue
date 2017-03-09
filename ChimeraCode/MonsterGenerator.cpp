@@ -338,7 +338,7 @@ void MonsterGenerator::generate() {
     for (int i = 0; i < aquaMonstersCount; i += 1) {
         int minDL = i * (maxAquaDL / aquaMonstersCount) - 3;
         int maxDL = (i+1) * (maxAquaDL / aquaMonstersCount) + 1;
-        if (rand_percent(65)) {
+        if (rand_percent(80)) {
             // custom aqua
             Body *body = matchingBody([i, minDL, maxDL](const Body *body) {
                 return (body->genFlags & GenerateFlag::AQUATIC_ONLY)  && body->dangerLevel >= minDL && body->dangerLevel <= maxDL;
@@ -409,29 +409,49 @@ void MonsterGenerator::generate() {
                 groupHorde.extraRange = 1;
             }
         } else {
-            // convert a mook if possible
+            // convert a monster
+            // if possible, use a mook
             minDL -= 2;
             maxDL += 1;
             ChimeraMonster *monster = NULL;
             for (ChimeraMonster &mook : mookMonsters) {
-                if (mook.genFlags & GenerateFlag::AQUATIC) {
-                    if (mook.dangerLevel < minDL || mook.dangerLevel > maxDL) {
-                        continue;
-                    }
-                    Ability *ability = matchingAbility([mook](const Ability *ability) {
-                        return ability->validForMonster(mook) && (ability->requiredFlags & GenerateFlag::AQUATIC);
-                    });
-                    if (ability == NULL) {
-                        continue;
-                    }
-                    monster = new ChimeraMonster(mook);
-                    monster->applyAbility(*ability);
+                if (!(mook.genFlags & GenerateFlag::AQUATIC)) {
+                    continue;
                 }
+                if (mook.dangerLevel < minDL || mook.dangerLevel > maxDL) {
+                    continue;
+                }
+                monster = new ChimeraMonster(mook);
+                break;
+            }
+            if (monster == NULL) {
+                // no mook available, let's find another suitable mob
+                minDL += 3;
+                Body *body = matchingBody([minDL, maxDL](const Body *body) {
+                    if (body->dangerLevel > minDL || body->dangerLevel < maxDL) {
+                        return false;
+                    }
+                    return (body->genFlags & GenerateFlag::AQUATIC) > 0;
+                });
+                if (body == NULL) {
+                    i -= 1;
+                    continue;
+                }
+                monster = new ChimeraMonster(*body);
             }
             if (monster == NULL) {
                 i -= 1;
                 continue;
             }
+            Ability *ability = matchingAbility([monster](const Ability *ability) {
+                return ability->validForMonster(*monster) && (ability->requiredFlags & GenerateFlag::AQUATIC);
+            });
+            if (ability == NULL) {
+                i -= 1;
+                delete monster;
+                continue;
+            }
+            monster->applyAbility(*ability);
             this->monsters.push_back(monster);
             Horde &horde = this->newHorde(*monster);
             horde.purpose = HordePurposeType::AQUA;

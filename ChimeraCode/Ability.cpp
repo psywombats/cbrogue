@@ -730,6 +730,17 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
+    ability->namePrefix = "deep sea";
+    ability->colorOverride = &darkGray;
+    ability->dangerBoost = 0;
+    ability->regenSpeed = RegenSpeedType::VERY_FAST;
+    ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER | MONST_FLEES_NEAR_DEATH);
+    ability->requiredFlags = (GenerateFlag::AQUATIC);
+    ability->forbiddenFlags = (GenerateFlag::AQUATIC_ONLY);
+    ability->rarityPercent = 50;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
     ability->namePrefix = "electric";
     ability->colorOverride = &yellow;
     ability->dangerBoost = 3;
