@@ -20,11 +20,7 @@ enum class ColorModFlavor {
     COMBAT,
     MOBILITY,
     FIRE,
-};
-
-enum AbilityFlag : int {
-    SPELLCASTING        = 1 << 1,
-    UNIQUE                = 1 << 2,
+    TOTEM,
 };
 
 /**

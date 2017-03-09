@@ -21,6 +21,7 @@ enum class HordePurposeType {
     KAMIKAZE,
     THIEF,
     AQUA,
+    TOTEM,
 //    RESOURCE,
 //    WATER,
 //    GROUP,

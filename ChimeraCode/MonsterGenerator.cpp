@@ -51,15 +51,18 @@ void MonsterGenerator::generate() {
     int kamikazeMonstersCount = 3;
     int thiefMonstersCount = 2;
     int aquaMonstersCount = 2;
+    int totemsCount = 2;
     
     for (int i = 0; i < 2; i += 1) {
     int roll = rand_range(0, 100);
-        if (roll < 33) {
+        if (roll < 40) {
             mookGroupHordes += 1;
         } else if (roll < 60) {
             kamikazeMonstersCount += 1;
-        } else if (roll < 85) {
+        } else if (roll < 75) {
             aquaMonstersCount += 1;
+        } else if (roll < 90) {
+            totemsCount += 1;
         } else {
             thiefMonstersCount += 1;
         }
@@ -70,11 +73,12 @@ void MonsterGenerator::generate() {
     Body *specialistMookBody = NULL;
     std::vector<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
     std::vector<std::reference_wrapper<ChimeraMonster>> mookMonsters;
+    std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> mookMinions;
 
     // Step 2: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
         Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY));
+            return body->dangerLevel <= 3 && !(body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY | GenerateFlag::TOTEM));
         });
         if (body == NULL) {
             continue;
@@ -89,7 +93,7 @@ void MonsterGenerator::generate() {
             if (!(body->genFlags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
                 return false;
             }
-            if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY)) {
+            if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY | GenerateFlag::TOTEM)) {
                 return false;
             }
             int dl = body->dangerLevel;
@@ -172,6 +176,8 @@ void MonsterGenerator::generate() {
 
     // Step 9: variations on the mooks
     for (ChimeraMonster &mook : mookMonsters) {
+        std::vector<std::reference_wrapper<ChimeraMonster>> mookSet;
+        mookSet.push_back(mook);
         int choice = rand_range(0, 3);
         if (choice == 0 || choice == 1 || choice == 2) {
             // a mutant...
@@ -184,6 +190,7 @@ void MonsterGenerator::generate() {
                 continue;
             }
             monster.applyAbility(*ability);
+            mookSet.push_back(monster);
             this->newHorde(monster);
 
             if (choice == 1) {
@@ -202,6 +209,7 @@ void MonsterGenerator::generate() {
                     continue;
                 }
                 monster2.applyAbility(*ability2);
+                mookSet.push_back(monster2);
 
                 Horde &horde = this->newHorde(monster2);
                 horde.addMember(monster, 1, 1);
@@ -252,6 +260,9 @@ void MonsterGenerator::generate() {
                 monster2.applyAbility(*ability);
                 horde.addMember(monster2, 1, 1);
             }
+        }
+        if (mookSet.size() > 0) {
+            mookMinions.push_back(mookSet);
         }
     }
     
@@ -458,7 +469,59 @@ void MonsterGenerator::generate() {
             horde.extraRange = 1;
         }
     }
-
+    
+    // Step 13: Totems
+    j = 0;
+    for (std::vector<std::reference_wrapper<ChimeraMonster>> &mookSet : mookMinions) {
+        if (j >= totemsCount) {
+            break;
+        }
+        ChimeraMonster &mook = mookSet[0];
+        Body *body = matchingBody([mook](const Body *body) {
+            return body->genFlags == ((mook.genFlags & body->genFlags) | GenerateFlag::TOTEM);
+        });
+        if (body == NULL) {
+            continue;
+        }
+        j += 1;
+        ChimeraMonster &totem = this->newMonster(*body);
+        totem.name = mook.name;
+        totem.genFlags |= mook.genFlags;
+        Ability *ability = matchingAbility([totem](const Ability *ability) {
+            return ability->validForMonster(totem) && (ability->requiredFlags & GenerateFlag::TOTEM);
+        });
+        totem.applyAbility(*ability);
+        
+        // basic group
+        Horde &baseHorde = this->newHorde(totem);
+        baseHorde.purpose = HordePurposeType::TOTEM;
+        baseHorde.addMember(mook, 2, 4);
+        
+        if (rand_percent(50) && mookSet.size() > 1) {
+            // colony
+            Horde &colonyHorde = this->newHorde(totem);
+            colonyHorde.purpose = HordePurposeType::TOTEM;
+            colonyHorde.addMember(totem, 1, 2);
+            colonyHorde.addMember(mook, 3, 6);
+            colonyHorde.addMember(mookSet[1], 1, rand_range(1, 2));
+        }
+        if (mookSet.size() > 1) {
+            // group
+            Horde &groupHorde = this->newHorde(totem);
+            groupHorde.purpose = HordePurposeType::TOTEM;
+            groupHorde.addMember(mook, 2, 3);
+            groupHorde.addMember(mookSet[1], 1, 2);
+        }
+        if (mookSet.size() > 2) {
+            // big group
+            Horde &groupHorde = this->newHorde(totem);
+            groupHorde.purpose = HordePurposeType::TOTEM;
+            groupHorde.addMember(mook, 2, 4);
+            groupHorde.addMember(mookSet[1], 0, rand_range(1, 2));
+            groupHorde.addMember(mookSet[2], 1, rand_range(1, 2));
+        }
+    }
+    
     std::string report = debugReport();
     std::cout << report;
     return;

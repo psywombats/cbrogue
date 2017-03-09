@@ -174,6 +174,18 @@ const color *Ability::blendColor(const color *baseColor) const {
         } else {
             return &red;
         }
+    case ColorModFlavor::TOTEM:
+        if (baseColor == &brown || baseColor == &tanColor) {
+            return &orange;
+        } else if (baseColor == &darkGreen) {
+            return &green;
+        } else if (baseColor == &darkPurple || baseColor == &darkGray) {
+            return &pink;
+        } else if (baseColor == &white) {
+            return &black;
+        } else {
+            return &darkTurquoise;
+        }
     case ColorModFlavor::NONE:
         return baseColor;
     }
@@ -205,10 +217,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "bulwark";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 2;
+    ability->dangerBoost = 3;
     ability->hpBoost = 20;
     ability->defense = DefenseType::LOW;
-    ability->regenSpeed = RegenSpeedType::VERY_FAST;
+    ability->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
     ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
     abilities.push_back(ability);
 
@@ -241,8 +253,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "swordsman";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 3;
-    ability->minDamageBoost = 1;
+    ability->dangerBoost = 5;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
     ability->requiredFlags = (GenerateFlag::ARMED);
@@ -268,6 +279,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -2;
     ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->rarityPercent = 75;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -315,7 +327,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_BLINKING};
     ability->defense = DefenseType::HIGH;
-    ability->accuracy = AccuracyType::ACCURATE;
     ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
     abilities.push_back(ability);
 
@@ -824,6 +835,57 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::SUPPORTS_CLASS);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "totem";
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 1;
+    ability->bolts = {BOLT_SPARK, BOLT_SHIELDING};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "totem";
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 1;
+    ability->bolts = {BOLT_HEALING, BOLT_SLOW_2};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "statue";
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 3;
+    ability->bolts = {BOLT_BECKONING, BOLT_HASTE};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "idol";
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 3;
+    ability->bolts = {BOLT_CONJURATION, BOLT_INVISIBILITY};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    ability->rarityPercent = 33;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "crystalline";
+    ability->colorOverride = &darkTurquoise;
+    ability->dangerBoost = 4;
+    ability->bolts = {BOLT_FIRE, BOLT_SHIELDING};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    ability->rarityPercent = 12;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "onyx";
+    ability->colorOverride = &black;
+    ability->dangerBoost = 4;
+    ability->bolts = {BOLT_FIRE, BOLT_HASTE};
+    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    ability->rarityPercent = 12;
     abilities.push_back(ability);
 
     return abilities;

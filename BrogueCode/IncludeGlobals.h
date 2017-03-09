@@ -94,6 +94,7 @@ extern color pink;
 extern color tanColor;
 extern color sunlight;
 extern color rainbow;
+extern color darkTurquoise;
 
 // tile colors
 extern color undiscoveredColor;

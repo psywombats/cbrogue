@@ -99,6 +99,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 2;
     body->gender = GenderType::BOTH;
     body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::WIZARDLY);
+    body->rarityPercent = 75;
     bodies.push_back(body);
 
     body = new Body();
@@ -120,6 +121,7 @@ std::vector<Body *> Body::loadBodies() {
     body->moveSpeed = MoveSpeedType::FAST;
     body->dangerLevel = 3;
     body->genFlags = (GenerateFlag::ANIMAL);
+    body->rarityPercent = 75;
     bodies.push_back(body);
 
     body = new Body();
@@ -144,7 +146,31 @@ std::vector<Body *> Body::loadBodies() {
     body->accuracy = AccuracyType::INACCURATE;
     body->dangerLevel = 6;
     body->gender = GenderType::BOTH;
-    body->genFlags = (GenerateFlag::SUPPORTS_CLASS & GenerateFlag::SHAMANISTIC);
+    body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
+    body->rarityPercent = 75;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "orc";
+    body->baseColor = &darkGreen;
+    body->minDamage = 3;
+    body->maxDamage = 5;
+    body->hp = 18;
+    body->dangerLevel = 8;
+    body->gender = GenderType::BOTH;
+    body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC | GenerateFlag::ARMED | GenerateFlag::AQUATIC);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "acolyte";
+    body->baseColor = &darkGray;
+    body->minDamage = 1;
+    body->maxDamage = 5;
+    body->hp = 16;
+    body->dangerLevel = 7;
+    body->gender = GenderType::BOTH;
+    body->genFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    body->rarityPercent = 33;
     bodies.push_back(body);
 
     body = new Body();
@@ -607,6 +633,39 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::FAST;
     body->genFlags = (GenerateFlag::AQUATIC | GenerateFlag::AQUATIC_ONLY | GenerateFlag::ARMED | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
     bodies.push_back(body);
-
+    
+    body = new Body();
+    body->baseName = "totem";
+    body->baseChar = TOTEM_CHAR;
+    body->baseColor = &green;
+    body->attackSpeed = AttackSpeedType::TOTEM;
+    body->flags = (MONST_TURRET);
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "statue";
+    body->baseChar = STATUE_CHAR;
+    body->baseColor = &green;
+    body->attackSpeed = AttackSpeedType::TOTEM;
+    body->flags = (MONST_TURRET);
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "idol";
+    body->baseChar = STATUE_CHAR;
+    body->baseColor = &green;
+    body->attackSpeed = AttackSpeedType::TOTEM;
+    body->flags = (MONST_TURRET);
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    bodies.push_back(body);
+    
     return bodies;
 }

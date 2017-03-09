@@ -33,6 +33,7 @@ enum GenerateFlag : int {
     KAMIKAZE            = 1 << 12,
     THIEVING            = 1 << 13,
     THIEVING_ONLY       = 1 << 14,
+    TOTEM               = 1 << 15,
 };
 
 enum class RegenSpeedType {
