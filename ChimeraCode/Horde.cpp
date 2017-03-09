@@ -58,13 +58,13 @@ hordeType Horde::convertToStruct() {
 
     if (this->purpose == HordePurposeType::TOTEM) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
-        if (this->leader.genFlags & GenerateFlag::SHAMANISTIC) {
+        if (this->leader.genFlags & GF_SHAMANISTIC) {
             if (rand_percent(60)) {
                 hordeStruct.machine = MT_CAMP_AREA;
             } else {
                 hordeStruct.machine = MT_DISMAL_AREA;
             }
-        } else if (this->leader.genFlags & GenerateFlag::SHAMANISTIC) {
+        } else if (this->leader.genFlags & GF_SHAMANISTIC) {
             int roll = rand_range(0, 100);
             if (roll < 50) {
                 hordeStruct.machine = MT_REMNANT_AREA;
@@ -127,10 +127,10 @@ int Horde::calculateDL() const {
         danger += this->members.size() * 2;
     } else {
         if (this->members.size() >= 1) {
-            danger += CLAMP(this->members.front()->member.dangerLevel / 2, 2, 7);
+            danger += CLAMP(this->members.front()->member.dangerLevel / 2, 2, 9);
         }
         if (this->members.size() >= 2) {
-            danger += CLAMP(this->members.front()->member.dangerLevel / 3, 2, 6);
+            danger += CLAMP(this->members.front()->member.dangerLevel / 3, 2, 7);
         }
         if (this->members.size() >= 3) {
             danger += CLAMP(this->members.front()->member.dangerLevel / 4, 2, 5);

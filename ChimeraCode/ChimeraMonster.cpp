@@ -120,12 +120,12 @@ creatureType ChimeraMonster::convertToStruct() {
         i += 1;
     }
 
-    if (this->genFlags & GenerateFlag::SUPPORTS_CLASS) {
+    if (this->genFlags & GF_SUPPORTS_CLASS) {
         // TODO: do this more smartlier
         creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
     }
     
-    if (this->genFlags & GenerateFlag::AQUATIC_ONLY) {
+    if (this->genFlags & GF_AQUATIC_ONLY) {
         creatureStruct.flags |= MONST_RESTRICTED_TO_LIQUID | MONST_NEVER_SLEEPS;
     }
     
@@ -134,11 +134,11 @@ creatureType ChimeraMonster::convertToStruct() {
     creatureStruct.DFChance = this->featurePeriodicPercent;
     
     if (this->bloodType == DF_NONE) {
-        if ((this->genFlags & GenerateFlag::ANIMAL) > 0) {
+        if ((this->genFlags & GF_ANIMAL) > 0) {
             this->bloodType = DF_RED_BLOOD;
-        } else if ((this->genFlags & GenerateFlag::INSECTOID) > 0) {
+        } else if ((this->genFlags & GF_INSECTOID) > 0) {
             this->bloodType = DF_WORM_BLOOD;
-        } else if ((this->genFlags & GenerateFlag::AMORPHOUS) > 0) {
+        } else if ((this->genFlags & GF_AMORPHOUS) > 0) {
             this->bloodType = DF_GREEN_BLOOD;
         }
     }
@@ -353,6 +353,8 @@ void ChimeraMonster::specializeName() {
     if (name == "thieving raven")           name = "raven";
     if (name == "thieving magpie")          name = "magpie";
     if (name == "impish quasit")            name = "imp";
+    if (name == "tentacle mollusk")         name = "kraken";
+    if (name == "winged quasit")            name = "gargoyle";
     
     if (isupper(this->displayChar)) {
         this->displayChar = toupper(name[0]);

@@ -19,21 +19,23 @@ class Body;
 class Ability;
 
 enum GenerateFlag : int {
-    AQUATIC             = 1 << 1,
-    AQUATIC_ONLY        = 1 << 2,
-    ANIMAL              = 1 << 3,
-    SUPPORTS_CLASS      = 1 << 4,
-    PACK_MEMBER         = 1 << 5,
-    SHAMANISTIC         = 1 << 6,
-    WIZARDLY            = 1 << 7,
-    INSECTOID           = 1 << 8,
-    ARMED               = 1 << 9,
-    AMORPHOUS           = 1 << 10,
-    BURSTS              = 1 << 11,
-    KAMIKAZE            = 1 << 12,
-    THIEVING            = 1 << 13,
-    THIEVING_ONLY       = 1 << 14,
-    TOTEM               = 1 << 15,
+    GF_AQUATIC              = 1 << 1,
+    GF_AQUATIC_ONLY         = 1 << 2,
+    GF_ANIMAL               = 1 << 3,
+    GF_SUPPORTS_CLASS       = 1 << 4,
+    GF_PACK_MEMBER          = 1 << 5,
+    GF_SHAMANISTIC          = 1 << 6,
+    GF_WIZARDLY             = 1 << 7,
+    GF_INSECTOID            = 1 << 8,
+    GF_ARMED                = 1 << 9,
+    GF_AMORPHOUS            = 1 << 10,
+    GF_BURSTS               = 1 << 11,
+    GF_KAMIKAZE             = 1 << 12,
+    GF_THIEVING             = 1 << 13,
+    GF_THIEVING_ONLY        = 1 << 14,
+    GF_TOTEM                = 1 << 15,
+    GF_MOOKISH              = 1 << 16,
+    GF_NO_SPECIALS          = 1 << 17,
 };
 
 enum class RegenSpeedType {

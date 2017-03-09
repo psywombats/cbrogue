@@ -37,13 +37,13 @@ public:
     MoveSpeedType moveSpeed;
     RegenSpeedType regenSpeed;
     AttackSpeedType attackSpeed;
-    unsigned long flags;            // monsterBehaviorTypes bitset
-    unsigned long abilFlags;        // monsterAbilityTypes bitset
+    unsigned long flags;                // monsterBehaviorTypes bitset
+    unsigned long abilFlags;            // monsterAbilityTypes bitset
 
     // flavor
     std::string baseName;
-    char baseChar;
-    color *baseColor;
+    uchar baseChar;
+    const color *baseColor;
 
     // generation
     unsigned long genFlags;            // generateFlag bitset
@@ -53,10 +53,15 @@ public:
 
     // flavor
     GenderType gender;
+    dungeonFeatureTypes blood;
+    
+    // special, probably leave these
+    dungeonFeatureTypes periodicFeature;
+    int periodicFeatureChance;
 
 private:
 
-    static std::set<std::reference_wrapper<char>> usedChars;
+    static std::set<std::reference_wrapper<uchar>> usedChars;
 };
 
 #endif /* BODY_H_ */

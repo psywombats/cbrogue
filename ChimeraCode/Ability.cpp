@@ -93,6 +93,9 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
+    if (monster.genFlags & GF_NO_SPECIALS) {
+        return false;
+    }
     if ((this->requiredFlags & monster.genFlags) != this->requiredFlags) {
         return false;
     }
@@ -202,7 +205,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 2;
     ability->minDamageBoost = 2;
     ability->maxDamageBoost = 6;
-    ability->requiredFlags = GenerateFlag::ANIMAL;
+    ability->requiredFlags = GF_ANIMAL;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -211,7 +214,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 3;
     ability->hpBoost = 12;
     ability->accuracy = AccuracyType::ACCURATE;
-    ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+    ability->requiredFlags = GF_SUPPORTS_CLASS;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -221,7 +224,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = 20;
     ability->defense = DefenseType::LOW;
     ability->regenSpeed = RegenSpeedType::EXTREMELY_FAST;
-    ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+    ability->requiredFlags = GF_SUPPORTS_CLASS;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -231,7 +234,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = 0;
     ability->maxDamageBoost = 6;
     ability->moveSpeed = MoveSpeedType::FAST;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -239,7 +242,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 3;
     ability->moveSpeed = MoveSpeedType::FAST;
-    ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+    ability->requiredFlags = GF_SUPPORTS_CLASS;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -256,7 +259,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 5;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
-    ability->requiredFlags = (GenerateFlag::ARMED);
+    ability->requiredFlags = (GF_ARMED);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -264,7 +267,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &white;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_SPIDERWEB};
-    ability->requiredFlags = GenerateFlag::INSECTOID;
+    ability->requiredFlags = GF_INSECTOID;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_IMMUNE_TO_WEBS);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
@@ -277,7 +280,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = -4;
     ability->maxDamageBoost = -2;
     ability->minDamageBoost = -2;
-    ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_PACK_MEMBER | GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
@@ -290,7 +293,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = -4;
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
-    ability->requiredFlags = GenerateFlag::SUPPORTS_CLASS;
+    ability->requiredFlags = GF_SUPPORTS_CLASS;
     ability->rarityPercent = 33;
     abilities.push_back(ability);
 
@@ -303,7 +306,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
     ability->moveSpeed = MoveSpeedType::FAST;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::SHAMANISTIC);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -316,7 +319,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = -6;
     ability->maxDamageBoost = -3;
     ability->minDamageBoost = -3;
-    ability->requiredFlags = (GenerateFlag::SHAMANISTIC | GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->rarityPercent = 66;
     abilities.push_back(ability);
@@ -327,7 +330,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_BLINKING};
     ability->defense = DefenseType::HIGH;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -335,7 +338,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_BLINKING};
-    ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
 
@@ -348,7 +351,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -5;
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
-    ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 66;
     abilities.push_back(ability);
@@ -362,7 +365,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -6;
     ability->minDamageBoost = -6;
     ability->defense = DefenseType::LOW;
-    ability->requiredFlags = (GenerateFlag::PACK_MEMBER | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 66;
     abilities.push_back(ability);
@@ -376,7 +379,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -5;
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
@@ -389,7 +392,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -5;
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
@@ -402,7 +405,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->maxDamageBoost = -5;
     ability->minDamageBoost = -5;
     ability->defense = DefenseType::LOW;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
@@ -414,7 +417,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = -2;
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
-    ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL);
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     abilities.push_back(ability);
 
@@ -426,7 +429,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = -2;
     ability->maxDamageBoost = -1;
     ability->minDamageBoost = -1;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
@@ -438,7 +441,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->attackSpeed = AttackSpeedType::TOTEM;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
-    ability->requiredFlags = (GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_INSECTOID);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -449,7 +452,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->attackSpeed = AttackSpeedType::TURRET;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
-    ability->requiredFlags = (GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_INSECTOID);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
 
@@ -458,7 +461,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 1;
     ability->flags = (MONST_FLEES_NEAR_DEATH);
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -468,7 +471,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = 1;
     ability->maxDamageBoost = 2;
     ability->flags = (MONST_FLEES_NEAR_DEATH);
-    ability->requiredFlags = (GenerateFlag::ANIMAL | GenerateFlag::PACK_MEMBER);
+    ability->requiredFlags = (GF_ANIMAL | GF_PACK_MEMBER);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -483,7 +486,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 1;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_SUBMERGES);
-    ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -491,7 +494,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 2;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
-    ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -499,14 +502,14 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &lightBlue;
     ability->dangerBoost = 2;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
-    ability->requiredFlags = (GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_INSECTOID);
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "spearman";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 1;
-    ability->requiredFlags = (GenerateFlag::ARMED);
+    ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_PENETRATE);
     abilities.push_back(ability);
 
@@ -514,7 +517,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "axeman";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 1;
-    ability->requiredFlags = (GenerateFlag::ARMED);
+    ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_ALL_ADJACENT);
     abilities.push_back(ability);
 
@@ -522,7 +525,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "dominatrix";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 2;
-    ability->requiredFlags = (GenerateFlag::ARMED);
+    ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_EXTEND);
     abilities.push_back(ability);
 
@@ -530,7 +533,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "whiptail";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 1;
-    ability->requiredFlags = (GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_INSECTOID);
     ability->abilFlags = (MA_ATTACKS_EXTEND);
     abilities.push_back(ability);
 
@@ -538,7 +541,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "rainbow";
     ability->colorOverride = &rainbow;
     ability->dangerBoost = 5;
-    ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+    ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_HIT_HALLUCINATE);
     abilities.push_back(ability);
 
@@ -546,7 +549,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "vampire";
     ability->colorOverride = &gray;
     ability->dangerBoost = 4;
-    ability->requiredFlags = (GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_ANIMAL);
     ability->abilFlags = (MA_TRANSFERENCE);
     abilities.push_back(ability);
 
@@ -554,8 +557,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "grappler";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
-    ability->requiredFlags = (GenerateFlag::SUPPORTS_CLASS);
-    ability->forbiddenFlags = (GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS);
+    ability->forbiddenFlags = (GF_WIZARDLY);
     ability->abilFlags = (MA_SEIZES);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -564,7 +567,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "sticky";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
-    ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+    ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_SEIZES);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -573,7 +576,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "venemous";
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 4;
-    ability->requiredFlags = (GenerateFlag::AMORPHOUS | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AMORPHOUS | GF_ANIMAL);
     ability->abilFlags = (MA_POISONS);
     abilities.push_back(ability);
 
@@ -581,7 +584,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "deadly";
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 5;
-    ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+    ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_CAUSES_WEAKNESS);
     abilities.push_back(ability);
 
@@ -589,7 +592,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "acid";
     ability->colorOverride = &acidBackColor;
     ability->dangerBoost = 6;
-    ability->requiredFlags = (GenerateFlag::AMORPHOUS);
+    ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_HIT_DEGRADE_ARMOR);
     ability->flags = (MONST_DEFEND_DEGRADE_WEAPON);
     ability->rarityPercent = 100;
@@ -599,7 +602,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "caustic";
     ability->colorOverride = &poisonGasColor;
     ability->dangerBoost = 6;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_BLOAT_DEATH;
     ability->featureMessage = "bursts, leaving behind an expanding cloud of caustic gas!";
     ability->rarityPercent = 66;
@@ -609,7 +612,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "pit";
     ability->colorOverride = &lightBlue;
     ability->dangerBoost = 6;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_HOLE_POTION;
     ability->featureMessage = "bursts, causing the floor underneath $HIMHER to disappear!";
     ability->rarityPercent = 33;
@@ -619,7 +622,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "explosive";
     ability->colorOverride = &orange;
     ability->dangerBoost = 17;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_BLOAT_EXPLOSION;
     ability->featureMessage = "detonates with terrifying force!";
     abilities.push_back(ability);
@@ -628,7 +631,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "infested";
     ability->colorOverride = &lichenColor;
     ability->dangerBoost = 15;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_MUTATION_LICHEN;
     ability->featureMessage = "bursts, filling the air with a cloud of fungal spores!";
     ability->rarityPercent = 25;
@@ -638,7 +641,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "fire";
     ability->colorOverride = &red;
     ability->dangerBoost = 8;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_INCINERATION_POTION;
     ability->featureMessage = "detonates into an immense conflagration!";
     abilities.push_back(ability);
@@ -647,7 +650,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "shattering";
     ability->colorOverride = &teal;
     ability->dangerBoost = 4;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_SHATTERING_SPELL;
     ability->featureMessage = "bursts, releasing a wave of turquoise radiation! The walls begin to shimmer.";
     ability->rarityPercent = 25;
@@ -657,7 +660,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "stink";
     ability->colorOverride = &teal;
     ability->dangerBoost = 14;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_DEWAR_METHANE;
     ability->featureMessage = "bursts, and an offensive odor accompanies the hiss of escaping methane!";
     ability->rarityPercent = 25;
@@ -667,7 +670,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "gassy";
     ability->colorOverride = &confusionGasColor;
     ability->dangerBoost = 15;
-    ability->requiredFlags = (GenerateFlag::BURSTS);
+    ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_CONFUSION_GAS_CLOUD_POTION;
     ability->featureMessage = "bursts, and the air starts to shimmer and sparkle!";
     abilities.push_back(ability);
@@ -676,7 +679,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "thieving";
     ability->colorMod = ColorModFlavor::NONE;
     ability->dangerBoost = 3;
-    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_THIEVING | GF_ANIMAL);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
@@ -685,7 +688,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "pickpocket";
     ability->colorOverride = &ogreColor;
     ability->dangerBoost = 3;
-    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_THIEVING | GF_SUPPORTS_CLASS);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     abilities.push_back(ability);
     
@@ -695,8 +698,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 12;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
-    ability->requiredFlags = (GenerateFlag::THIEVING);
-    ability->forbiddenFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_THIEVING);
+    ability->forbiddenFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_INSECTOID);
     ability->bolts = {BOLT_BLINKING};
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     ability->rarityPercent = 66;
@@ -707,9 +710,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 11;
     ability->defense = DefenseType::HIGH;
-    ability->requiredFlags = (GenerateFlag::THIEVING);
+    ability->requiredFlags = (GF_THIEVING);
     ability->bolts = {BOLT_SLOW_2, BOLT_HASTE};
-    ability->requiredFlags = (GenerateFlag::THIEVING | GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_THIEVING | GF_SUPPORTS_CLASS);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     ability->rarityPercent = 66;
@@ -725,8 +728,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -3;
     ability->defense = DefenseType::LOW;
     ability->accuracy = AccuracyType::ACCURATE;
-    ability->requiredFlags = (GenerateFlag::THIEVING);
-    ability->forbiddenFlags = (GenerateFlag::AQUATIC | GenerateFlag::AMORPHOUS | GenerateFlag::INSECTOID);
+    ability->requiredFlags = (GF_THIEVING);
+    ability->forbiddenFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_INSECTOID);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
     abilities.push_back(ability);
     
@@ -735,19 +738,19 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &brown;
     ability->dangerBoost = -3;
     ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER);
-    ability->requiredFlags = (GenerateFlag::AQUATIC);
-    ability->forbiddenFlags = (GenerateFlag::AQUATIC_ONLY);
+    ability->requiredFlags = (GF_AQUATIC);
+    ability->forbiddenFlags = (GF_AQUATIC_ONLY);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "deep sea";
+    ability->namePrefix = "abyssal";
     ability->colorOverride = &darkGray;
     ability->dangerBoost = 0;
     ability->regenSpeed = RegenSpeedType::VERY_FAST;
     ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER | MONST_FLEES_NEAR_DEATH);
-    ability->requiredFlags = (GenerateFlag::AQUATIC);
-    ability->forbiddenFlags = (GenerateFlag::AQUATIC_ONLY);
+    ability->requiredFlags = (GF_AQUATIC);
+    ability->forbiddenFlags = (GF_AQUATIC_ONLY);
     ability->rarityPercent = 50;
     abilities.push_back(ability);
     
@@ -756,7 +759,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &yellow;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_SPARK};
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
     
@@ -767,7 +770,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = 2;
     ability->maxDamageBoost = 4;
     ability->hpBoost = 5;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
     
@@ -776,7 +779,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 3;
     ability->abilFlags = MA_POISONS;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
     
@@ -785,7 +788,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->abilFlags = MA_SEIZES;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
     
@@ -795,7 +798,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->flags = MONST_FLEES_NEAR_DEATH;
     ability->defense = DefenseType::HIGH;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
     
@@ -805,7 +808,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 3;
     ability->flags = MONST_FLEES_NEAR_DEATH;
     ability->defense = DefenseType::HIGH;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::PACK_MEMBER | GenerateFlag::ANIMAL);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_PACK_MEMBER | GF_ANIMAL);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
     
@@ -815,7 +818,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_HEALING, BOLT_DISCORD};
     ability->flags = (MONST_MAINTAINS_DISTANCE);
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::SUPPORTS_CLASS | GenerateFlag::PACK_MEMBER);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_SUPPORTS_CLASS | GF_PACK_MEMBER);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
     
@@ -824,7 +827,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 4;
     ability->abilFlags = MA_CAUSES_WEAKNESS;
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::ARMED);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ARMED);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -834,7 +837,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->bolts = {BOLT_DISCORD, BOLT_SLOW_2};
     ability->defense = DefenseType::LOW;
     ability->flags = (MONST_MAINTAINS_DISTANCE);
-    ability->requiredFlags = (GenerateFlag::AQUATIC_ONLY | GenerateFlag::AQUATIC | GenerateFlag::SUPPORTS_CLASS);
+    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -842,7 +845,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_SPARK, BOLT_SHIELDING};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -850,7 +853,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_HEALING, BOLT_SLOW_2};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -858,7 +861,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_BECKONING, BOLT_HASTE};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_TOTEM | GF_WIZARDLY);
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -866,7 +869,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_CONJURATION, BOLT_INVISIBILITY};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_TOTEM | GF_WIZARDLY);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
     
@@ -875,7 +878,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &darkTurquoise;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_SHIELDING};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::WIZARDLY);
+    ability->requiredFlags = (GF_TOTEM | GF_WIZARDLY);
     ability->rarityPercent = 12;
     abilities.push_back(ability);
     
@@ -884,7 +887,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &black;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_HASTE};
-    ability->requiredFlags = (GenerateFlag::TOTEM | GenerateFlag::SHAMANISTIC);
+    ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     ability->rarityPercent = 12;
     abilities.push_back(ability);
 
