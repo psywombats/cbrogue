@@ -103,7 +103,7 @@ hordeType Horde::convertToStruct() {
 }
 
 void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile) {
-    if ((this->leader.flags & flag > 0)) {
+    if ((this->leader.flags & flag) > 0) {
         bool spawnsSpecial = true;
         for (HordeMember *member : this->members) {
             if ((member->member.flags & flag) == 0) {

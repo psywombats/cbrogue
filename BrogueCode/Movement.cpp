@@ -1330,7 +1330,7 @@ short nextStep(short **distanceMap, short x, short y, creature *monst, bool pref
     
     for (dir = (directions)(preferDiagonals ? 7 : 0);
          (preferDiagonals ? dir >= 0 : dir < DIRECTION_COUNT);
-         (preferDiagonals ? ((directions)((int)dir - 1)) : NEXT_DIR(dir))) {
+         dir = (preferDiagonals ? ((directions)((int)dir - 1)) : ((directions)((int)dir + 1)))) {
         
         newX = x + nbDirs[dir][0];
         newY = y + nbDirs[dir][1];

@@ -59,7 +59,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     if (this->baseChar == '?') {
         this->baseChar = this->baseName.at(0);
     }
-    if (Body::usedChars.find(this->baseChar) != Body::usedChars.end()) {
+    if (Body::usedChars.find(this->baseChar) != Body::usedChars.end() && this->singleUse) {
         if (islower(baseChar)) {
             this->baseChar = toupper(this->baseChar);
         } else {
@@ -198,7 +198,7 @@ std::vector<Body *> Body::loadBodies() {
     body->baseName = "frog";
     body->baseColor = &darkGreen;
     body->blood = DF_RED_BLOOD;
-    body->minDamage = 1;
+    body->minDamage = 2;
     body->maxDamage = 4;
     body->hp = 8;
     body->defense = DefenseType::DEFENSELESS;
@@ -699,11 +699,13 @@ std::vector<Body *> Body::loadBodies() {
     body->baseChar = TOTEM_CHAR;
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
+    body->hp = 30;
     body->attackSpeed = AttackSpeedType::TOTEM;
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
+    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();
@@ -711,16 +713,18 @@ std::vector<Body *> Body::loadBodies() {
     body->baseChar = 0x03AA; // Ϊ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
+    body->hp = 30;
     body->attackSpeed = AttackSpeedType::TOTEM;
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_WIZARDLY);
+    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();
     body->baseName = "idol";
-    body->baseChar = STATUE_CHAR;
+    body->baseChar = 0x03C7; // χ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
     body->attackSpeed = AttackSpeedType::TOTEM;
@@ -728,6 +732,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_WIZARDLY);
+    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();

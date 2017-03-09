@@ -52,6 +52,8 @@ ChimeraMonster::~ChimeraMonster() {
 
 creatureType ChimeraMonster::convertToStruct() {
     creatureType creatureStruct = creatureType();
+    
+    this->damage.lowerBound = MAX(damage.lowerBound, 0);
 
     creatureStruct.monsterID = this->monsterId;
     memcpy(&creatureStruct.monsterName, this->name.c_str(), this->name.length()+1);
@@ -334,6 +336,7 @@ std::string ChimeraMonster::generateSummonFlavor() {
 }
 
 void ChimeraMonster::specializeName() {
+    std::string nameBefore = this->name;
     if (name == "caustic bloat")            name = "bloat";
     if (name == "vampire jackal")           name = "chupacabra";
     if (name == "vampire dog")              name = "chupacabra";
@@ -355,11 +358,16 @@ void ChimeraMonster::specializeName() {
     if (name == "impish quasit")            name = "imp";
     if (name == "tentacle mollusk")         name = "kraken";
     if (name == "winged quasit")            name = "gargoyle";
+    if (name == "acolyte idol")             name = "demonic idol";
+    if (name == "acolyte obelisk")          name = "obsidian obelisk";
+    if (name == "onyx acolyte")             name = "angel statue";
     
-    if (isupper(this->displayChar)) {
-        this->displayChar = toupper(name[0]);
-    } else {
-        this->displayChar = tolower(name[0]);
+    if (nameBefore != this->name && (genFlags & GF_TOTEM)) {
+        if (isupper(this->displayChar)) {
+            this->displayChar = toupper(name[0]);
+        } else {
+            this->displayChar = tolower(name[0]);
+        }
     }
 }
 

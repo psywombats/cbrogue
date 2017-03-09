@@ -132,6 +132,7 @@ public:
     unsigned long abilFlags;            // bitset of monsterAbilityFlags
 
     // generation
+    Body &body;
     unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
     int dangerLevel;
@@ -149,7 +150,6 @@ private:
     std::string generateSummonFlavor();
 
     // generation
-    const Body &body;
     std::list<std::reference_wrapper<Ability>> abilities;
 
     static std::string boltToString(boltType bolt);

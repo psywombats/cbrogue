@@ -44,8 +44,9 @@ void MonsterGenerator::generate() {
     // Step 1: Let's put together some constants
     int fodderCount = 3;
     int mookCount = rand_range(6, 7);
-    int maxMookDL = AMULET_LEVEL + 5;
-    int maxAquaDL = AMULET_LEVEL + 7;
+    int maxMookDL = AMULET_LEVEL + 3;
+    int maxAquaDL = AMULET_LEVEL + 6;
+    int maxThiefDL = AMULET_LEVEL - 3;
     int fodderGroupHordes = 1;
     int kamikazeMonstersCount = 3;
     int thiefMonstersCount = 2;
@@ -148,6 +149,7 @@ void MonsterGenerator::generate() {
     // Step 8: Turn the "specialist" mook into its classes
     if (specialistMookBody != NULL) {
         std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
+        specialistMookBody->singleUse = false;
         ChimeraMonster genericSpecialistMook = ChimeraMonster(*specialistMookBody);
         genericSpecialistMook.genFlags |= GF_MOOKISH;
         for (int i = 0; i < specialistMookClasses; i += 1) {
@@ -304,7 +306,7 @@ void MonsterGenerator::generate() {
     std::vector<std::reference_wrapper<ChimeraMonster>> thieves;
     for (int i = 0; i < thiefMonstersCount; i += 1) {
         ChimeraMonster *monster;
-        if (rand_percent(50)) {
+        if (rand_percent(80)) {
             Body *body = matchingBody([](const Body *body) {
                 return body->genFlags & GF_THIEVING;
             });
@@ -317,12 +319,12 @@ void MonsterGenerator::generate() {
             monster = new ChimeraMonster(mook);
         }
         monster->genFlags |= GF_THIEVING;
-        Ability *ability = matchingAbility([i, thiefMonstersCount, monster](const Ability *ability) {
+        Ability *ability = matchingAbility([i, thiefMonstersCount, monster, maxThiefDL](const Ability *ability) {
             if (!ability->validForMonster(*monster)) {
                 return false;
             }
-            int minDL = i * (AMULET_LEVEL / thiefMonstersCount) - 3;
-            int maxDL = (i+1) * (AMULET_LEVEL / thiefMonstersCount) + 1;
+            int minDL = i * (maxThiefDL / thiefMonstersCount) - 3;
+            int maxDL = (i+1) * (maxThiefDL / thiefMonstersCount);
             int dl = (ability->dangerBoost + monster->dangerLevel);
             return (ability->requiredFlags & GF_THIEVING) > 0  && dl >= minDL && dl <= maxDL;
         });
@@ -491,6 +493,12 @@ void MonsterGenerator::generate() {
         totem.name = mook.name;
         totem.genFlags |= mook.genFlags;
         totem.displayColor = mook.displayColor;
+        if (mook.dangerLevel > 10) {
+            totem.hp += 40;
+        }
+        if (mook.dangerLevel > 20) {
+            totem.hp += 30;
+        }
         Ability *ability = matchingAbility([totem](const Ability *ability) {
             return ability->validForMonster(totem) && (ability->requiredFlags & GF_TOTEM);
         });
@@ -536,7 +544,7 @@ void MonsterGenerator::generate() {
         }
         ChimeraMonster *turret = new ChimeraMonster(*body);
         Ability *ability = matchingAbility([turret](const Ability *ability) {
-            return ability->validForMonster(*turret);
+            return ability->validForMonster(*turret) && (ability->requiredFlags && GF_TURRET);
         });
         if (ability == NULL) {
             delete turret;
@@ -627,7 +635,10 @@ ChimeraMonster &MonsterGenerator::newMonster(const ChimeraMonster &baseMonster) 
 }
 
 Horde &MonsterGenerator::newHorde(const ChimeraMonster &monster) {
-    Horde *horde = new Horde(monster);
+    bool wasSingleUse = monster.body.singleUse;
+    monster.body.singleUse = false;
+    Horde *horde = new Horde(monster.body);
+    monster.body.singleUse = wasSingleUse;
     this->hordes.push_back(horde);
     return *horde;
 }

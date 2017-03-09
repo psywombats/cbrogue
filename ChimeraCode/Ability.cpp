@@ -282,7 +282,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -2;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
-    ability->rarityPercent = 75;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -321,7 +321,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->minDamageBoost = -3;
     ability->requiredFlags = (GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
-    ability->rarityPercent = 66;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -353,7 +353,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
-    ability->rarityPercent = 66;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -367,7 +367,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
-    ability->rarityPercent = 66;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -397,10 +397,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "lightning mage";
+    ability->nameSuffix = "air mage";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 3;
-    ability->bolts = {BOLT_FIRE};
+    ability->bolts = {BOLT_SPARK};
     ability->hpBoost = -4;
     ability->maxDamageBoost = -5;
     ability->minDamageBoost = -5;
