@@ -120,12 +120,12 @@ creatureType ChimeraMonster::convertToStruct() {
         i += 1;
     }
 
-    if (this->flags & GenerateFlag::SUPPORTS_CLASS) {
+    if (this->genFlags & GenerateFlag::SUPPORTS_CLASS) {
         // TODO: do this more smartlier
         creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
     }
     
-    if (this->flags & GenerateFlag::AQUATIC_ONLY) {
+    if (this->genFlags & GenerateFlag::AQUATIC_ONLY) {
         creatureStruct.flags |= MONST_RESTRICTED_TO_LIQUID | MONST_NEVER_SLEEPS;
     }
     

@@ -50,7 +50,7 @@ void MonsterGenerator::generate() {
     int mookGroupHordes = 2;
     int kamikazeMonstersCount = 3;
     int thiefMonstersCount = 2;
-    int aquaMonstersCount = 3;
+    int aquaMonstersCount = 2;
     
     for (int i = 0; i < 2; i += 1) {
     int roll = rand_range(0, 100);
@@ -58,7 +58,7 @@ void MonsterGenerator::generate() {
             mookGroupHordes += 1;
         } else if (roll < 60) {
             kamikazeMonstersCount += 1;
-        } else if (roll < 81) {
+        } else if (roll < 85) {
             aquaMonstersCount += 1;
         } else {
             thiefMonstersCount += 1;
@@ -86,7 +86,7 @@ void MonsterGenerator::generate() {
     // Step 3: Generate the vanilla mooks
     for (int i = 0; i < mookCount; i += 1) {
         Body *body = matchingBody([maxMookDL, mookCount, i](const Body *body) {
-            if (!(body->flags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
+            if (!(body->genFlags & GenerateFlag::SUPPORTS_CLASS) && !rand_percent(50)) {
                 return false;
             }
             if (body->genFlags & (GenerateFlag::KAMIKAZE | GenerateFlag::THIEVING_ONLY | GenerateFlag::AQUATIC_ONLY)) {
@@ -338,10 +338,10 @@ void MonsterGenerator::generate() {
     for (int i = 0; i < aquaMonstersCount; i += 1) {
         int minDL = i * (maxAquaDL / aquaMonstersCount) - 3;
         int maxDL = (i+1) * (maxAquaDL / aquaMonstersCount) + 1;
-        if (rand_percent(80)) {
+        if (rand_percent(65)) {
             // custom aqua
             Body *body = matchingBody([i, minDL, maxDL](const Body *body) {
-                return (body->genFlags & GenerateFlag::AQUATIC_ONLY) > 0  && body->dangerLevel >= minDL && body->dangerLevel <= maxDL;
+                return (body->genFlags & GenerateFlag::AQUATIC_ONLY)  && body->dangerLevel >= minDL && body->dangerLevel <= maxDL;
             });
             if (body == NULL) {
                 continue;
@@ -351,9 +351,9 @@ void MonsterGenerator::generate() {
             horde.purpose = HordePurposeType::AQUA;
             horde.extraRange = MAX(0, (3-i));
             
-            if (rand_percent(70)) {
+            if (rand_percent(75)) {
                 // let's make a group for it
-                if (rand_percent(60)) {
+                if (rand_percent(75)) {
                     // a simple group
                     Horde &horde = this->newHorde(monster);
                     horde.addMember(monster, 2, 4);
@@ -394,14 +394,16 @@ void MonsterGenerator::generate() {
                 }
             } else {
                 // let's make a variant of it
-                ChimeraMonster variantMonster = this->newMonster(monster);
+                ChimeraMonster &variantMonster = this->newMonster(monster);
                 Ability *ability = matchingAbility([variantMonster](const Ability *ability) {
                     if (!(ability->requiredFlags & GenerateFlag::AQUATIC)) {
                         if (rand_percent(50)) return false;
                     }
                     return ability->validForMonster(variantMonster);
                 });
-                variantMonster.applyAbility(*ability);
+                if (ability != NULL) {
+                    variantMonster.applyAbility(*ability);
+                }
                 Horde &groupHorde = this->newHorde(variantMonster);
                 groupHorde.addMember(monster, 0, 2);
                 groupHorde.extraRange = 1;

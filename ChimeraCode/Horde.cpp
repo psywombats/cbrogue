@@ -105,18 +105,13 @@ int Horde::calculateDL() const {
         }
     }
     if (this->members.size() >= 1) {
-        if (this->purpose == HordePurposeType::FODDER) {
-            danger += 2;
-        } else {
-            danger += MIN(3, this->members.front()->member.dangerLevel / 3);
-        }
+        danger += CLAMP(this->members.front()->member.dangerLevel / 2, 2, 7);
     }
     if (this->members.size() >= 2) {
-        if (this->purpose == HordePurposeType::FODDER) {
-            danger += 2;
-        } else {
-            danger += MIN(3, this->members.front()->member.dangerLevel / 2);
-        }
+        danger += CLAMP(this->members.front()->member.dangerLevel / 3, 2, 6);
+    }
+    if (this->members.size() >= 3) {
+        danger += CLAMP(this->members.front()->member.dangerLevel / 4, 2, 5);
     }
     return danger;
 }
