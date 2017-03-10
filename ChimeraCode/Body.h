@@ -51,7 +51,7 @@ public:
     unsigned long genFlags;            // generateFlag bitset
     int dangerLevel;
     int rarityPercent;
-    const bool singleUse;
+    bool reusable;
     bool inUse;
 
     // flavor

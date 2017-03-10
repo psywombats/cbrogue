@@ -39,6 +39,7 @@ public:
     void applyToMonster(ChimeraMonster &monster);
     bool validForMonster(const ChimeraMonster &monster) const;
     bool validForBody(const Body &body) const;
+    bool validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const;
 
     // rpg
     int hpBoost;

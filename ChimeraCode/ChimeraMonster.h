@@ -92,7 +92,6 @@ class ChimeraMonster {
 public:
 
     ChimeraMonster(Body &body);
-    ChimeraMonster(Body &body, const std::string &baseMonsterName);
     virtual ~ChimeraMonster();
 
     /**
@@ -101,11 +100,10 @@ public:
      */
     creatureType convertToStruct();
 
-    std::string debugReport() const;
+    std::string debugReport();
+    const std::string &getDisplayName() const;
 
     void applyAbility(Ability &ability);
-    
-    std::string generateName() const;
 
     // flavor
     std::string baseName;
@@ -137,7 +135,8 @@ public:
 
     // generation
     Body &body;
-    std::string baseMonsterName;
+    std::string mookName;
+    std::string nameSuffix, namePrefix;
     unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
     int dangerLevel;
@@ -155,8 +154,10 @@ private:
     static int nextChimeraId;
     static std::set<std::reference_wrapper<uchar>> usedChars;
 
-    void specializeName();
-    std::string generateFlavor() const;
+    void generateName();
+    void generateDisplayChar();
+    void generateFlavor();
+    
     AbsorbFlavorType generateAbsorbFlavor() const;
     std::list<std::string> generateAttackFlavor() const;
     std::string generateSummonFlavor() const;
@@ -164,6 +165,8 @@ private:
     // generation
     std::list<std::reference_wrapper<Ability>> abilities;
     uchar displayChar;
+    std::string displayName;
+    std::string flavor;
 };
 
 #endif /* CHIMERAMONSTER_H_ */

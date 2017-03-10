@@ -6,9 +6,6 @@
          contextName = "initMonsterCatalog():MonsterGlobals.cpp">
          <PersistentStrings>
             <PersistentString
-               value = "monster-&gt;monsterId">
-            </PersistentString>
-            <PersistentString
                value = "getMonsterCatalogCount()">
             </PersistentString>
          </PersistentStrings>
@@ -22,7 +19,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "ChimeraMonster::convertToStruct():ChimeraMonster.cpp">
+         contextName = "MonsterGenerator::generate():MonsterGenerator.cpp">
       </ContextState>
       <ContextState
          contextName = "paintLight:Light.c">

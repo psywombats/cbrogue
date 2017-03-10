@@ -19,7 +19,7 @@ Body::Body() :
         flags(0),
         abilFlags(0),
         baseColor(&brown),
-        singleUse(true),
+        reusable(false),
         light(NO_LIGHT),
         gender(GenderType::NONE),
         dangerLevel(0),
@@ -57,13 +57,10 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.lightType = this->light;
 
     monster.dangerLevel = this->dangerLevel;
-
-    Body::usedChars.insert(this->baseChar);
+    
     monster.baseDisplayChar = this->baseChar;
-
-    if (this->singleUse) {
-        this->inUse = true;
-    }
+    
+    this->inUse = true;
 
     monster.genFlags |= this->genFlags;
     monster.flags |= this->flags;
@@ -742,7 +739,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
-    body->singleUse = false;
+    body->reusable = true;
     bodies.push_back(body);
     
     body = new Body();
@@ -757,7 +754,6 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
-    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();
@@ -772,7 +768,6 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_WIZARDLY);
-    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();
@@ -787,7 +782,6 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_WIZARDLY);
-    body->singleUse = false;
     bodies.push_back(body);
     
     body = new Body();
@@ -928,7 +922,7 @@ std::vector<Body *> Body::loadBodies() {
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET);
     body->flags = MONST_TURRET;
-    body->singleUse = false;
+    body->reusable = true;
     body->rarityPercent = 100;
     bodies.push_back(body);
     
@@ -946,7 +940,7 @@ std::vector<Body *> Body::loadBodies() {
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_SHAMANISTIC);
     body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
-    body->singleUse = false;
+    body->reusable = true;
     body->rarityPercent = 25;
     bodies.push_back(body);
     
@@ -964,7 +958,7 @@ std::vector<Body *> Body::loadBodies() {
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_WIZARDLY);
     body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
-    body->singleUse = false;
+    body->reusable = true;
     body->rarityPercent = 12;
     bodies.push_back(body);
     

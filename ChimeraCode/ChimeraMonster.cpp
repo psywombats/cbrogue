@@ -20,7 +20,10 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         genFlags(0),
         abilFlags(0),
         flags(0),
-        baseMonsterName(""),
+        mookName(""),
+        displayName(""),
+        nameSuffix(""),
+        namePrefix(""),
         displayChar('?'),
         baseDisplayChar('?'),
         accuracy(AccuracyType::NORMAL),
@@ -43,14 +46,10 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
     if (ChimeraMonster::nextChimeraId == 0) {
         ChimeraMonster::nextChimeraId = getWardenMonsterId() + 1;
     }
-    this->monsterId = ChimeraMonster::nextChimeraId;
+    monsterId = ChimeraMonster::nextChimeraId;
     ChimeraMonster::nextChimeraId += 1;
 
     body.applyToMonster(*this);
-}
-
-ChimeraMonster::ChimeraMonster(Body &body, const std::string &baseMonsterName) :  ChimeraMonster(body) {
-    this->baseMonsterName = std::string(baseMonsterName);
 }
 
 ChimeraMonster::~ChimeraMonster() {
@@ -60,36 +59,37 @@ ChimeraMonster::~ChimeraMonster() {
 creatureType ChimeraMonster::convertToStruct() {
     creatureType creatureStruct = creatureType();
     
-    this->damage.lowerBound = MAX(damage.lowerBound, 0);
-
-    creatureStruct.monsterID = this->monsterId;
-    creatureStruct.displayChar = this->displayChar;
-    creatureStruct.foreColor = this->displayColor;
-    creatureStruct.maxHP = this->hp;
-    memcpy(&creatureStruct.damage, &this->damage, sizeof(randomRange));
-    creatureStruct.turnsBetweenRegen = regenSpeedToTurnsPerRegen(this->regenSpeed);
-    creatureStruct.movementSpeed = moveSpeedToTicksPerMove(this->moveSpeed);
-    creatureStruct.attackSpeed = attackSpeedToTicksPerAttack(this->attackSpeed);
-    creatureStruct.bloodType = this->bloodType;
-    creatureStruct.intrinsicLightType = this->lightType;
-
-    AbsorbFlavorType absorb = this->generateAbsorbFlavor();
-    std::string flavor = this->generateFlavor();
-    std::string genName = this->generateName();
-    strcpy(creatureStruct.monsterName, genName.c_str());
+    damage.lowerBound = MAX(damage.lowerBound, 0);
+    memcpy(&creatureStruct.damage, &damage, sizeof(randomRange));
+    
+    generateName();
+    generateDisplayChar();
+    generateFlavor();
+    AbsorbFlavorType absorb = generateAbsorbFlavor();
+    strcpy(creatureStruct.monsterName, displayName.c_str());
     strcpy(creatureStruct.flavorText, flavor.c_str());
     strcpy(creatureStruct.absorbStatus, absorb.status.c_str());
     strcpy(creatureStruct.absorbing, absorb.message.c_str());
+
+    creatureStruct.monsterID = monsterId;
+    creatureStruct.displayChar = displayChar;
+    creatureStruct.foreColor = displayColor;
+    creatureStruct.maxHP = hp;
+    creatureStruct.turnsBetweenRegen = regenSpeedToTurnsPerRegen(regenSpeed);
+    creatureStruct.movementSpeed = moveSpeedToTicksPerMove(moveSpeed);
+    creatureStruct.attackSpeed = attackSpeedToTicksPerAttack(attackSpeed);
+    creatureStruct.bloodType = bloodType;
+    creatureStruct.intrinsicLightType = lightType;
     
-    if (this->hp < 10) {
+    if (hp < 10) {
         creatureStruct.accuracy = 70;
-    } else if (this->hp < 19) {
+    } else if (hp < 19) {
         creatureStruct.accuracy = 85;
-    } else if (this->hp < 50) {
+    } else if (hp < 50) {
         creatureStruct.accuracy = 100;
-    } else if (this->hp < 75) {
+    } else if (hp < 75) {
         creatureStruct.accuracy = 125;
-    } else if (this->hp < 95){
+    } else if (hp < 95){
         creatureStruct.accuracy = 150;
     } else {
         creatureStruct.accuracy = 225;
@@ -101,13 +101,13 @@ creatureType ChimeraMonster::convertToStruct() {
         creatureStruct.accuracy -= 30;
     }
 
-    if (this->hp < 10) {
+    if (hp < 10) {
         creatureStruct.defense = 0;
-    } else if (this->hp < 50) {
+    } else if (hp < 50) {
         creatureStruct.defense = 20;
-    } else if (this->hp < 70) {
+    } else if (hp < 70) {
         creatureStruct.defense = 55;
-    } else if (this->hp < 95) {
+    } else if (hp < 95) {
         creatureStruct.defense = 70;
     } else {
         creatureStruct.defense = 90;
@@ -122,54 +122,34 @@ creatureType ChimeraMonster::convertToStruct() {
         creatureStruct.defense /= 2;
     }
 
-    creatureStruct.flags = this->flags;
-    creatureStruct.abilityFlags = this->abilFlags;
-    
-    if (this->displayChar == '?') {
-        if (this->baseDisplayChar == '?') {
-            this->baseDisplayChar = this->baseName[0];
-        }
-        this->displayChar = this->baseDisplayChar;
-        if (usedChars.find(this->displayChar) != usedChars.end()) {
-            if (islower(this->displayChar)) {
-                this->displayChar = toupper(this->displayChar);
-            } else {
-                this->displayChar = tolower(this->displayChar);
-            }
-            if (usedChars.find(this->displayChar) != usedChars.end()) {
-                // someone else has BOTH letters? fuck
-                uchar randomChars[] = {0x03D7,0x03D6,0x03B6,0x0376,0x03EA,0x03E0,0x054B,0x0556,0x07F7,0x0186,0x0518};
-                this->displayChar = randomChars[rand_range(0, sizeof(randomChars) / sizeof(randomChars[0]))];
-            }
-        }
-        
-    }
+    creatureStruct.flags = flags;
+    creatureStruct.abilityFlags = abilFlags;
 
-    for (unsigned int i = 0; i < this->bolts.size(); i += 1) {
-        creatureStruct.bolts[i] = this->bolts[i];
+    for (unsigned int i = 0; i < bolts.size(); i += 1) {
+        creatureStruct.bolts[i] = bolts[i];
         i += 1;
     }
 
-    if (this->genFlags & GF_SUPPORTS_CLASS) {
+    if (genFlags & GF_SUPPORTS_CLASS) {
         // TODO: do this more smartlier
         creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
     }
     
-    if (this->genFlags & GF_AQUATIC_ONLY) {
+    if (genFlags & GF_AQUATIC_ONLY) {
         creatureStruct.flags |= MONST_RESTRICTED_TO_LIQUID | MONST_NEVER_SLEEPS;
     }
     
-    creatureStruct.DFType = this->feature;
-    memcpy(&creatureStruct.DFMessage, this->featureMessage.c_str(), this->featureMessage.length()+1);
-    creatureStruct.DFChance = this->featurePeriodicPercent;
+    creatureStruct.DFType = feature;
+    memcpy(&creatureStruct.DFMessage, featureMessage.c_str(), featureMessage.length()+1);
+    creatureStruct.DFChance = featurePeriodicPercent;
     
-    if (this->bloodType == DF_NONE) {
-        if ((this->genFlags & GF_ANIMAL) > 0) {
-            this->bloodType = DF_RED_BLOOD;
-        } else if ((this->genFlags & GF_INSECTOID) > 0) {
-            this->bloodType = DF_WORM_BLOOD;
-        } else if ((this->genFlags & GF_AMORPHOUS) > 0) {
-            this->bloodType = DF_GREEN_BLOOD;
+    if (bloodType == DF_NONE) {
+        if ((genFlags & GF_ANIMAL) > 0) {
+            bloodType = DF_RED_BLOOD;
+        } else if ((genFlags & GF_INSECTOID) > 0) {
+            bloodType = DF_WORM_BLOOD;
+        } else if ((genFlags & GF_AMORPHOUS) > 0) {
+            bloodType = DF_GREEN_BLOOD;
         }
     }
 
@@ -182,14 +162,17 @@ creatureType ChimeraMonster::convertToStruct() {
 
 void ChimeraMonster::applyAbility(Ability &ability) {
     ability.applyToMonster(*this);
-    this->abilities.push_back(ability);
-    specializeName();
+    abilities.push_back(ability);
 }
 
-std::string ChimeraMonster::debugReport() const {
-    std::string report = "";
-
-    report += generateName() + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
+std::string ChimeraMonster::debugReport() {
+    generateName();
+    generateFlavor();
+    generateDisplayChar();
+    
+    std::string report = std::string(1, displayChar);
+    
+    report += " " + displayName + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
     report += "  HP: " + printInt(hp) + "  dmg: " + printInt(damage.lowerBound) + "-" + printInt(damage.upperBound) + "\n";
     report += "  Specials: ";
     if (accuracy == AccuracyType::ACCURATE) report += "(accurate) ";
@@ -211,51 +194,55 @@ std::string ChimeraMonster::debugReport() const {
         report += "{" + ChimeraMonster::boltToString(bolt) + "} ";
     }
 
-    if ((this->flags & MONST_FLEES_NEAR_DEATH) > 0) report += "[flees] ";
-    if ((this->flags & MONST_CAST_SPELLS_SLOWLY) > 0) report += "[slowspells] ";
-    if ((this->flags & MONST_CARRY_ITEM_100) > 0) report += "[item100] ";
-    if ((this->flags & MONST_CARRY_ITEM_25) > 0) report += "[item] ";
-    if ((this->flags & MONST_DEFEND_DEGRADE_WEAPON) > 0) report += "[acid def] ";
-    if ((this->flags & MONST_ALWAYS_HUNTING) > 0) report += "[nosleep] ";
-    if ((this->flags & MONST_ALWAYS_USE_ABILITY) > 0) report += "[abilonly] ";
-    if ((this->flags & MONST_DIES_IF_NEGATED) > 0) report += "[negatedeath] ";
-    if ((this->flags & MONST_FIERY) > 0) report += "[fiery] ";
-    if ((this->flags & MONST_FLIES) > 0) report += "[flies] ";
-    if ((this->flags & MONST_FLITS) > 0) report += "[flits] ";
-    if ((this->flags & MONST_IMMUNE_TO_FIRE) > 0) report += "[fire immune] ";
-    if ((this->flags & MONST_IMMUNE_TO_WATER) > 0) report += "[water immune] ";
-    if ((this->flags & MONST_IMMUNE_TO_WEAPONS) > 0) report += "[weapon immune] ";
-    if ((this->flags & MONST_IMMUNE_TO_WEBS) > 0) report += "[web immune] ";
-    if ((this->flags & MONST_INVISIBLE) > 0) report += "[invisible] ";
-    if ((this->flags & MONST_MAINTAINS_DISTANCE) > 0) report += "[keeps distance] ";
-    if ((this->flags & MONST_REFLECT_4) > 0) report += "[reflective] ";
-    if ((this->flags & MONST_RESTRICTED_TO_LIQUID) > 0) report += "[liquids only] ";
-    if ((this->flags & MONST_SUBMERGES) > 0) report += "[submerges] ";
+    if ((flags & MONST_FLEES_NEAR_DEATH) > 0) report += "[flees] ";
+    if ((flags & MONST_CAST_SPELLS_SLOWLY) > 0) report += "[slowspells] ";
+    if ((flags & MONST_CARRY_ITEM_100) > 0) report += "[item100] ";
+    if ((flags & MONST_CARRY_ITEM_25) > 0) report += "[item] ";
+    if ((flags & MONST_DEFEND_DEGRADE_WEAPON) > 0) report += "[acid def] ";
+    if ((flags & MONST_ALWAYS_HUNTING) > 0) report += "[nosleep] ";
+    if ((flags & MONST_ALWAYS_USE_ABILITY) > 0) report += "[abilonly] ";
+    if ((flags & MONST_DIES_IF_NEGATED) > 0) report += "[negatedeath] ";
+    if ((flags & MONST_FIERY) > 0) report += "[fiery] ";
+    if ((flags & MONST_FLIES) > 0) report += "[flies] ";
+    if ((flags & MONST_FLITS) > 0) report += "[flits] ";
+    if ((flags & MONST_IMMUNE_TO_FIRE) > 0) report += "[fire immune] ";
+    if ((flags & MONST_IMMUNE_TO_WATER) > 0) report += "[water immune] ";
+    if ((flags & MONST_IMMUNE_TO_WEAPONS) > 0) report += "[weapon immune] ";
+    if ((flags & MONST_IMMUNE_TO_WEBS) > 0) report += "[web immune] ";
+    if ((flags & MONST_INVISIBLE) > 0) report += "[invisible] ";
+    if ((flags & MONST_MAINTAINS_DISTANCE) > 0) report += "[keeps distance] ";
+    if ((flags & MONST_REFLECT_4) > 0) report += "[reflective] ";
+    if ((flags & MONST_RESTRICTED_TO_LIQUID) > 0) report += "[liquids only] ";
+    if ((flags & MONST_SUBMERGES) > 0) report += "[submerges] ";
 
-    if ((this->abilFlags & MA_HIT_HALLUCINATE) > 0) report += ".hallucinative.";
-    if ((this->abilFlags & MA_HIT_STEAL_FLEE) > 0) report += ".thief.";
-    if ((this->abilFlags & MA_ENTER_SUMMONS) > 0) report += ".summon transforms.";
-    if ((this->abilFlags & MA_HIT_DEGRADE_ARMOR) > 0) report += ".acid atk.";
-    if ((this->abilFlags & MA_CAST_SUMMON) > 0) report += ".summons.";
-    if ((this->abilFlags & MA_SEIZES) > 0) report += ".grappler.";
-    if ((this->abilFlags & MA_POISONS) > 0) report += ".poisons.";
-    if ((this->abilFlags & MA_DF_ON_DEATH) > 0) report += ".death effect.";
-    if ((this->abilFlags & MA_CLONE_SELF_ON_DEFEND) > 0) report += ".splits.";
-    if ((this->abilFlags & MA_KAMIKAZE) > 0) report += ".kamikaze.";
-    if ((this->abilFlags & MA_TRANSFERENCE) > 0) report += ".vampiric.";
-    if ((this->abilFlags & MA_CAUSES_WEAKNESS) > 0) report += ".weakens.";
-    if ((this->abilFlags & MA_ATTACKS_PENETRATE) > 0) report += ".penetrate atk.";
-    if ((this->abilFlags & MA_ATTACKS_ALL_ADJACENT) > 0) report += ".axe atk.";
-    if ((this->abilFlags & MA_ATTACKS_EXTEND) > 0) report += ".whip atk.";
-    if ((this->abilFlags & MA_AVOID_CORRIDORS) > 0) report += ".nohalls.";
+    if ((abilFlags & MA_HIT_HALLUCINATE) > 0) report += ".hallucinative.";
+    if ((abilFlags & MA_HIT_STEAL_FLEE) > 0) report += ".thief.";
+    if ((abilFlags & MA_ENTER_SUMMONS) > 0) report += ".summon transforms.";
+    if ((abilFlags & MA_HIT_DEGRADE_ARMOR) > 0) report += ".acid atk.";
+    if ((abilFlags & MA_CAST_SUMMON) > 0) report += ".summons.";
+    if ((abilFlags & MA_SEIZES) > 0) report += ".grappler.";
+    if ((abilFlags & MA_POISONS) > 0) report += ".poisons.";
+    if ((abilFlags & MA_DF_ON_DEATH) > 0) report += ".death effect.";
+    if ((abilFlags & MA_CLONE_SELF_ON_DEFEND) > 0) report += ".splits.";
+    if ((abilFlags & MA_KAMIKAZE) > 0) report += ".kamikaze.";
+    if ((abilFlags & MA_TRANSFERENCE) > 0) report += ".vampiric.";
+    if ((abilFlags & MA_CAUSES_WEAKNESS) > 0) report += ".weakens.";
+    if ((abilFlags & MA_ATTACKS_PENETRATE) > 0) report += ".penetrate atk.";
+    if ((abilFlags & MA_ATTACKS_ALL_ADJACENT) > 0) report += ".axe atk.";
+    if ((abilFlags & MA_ATTACKS_EXTEND) > 0) report += ".whip atk.";
+    if ((abilFlags & MA_AVOID_CORRIDORS) > 0) report += ".nohalls.";
 
-    if (this->featureKamikaze) report += ".kamikaze ";
-    if (this->featurePeriodicPercent > 0) report += ".periodic ";
+    if (featureKamikaze) report += ".kamikaze ";
+    if (featurePeriodicPercent > 0) report += ".periodic ";
     
     
     report += "\n";
 
     return report;
+}
+
+const std::string &ChimeraMonster::getDisplayName() const {
+    return displayName;
 }
 
 std::string ChimeraMonster::boltToString(boltType bolt) {
@@ -342,8 +329,8 @@ short ChimeraMonster::attackSpeedToTicksPerAttack(AttackSpeedType speed) {
     return 0;
 }
 
-std::string ChimeraMonster::generateFlavor() const {
-    std::string flavor = body.flavor;
+void ChimeraMonster::generateFlavor() {
+    flavor = body.flavor;
     for (Ability &ability : abilities) {
         if (ability.flavorOverride.length() > 0) {
             flavor = ability.flavorOverride;
@@ -351,10 +338,9 @@ std::string ChimeraMonster::generateFlavor() const {
             flavor += " " + ability.flavorAddition;
         }
     }
-    if (baseMonsterName.size() > 0) {
-        replace(flavor, "$BASE", baseMonsterName);
+    if (mookName.size() > 0) {
+        replace(flavor, "$BASE", mookName);
     }
-    return flavor;
 }
 
 void ChimeraMonster::replace(std::string &source, const std::string &token, const std::string &replacement) {
@@ -382,8 +368,22 @@ std::string ChimeraMonster::generateSummonFlavor() const {
     return "summons allies.";
 }
 
-std::string ChimeraMonster::generateName() const {
-    std::string name = this->baseName;
+void ChimeraMonster::generateName() {
+    if (displayName.length() > 0) {
+        return;
+    }
+    
+    std::string name = baseName;
+    if (namePrefix.length() > 0) {
+        name = namePrefix + " " + name;
+    }
+    if (nameSuffix.length() > 0) {
+        name += " " + nameSuffix;
+    }
+    
+    if (mookName.size() > 0) {
+        replace(name, "$BASE", mookName);
+    }
     
     if (name == "caustic bloat")            name = "bloat";
     if (name == "vampire jackal")           name = "chupacabra";
@@ -408,12 +408,31 @@ std::string ChimeraMonster::generateName() const {
     if (name == "winged quasit")            name = "gargoyle";
     if (name == "acolyte idol")             name = "demonic idol";
     if (name == "acolyte obelisk")          name = "obsidian obelisk";
+
+    displayName = name;
+}
+
+void ChimeraMonster::generateDisplayChar() {
+    generateName();
+    if (displayChar != '?') {
+        return;
+    }
     
-    if (name != this->baseName) {
-        if (isupper(this->displayChar)) {
-            this->displayChar = toupper(name[0]);
+    if (baseDisplayChar == '?') {
+        baseDisplayChar = baseName[0];
+    }
+    displayChar = baseDisplayChar;
+    
+    if (usedChars.find(displayChar) != usedChars.end()) {
+        if (islower(displayChar)) {
+            displayChar = toupper(displayChar);
         } else {
-            this->displayChar = tolower(name[0]);
+            displayChar = tolower(displayChar);
+        }
+        if (usedChars.find(displayChar) != usedChars.end()) {
+            // someone else has BOTH letters? fuck
+            uchar randomChars[] = {0x03D7,0x03D6,0x03B6,0x0376,0x03EA,0x03E0,0x054B,0x0556,0x07F7,0x0186,0x0518};
+            displayChar = randomChars[rand_range(0, sizeof(randomChars) / sizeof(randomChars[0]))];
         }
     }
 }

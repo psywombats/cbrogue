@@ -43,93 +43,95 @@ Ability::~Ability() {
 }
 
 void Ability::applyToMonster(ChimeraMonster &monster) {
-    monster.hp += this->hpBoost;
-    monster.dangerLevel += this->dangerBoost;
-    monster.damage.lowerBound += this->minDamageBoost;
-    monster.damage.upperBound += this->maxDamageBoost;
+    monster.hp += hpBoost;
+    monster.dangerLevel += dangerBoost;
+    monster.damage.lowerBound += minDamageBoost;
+    monster.damage.upperBound += maxDamageBoost;
 
-    if (this->regenSpeed != RegenSpeedType::NORMAL) {
-        monster.regenSpeed = this->regenSpeed;
+    if (regenSpeed != RegenSpeedType::NORMAL) {
+        monster.regenSpeed = regenSpeed;
     }
-    if (this->moveSpeed != MoveSpeedType::NORMAL) {
-        monster.moveSpeed = this->moveSpeed;
+    if (moveSpeed != MoveSpeedType::NORMAL) {
+        monster.moveSpeed = moveSpeed;
     }
-    if (this->attackSpeed != AttackSpeedType::NORMAL) {
-        monster.attackSpeed = this->attackSpeed;
+    if (attackSpeed != AttackSpeedType::NORMAL) {
+        monster.attackSpeed = attackSpeed;
     }
-    if (this->accuracy != AccuracyType::NORMAL) {
-        monster.accuracy = this->accuracy;
+    if (accuracy != AccuracyType::NORMAL) {
+        monster.accuracy = accuracy;
     }
-    if (this->defense != DefenseType::NORMAL) {
-        monster.defense = this->defense;
+    if (defense != DefenseType::NORMAL) {
+        monster.defense = defense;
     }
-    if (this->namePrefix.size() > 0) {
-        monster.name = this->namePrefix + " " + monster.name;
-    }
-    if (this->nameSuffix.size() > 0) {
-        monster.name += " " + this->nameSuffix;
-    }
+    
+    monster.namePrefix = namePrefix;
+    monster.nameSuffix = nameSuffix;
 
-    for (boltType bolt : this->bolts) {
+    for (boltType bolt : bolts) {
         monster.bolts.push_back(bolt);
     }
 
-    monster.flags |= this->flags;
-    monster.abilFlags |= this->abilFlags;
+    monster.flags |= flags;
+    monster.abilFlags |= abilFlags;
     
-    if (this->featureKamikaze != DF_NONE) {
-        monster.feature = this->featureKamikaze;
+    if (featureKamikaze != DF_NONE) {
+        monster.feature = featureKamikaze;
         monster.flags |= (MA_DF_ON_DEATH);
-        monster.featureMessage = this->featureMessage;
-    } else if (this->featurePeriodic != DF_NONE) {
-        monster.feature = this->featurePeriodic;
-        monster.featurePeriodicPercent = this->featurePeriodicPercent;
-        monster.featureMessage = this->featureMessage;
+        monster.featureMessage = featureMessage;
+    } else if (featurePeriodic != DF_NONE) {
+        monster.feature = featurePeriodic;
+        monster.featurePeriodicPercent = featurePeriodicPercent;
+        monster.featureMessage = featureMessage;
     }
     
     if (colorOverride == NULL) {
-        monster.displayColor = this->blendColor(monster.displayColor);
+        monster.displayColor = blendColor(monster.displayColor);
     } else {
-        monster.displayColor = this->colorOverride;
+        monster.displayColor = colorOverride;
     }
     
-    if (this->light != NO_LIGHT) {
-        monster.lightType = this->light;
+    if (light != NO_LIGHT) {
+        monster.lightType = light;
     }
 
-    this->inUse = true;
+    inUse = true;
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
-    return this->validForBody(monster.body);
+    return validForBody(monster.body);
 }
 
 bool Ability::validForBody(const Body &body) const {
+    return validForBodyWithFlags(body, 0);
+}
+
+bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const {
+    unsigned long effectiveRequiredFlags = (requiredFlags & (~ignoredFlags));
+    if ((effectiveRequiredFlags & body.genFlags) != effectiveRequiredFlags) {
+        return false;
+    }
     if (body.genFlags & GF_NO_SPECIALS) {
         return false;
     }
-    if ((this->requiredFlags & body.genFlags) != this->requiredFlags) {
+    if ((forbiddenFlags & body.genFlags) > 0) {
         return false;
     }
-    if ((this->forbiddenFlags & body.genFlags) > 0) {
+    if ((featureKamikaze != DF_NONE || featurePeriodic != DF_NONE) && body.periodicFeature != DF_NONE) {
         return false;
     }
-    if ((this->featureKamikaze != DF_NONE || this->featurePeriodic != DF_NONE) && body.periodicFeature != DF_NONE) {
-        return false;
-    }
-    if ((body.flags & this->flags) > 0) {
+    if ((body.flags & flags) > 0) {
         // this means we'd generate something stupid like a "winged bat" or "mounted horseman"
         return false;
     }
-    if (((body.flags & MONST_FLIES) && this->moveSpeed != MoveSpeedType::NORMAL) ||
+    if (((body.flags & MONST_FLIES) && moveSpeed != MoveSpeedType::NORMAL) ||
         (body.moveSpeed != MoveSpeedType::NORMAL && (body.flags & MONST_FLIES))) {
         // flying is incompatible with movement modifiers
         return false;
     }
-    if (body.defense == DefenseType::DEFENSELESS && this->defense != DefenseType::NORMAL) {
+    if (body.defense == DefenseType::DEFENSELESS && defense != DefenseType::NORMAL) {
         return false;
     }
-    if (this->dangerBoost + body.dangerLevel > 32) {
+    if (dangerBoost + body.dangerLevel > 32) {
         // no one would see this monstrosity, it's probably like an explosive horror or something
         return false;
     }
@@ -138,7 +140,7 @@ bool Ability::validForBody(const Body &body) const {
 }
 
 const color *Ability::blendColor(const color *baseColor) const {
-    switch (this->colorMod) {
+    switch (colorMod) {
     case ColorModFlavor::COMBAT:
         if (baseColor == &white) {
             return &gray;
