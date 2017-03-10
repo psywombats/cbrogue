@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include <vector>
+#include <set>
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
@@ -91,7 +92,7 @@ class ChimeraMonster {
 public:
 
     ChimeraMonster(Body &body);
-    ChimeraMonster(Body &body, ChimeraMonster *baseMonster);
+    ChimeraMonster(Body &body, const std::string &baseMonsterName);
     virtual ~ChimeraMonster();
 
     /**
@@ -103,11 +104,13 @@ public:
     std::string debugReport() const;
 
     void applyAbility(Ability &ability);
+    
+    std::string generateName() const;
 
     // flavor
-    std::string name;
+    std::string baseName;
     const color *displayColor;
-    uchar displayChar;
+    uchar baseDisplayChar;
     dungeonFeatureTypes bloodType;
     lightType lightType;
     GenderType gender;
@@ -134,6 +137,7 @@ public:
 
     // generation
     Body &body;
+    std::string baseMonsterName;
     unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
     int dangerLevel;
@@ -143,23 +147,23 @@ private:
     static short regenSpeedToTurnsPerRegen(RegenSpeedType speed);
     static short moveSpeedToTicksPerMove(MoveSpeedType speed);
     static short attackSpeedToTicksPerAttack(AttackSpeedType speed);
+    
+    static std::string boltToString(boltType bolt);
+    static std::string dungeonFeatureToString(dungeonFeatureTypes feature);
+    static void replace(std::string &source, const std::string &token, const std::string &replacement);
+    
+    static int nextChimeraId;
+    static std::set<std::reference_wrapper<uchar>> usedChars;
 
     void specializeName();
-    std::string generateFlavor();
-    AbsorbFlavorType generateAbsorbFlavor();
-    std::list<std::string> generateAttackFlavor();
-    std::string generateSummonFlavor();
+    std::string generateFlavor() const;
+    AbsorbFlavorType generateAbsorbFlavor() const;
+    std::list<std::string> generateAttackFlavor() const;
+    std::string generateSummonFlavor() const;
 
     // generation
     std::list<std::reference_wrapper<Ability>> abilities;
-    ChimeraMonster *baseMonster;
-
-    static std::string boltToString(boltType bolt);
-    static std::string dungeonFeatureToString(dungeonFeatureTypes feature);
-    void replace(std::string &source, const std::string &token, const std::string &replacement);
-
-    static int nextChimeraId;
-
+    uchar displayChar;
 };
 
 #endif /* CHIMERAMONSTER_H_ */

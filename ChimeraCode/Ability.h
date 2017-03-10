@@ -13,6 +13,8 @@
 #include "Rogue.h"
 #include "ChimeraMonster.h"
 
+class Body;
+
 enum class ColorModFlavor {
     NONE,
     POISONOUS,
@@ -36,6 +38,7 @@ public:
 
     void applyToMonster(ChimeraMonster &monster);
     bool validForMonster(const ChimeraMonster &monster) const;
+    bool validForBody(const Body &body) const;
 
     // rpg
     int hpBoost;

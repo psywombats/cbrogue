@@ -210,9 +210,9 @@ void ensureCatalogsInitialized() {
 int getMonsterCatalogCount() {
     ensureCatalogsInitialized();
     if (CHIMERAS_ENABLED) {
+        // extra 2: one for you, one for Yendor
         return generator->getMonsters().size() + 2;
     } else {
-        // extra 2: one for you, one for Yendor
         return MONSTER_CLASS_COUNT;
     }
 }
@@ -246,7 +246,8 @@ void initMonsterCatalog() {
     
     if (CHIMERAS_ENABLED) {
         for (ChimeraMonster *monster : generator->getMonsters()) {
-            catalog[monster->monsterId] = monster->convertToStruct();
+            creatureType creatureStruct = monster->convertToStruct();
+            catalog[creatureStruct.monsterID] = creatureStruct;
         }
     }
     

@@ -51,7 +51,7 @@ public:
     unsigned long genFlags;            // generateFlag bitset
     int dangerLevel;
     int rarityPercent;
-    bool singleUse;
+    const bool singleUse;
     bool inUse;
 
     // flavor
@@ -61,10 +61,6 @@ public:
     // special, probably leave these
     dungeonFeatureTypes periodicFeature;
     int periodicFeatureChance;
-
-private:
-
-    static std::set<std::reference_wrapper<uchar>> usedChars;
 };
 
 #endif /* BODY_H_ */

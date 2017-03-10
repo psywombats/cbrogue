@@ -9,8 +9,6 @@
 #include "ChimeraMonster.h"
 #include "IncludeGlobals.h"
 
-std::set<std::reference_wrapper<uchar>> Body::usedChars = std::set<std::reference_wrapper<uchar>>();
-
 Body::Body() :
         hp(0),
         baseName(""),
@@ -21,7 +19,6 @@ Body::Body() :
         flags(0),
         abilFlags(0),
         baseColor(&brown),
-        inUse(false),
         singleUse(true),
         light(NO_LIGHT),
         gender(GenderType::NONE),
@@ -53,30 +50,16 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.attackSpeed = this->attackSpeed;
     monster.regenSpeed = this->regenSpeed;
 
-    monster.name = this->baseName;
+    monster.baseName = this->baseName;
     monster.gender = this->gender;
     monster.displayColor = this->baseColor;
+    monster.baseDisplayChar = this->baseChar;
     monster.lightType = this->light;
 
     monster.dangerLevel = this->dangerLevel;
 
-    if (this->baseChar == '?') {
-        this->baseChar = this->baseName.at(0);
-    }
-    if (Body::usedChars.find(this->baseChar) != Body::usedChars.end() && this->singleUse) {
-        if (islower(baseChar)) {
-            this->baseChar = toupper(this->baseChar);
-        } else {
-            this->baseChar = tolower(this->baseChar);
-        }
-        if (Body::usedChars.find(this->baseChar) != Body::usedChars.end()) {
-            // someone else has BOTH letters? fuck
-            uchar randomChars[] = {0x03D7,0x03D6,0x03B6,0x0376,0x03EA,0x03E0,0x054B,0x0556,0x07F7,0x0186,0x0518};
-            this->baseChar = randomChars[rand_range(0, sizeof(randomChars) / sizeof(randomChars[0]))];
-        }
-    }
     Body::usedChars.insert(this->baseChar);
-    monster.displayChar = this->baseChar;
+    monster.baseDisplayChar = this->baseChar;
 
     if (this->singleUse) {
         this->inUse = true;
@@ -748,7 +731,7 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "totem";
+    body->baseName = "$BASE totem";
     body->flavor = "A $BASE with some amount of magical ability has imbued this wooden totem with shamanistic power.";
     body->baseChar = TOTEM_CHAR;
     body->baseColor = &green;
@@ -763,7 +746,22 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "obelisk";
+    body->baseName = "onyx $BASE";
+    body->flavor = "This mysterious $BASE is carved completely out of jet-black onyx. It seems to hold some sway over the $BASE nearby.";
+    body->baseChar = STATUE_CHAR;
+    body->baseColor = &black;
+    body->blood = DF_RUBBLE_BLOOD;
+    body->hp = 30;
+    body->attackSpeed = AttackSpeedType::TOTEM;
+    body->flags = (MONST_TURRET);
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
+    body->singleUse = false;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "$BASE obelisk";
     body->flavor = "This sphere-topped pillar gleams menacingly in the darkness, a testament to the arcane power of the $BASE that crafted it.";
     body->baseChar = 0x03AA; // Ϊ
     body->baseColor = &green;
@@ -778,11 +776,12 @@ std::vector<Body *> Body::loadBodies() {
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "idol";
+    body->baseName = "$BASE idol";
     body->flavor = "A priest has constructed this idol in the image of some $BASE saint, and the statue's gem-studded eyes glimmer with malice from beyond.";
     body->baseChar = 0x03C7; // χ
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
+    body->hp = 30;
     body->attackSpeed = AttackSpeedType::TOTEM;
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;

@@ -30,7 +30,7 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
 std::string Horde::debugReport() const {
     std::string report = "";
 
-    report += leader.name + " (DL " + printInt(minDL()) + "-" + printInt(maxDL());
+    report += leader.generateName() + " (DL " + printInt(minDL()) + "-" + printInt(maxDL());
     report += "  freq. " + printInt(calculateFrequency()) + ")\n";
 
     for (HordeMember *member : this->members) {

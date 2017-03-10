@@ -76,6 +76,7 @@ void MonsterGenerator::generate() {
     Body *specialistMookBody = NULL;
     std::vector<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
     std::vector<std::reference_wrapper<ChimeraMonster>> mookMonsters;
+    std::vector<Body *> mookBodies;
     std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> mookMinions;
 
     // Step 2: Generate the fodder
@@ -113,6 +114,7 @@ void MonsterGenerator::generate() {
             ChimeraMonster &monster = this->newMonster(*body);
             monster.genFlags |= GF_MOOKISH;
             mookMonsters.push_back(monster);
+            mookBodies.push_back(body);
         }
     }
 
@@ -305,18 +307,19 @@ void MonsterGenerator::generate() {
     // Step 11: Thieves
     std::vector<std::reference_wrapper<ChimeraMonster>> thieves;
     for (int i = 0; i < thiefMonstersCount; i += 1) {
-        ChimeraMonster *monster;
+        Body *body;
         if (rand_percent(80)) {
-            Body *body = matchingBody([](const Body *body) {
+            body = matchingBody([](const Body *body) {
                 return body->genFlags & GF_THIEVING;
             });
             if (body == NULL) {
                 continue;
             }
-            monster = new ChimeraMonster(*body);
         } else {
-            ChimeraMonster &mook = mookMonsters[rand_range(0, mookMonsters.size() - 3)];
-            monster = new ChimeraMonster(mook);
+            body = mookBodies[rand_range(0, mookBodies.size() - 4)];
+            body->singleUse = false;
+            monster = new ChimeraMonster(mook.body, mook.name);
+            mook.body.singleUse = true;
         }
         monster->genFlags |= GF_THIEVING;
         Ability *ability = matchingAbility([i, thiefMonstersCount, monster, maxThiefDL](const Ability *ability) {
@@ -376,8 +379,10 @@ void MonsterGenerator::generate() {
                     horde.extraRange = 1;
                 } else {
                     // a fancy group
-                    ChimeraMonster *soloMonster = new ChimeraMonster(monster);
-                    ChimeraMonster *groupMonster = new ChimeraMonster(monster);
+                    monster.body.singleUse = false;
+                    ChimeraMonster *soloMonster = new ChimeraMonster(monster.body, monster.name);
+                    ChimeraMonster *groupMonster = new ChimeraMonster(monster.body, monster.name);
+                    monster.body.singleUse = true;
                     groupMonster->genFlags |= GF_PACK_MEMBER;
                     Ability *soloAbility = matchingAbility([soloMonster](const Ability *ability) {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
@@ -437,7 +442,9 @@ void MonsterGenerator::generate() {
                 if (mook.dangerLevel < minDL || mook.dangerLevel > maxDL) {
                     continue;
                 }
-                monster = new ChimeraMonster(mook);
+                mook.body.singleUse = false;
+                monster = new ChimeraMonster(mook.body, mook.name);
+                mook.body.singleUse = true;
                 break;
             }
             if (monster == NULL) {
@@ -490,7 +497,7 @@ void MonsterGenerator::generate() {
         }
         j += 1;
         ChimeraMonster &totem = this->newMonster(*body);
-        totem.name = mook.name;
+        totem.baseMonsterName = mook.name;
         totem.genFlags |= mook.genFlags;
         totem.displayColor = mook.displayColor;
         if (mook.dangerLevel > 10) {
@@ -631,7 +638,7 @@ ChimeraMonster &MonsterGenerator::newMonster(Body &body) {
 ChimeraMonster &MonsterGenerator::newMonster(const ChimeraMonster &baseMonster) {
     bool wasSingleUse = baseMonster.body.singleUse;
     baseMonster.body.singleUse = false;
-    ChimeraMonster *monster = new ChimeraMonster(baseMonster);
+    ChimeraMonster *monster = new ChimeraMonster(baseMonster.body, baseMonster.name);
     this->monsters.push_back(monster);
     baseMonster.body.singleUse = wasSingleUse;
     return *monster;

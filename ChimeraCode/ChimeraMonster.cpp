@@ -13,14 +13,16 @@
 #include <stdlib.h>
 
 int ChimeraMonster::nextChimeraId = 0;
+std::set<std::reference_wrapper<uchar>> ChimeraMonster::usedChars = std::set<std::reference_wrapper<uchar>>();
 
 ChimeraMonster::ChimeraMonster(Body &newBody) :
         hp(0),
         genFlags(0),
         abilFlags(0),
         flags(0),
-        displayChar('x'),
-        baseMonster(NULL),
+        baseMonsterName(""),
+        displayChar('?'),
+        baseDisplayChar('?'),
         accuracy(AccuracyType::NORMAL),
         defense(DefenseType::NORMAL),
         bloodType(DF_NONE),
@@ -47,12 +49,12 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
     body.applyToMonster(*this);
 }
 
-ChimeraMonster::ChimeraMonster(Body &body, ChimeraMonster *baseMonster) :  ChimeraMonster(body) {
-    this->baseMonster = baseMonster;
+ChimeraMonster::ChimeraMonster(Body &body, const std::string &baseMonsterName) :  ChimeraMonster(body) {
+    this->baseMonsterName = std::string(baseMonsterName);
 }
 
 ChimeraMonster::~ChimeraMonster() {
-
+    
 }
 
 creatureType ChimeraMonster::convertToStruct() {
@@ -61,7 +63,6 @@ creatureType ChimeraMonster::convertToStruct() {
     this->damage.lowerBound = MAX(damage.lowerBound, 0);
 
     creatureStruct.monsterID = this->monsterId;
-    memcpy(&creatureStruct.monsterName, this->name.c_str(), this->name.length()+1);
     creatureStruct.displayChar = this->displayChar;
     creatureStruct.foreColor = this->displayColor;
     creatureStruct.maxHP = this->hp;
@@ -74,10 +75,12 @@ creatureType ChimeraMonster::convertToStruct() {
 
     AbsorbFlavorType absorb = this->generateAbsorbFlavor();
     std::string flavor = this->generateFlavor();
-    memcpy(&creatureStruct.flavorText, flavor.c_str(), flavor.length()+1);
-    memcpy(&creatureStruct.absorbStatus, absorb.status.c_str(), absorb.status.length()+1);
-    memcpy(&creatureStruct.absorbing, absorb.message.c_str(), absorb.message.length()+1);
-
+    std::string genName = this->generateName();
+    strcpy(creatureStruct.monsterName, genName.c_str());
+    strcpy(creatureStruct.flavorText, flavor.c_str());
+    strcpy(creatureStruct.absorbStatus, absorb.status.c_str());
+    strcpy(creatureStruct.absorbing, absorb.message.c_str());
+    
     if (this->hp < 10) {
         creatureStruct.accuracy = 70;
     } else if (this->hp < 19) {
@@ -121,6 +124,26 @@ creatureType ChimeraMonster::convertToStruct() {
 
     creatureStruct.flags = this->flags;
     creatureStruct.abilityFlags = this->abilFlags;
+    
+    if (this->displayChar == '?') {
+        if (this->baseDisplayChar == '?') {
+            this->baseDisplayChar = this->baseName[0];
+        }
+        this->displayChar = this->baseDisplayChar;
+        if (usedChars.find(this->displayChar) != usedChars.end()) {
+            if (islower(this->displayChar)) {
+                this->displayChar = toupper(this->displayChar);
+            } else {
+                this->displayChar = tolower(this->displayChar);
+            }
+            if (usedChars.find(this->displayChar) != usedChars.end()) {
+                // someone else has BOTH letters? fuck
+                uchar randomChars[] = {0x03D7,0x03D6,0x03B6,0x0376,0x03EA,0x03E0,0x054B,0x0556,0x07F7,0x0186,0x0518};
+                this->displayChar = randomChars[rand_range(0, sizeof(randomChars) / sizeof(randomChars[0]))];
+            }
+        }
+        
+    }
 
     for (unsigned int i = 0; i < this->bolts.size(); i += 1) {
         creatureStruct.bolts[i] = this->bolts[i];
@@ -166,7 +189,7 @@ void ChimeraMonster::applyAbility(Ability &ability) {
 std::string ChimeraMonster::debugReport() const {
     std::string report = "";
 
-    report += name + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
+    report += generateName() + " (id " + printInt(monsterId) + " DL " + printInt(dangerLevel) + ")\n";
     report += "  HP: " + printInt(hp) + "  dmg: " + printInt(damage.lowerBound) + "-" + printInt(damage.upperBound) + "\n";
     report += "  Specials: ";
     if (accuracy == AccuracyType::ACCURATE) report += "(accurate) ";
@@ -319,7 +342,7 @@ short ChimeraMonster::attackSpeedToTicksPerAttack(AttackSpeedType speed) {
     return 0;
 }
 
-std::string ChimeraMonster::generateFlavor() {
+std::string ChimeraMonster::generateFlavor() const {
     std::string flavor = body.flavor;
     for (Ability &ability : abilities) {
         if (ability.flavorOverride.length() > 0) {
@@ -328,8 +351,8 @@ std::string ChimeraMonster::generateFlavor() {
             flavor += " " + ability.flavorAddition;
         }
     }
-    if (baseMonster != NULL) {
-        replace(flavor, "$BASE", baseMonster->name);
+    if (baseMonsterName.size() > 0) {
+        replace(flavor, "$BASE", baseMonsterName);
     }
     return flavor;
 }
@@ -342,25 +365,26 @@ void ChimeraMonster::replace(std::string &source, const std::string &token, cons
     }
 }
 
-AbsorbFlavorType ChimeraMonster::generateAbsorbFlavor() {
+AbsorbFlavorType ChimeraMonster::generateAbsorbFlavor() const {
     AbsorbFlavorType flavor;
     flavor.message = "absorbing";
     flavor.status = "Absorbing";
     return flavor;
 }
 
-std::list<std::string> ChimeraMonster::generateAttackFlavor() {
+std::list<std::string> ChimeraMonster::generateAttackFlavor() const {
     std::list<std::string> list;
     list.push_back("hits");
     return list;
 }
 
-std::string ChimeraMonster::generateSummonFlavor() {
+std::string ChimeraMonster::generateSummonFlavor() const {
     return "summons allies.";
 }
 
-void ChimeraMonster::specializeName() {
-    std::string nameBefore = this->name;
+std::string ChimeraMonster::generateName() const {
+    std::string name = this->baseName;
+    
     if (name == "caustic bloat")            name = "bloat";
     if (name == "vampire jackal")           name = "chupacabra";
     if (name == "vampire dog")              name = "chupacabra";
@@ -384,9 +408,8 @@ void ChimeraMonster::specializeName() {
     if (name == "winged quasit")            name = "gargoyle";
     if (name == "acolyte idol")             name = "demonic idol";
     if (name == "acolyte obelisk")          name = "obsidian obelisk";
-    if (name == "onyx acolyte")             name = "angel statue";
     
-    if (nameBefore != this->name && (genFlags & GF_TOTEM)) {
+    if (name != this->baseName) {
         if (isupper(this->displayChar)) {
             this->displayChar = toupper(name[0]);
         } else {

@@ -3,12 +3,26 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "initMonsterCatalog():MonsterGlobals.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "monster-&gt;monsterId">
+            </PersistentString>
+            <PersistentString
+               value = "getMonsterCatalogCount()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "generateMonster:Monsters.c">
          <PersistentStrings>
             <PersistentString
                value = "getMonsterCatalog()">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ChimeraMonster::convertToStruct():ChimeraMonster.cpp">
       </ContextState>
       <ContextState
          contextName = "paintLight:Light.c">
