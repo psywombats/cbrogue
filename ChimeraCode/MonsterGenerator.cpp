@@ -12,8 +12,25 @@
 #include "Ability.h"
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
-MonsterGenerator::MonsterGenerator() {
+MonsterGenerator::MonsterGenerator() :
+        ratTrapMonsterId(0),
+        warrenBossMonsterId(0),
+        vampireBossMonsterId(0),
+        wingedGuardianMonsterId(0),
+        guardianMonsterId(0),
+        sentinelMonsterId(0),
+        wardenMonsterId(0),
+        mirrorMonsterId(0),
+        webberMonsterId(0),
+        diggerMonsterId(0),
+        sparkMonsterId(0),
+        undeadMonsterId(0),
+        invisibleMonsterId(0),
+        spectralImageMonsterId(0),
+        conjurationMonsterId(0),
+        charmSummonMonsterId(0) {
 
 }
 
@@ -73,6 +90,10 @@ void MonsterGenerator::generate() {
 
     int specialistOnlyMook = rand_range(1, mookCount / 2); // index of the "dar", with no base type
     int specialistMookClasses = rand_range(3, 4);
+    unsigned long weird = (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET | GF_BOSS_ONLY | GF_CONJURATION);
+    unsigned long guardFlag = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_ALWAYS_HUNTING | MONST_IMMUNE_TO_FIRE |
+                               MONST_IMMUNE_TO_WEAPONS | MONST_WILL_NOT_USE_STAIRS | MONST_DIES_IF_NEGATED | MONST_REFLECT_4 |
+                               MONST_ALWAYS_USE_ABILITY | MONST_GETS_TURN_ON_ACTIVATION);
     Body *specialistMookBody = NULL;
     std::vector<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
     std::vector<std::reference_wrapper<ChimeraMonster>> mookMonsters;
@@ -81,8 +102,8 @@ void MonsterGenerator::generate() {
 
     // Step 2: Generate the vanilla mooks
     for (int i = 0; i < mookCount; i += 1) {
-        Body *body = matchingBody([maxMookDL, mookCount, i, specialistOnlyMook](const Body *body) {
-            if (body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET)) {
+        Body *body = matchingBody([weird, maxMookDL, mookCount, i, specialistOnlyMook](const Body *body) {
+            if (body->genFlags & weird) {
                 return false;
             }
             if (i == specialistOnlyMook && !(body->genFlags & GF_SUPPORTS_CLASS)) {
@@ -107,8 +128,8 @@ void MonsterGenerator::generate() {
     
     // Step 3: Generate the fodder
     for (int i = 0; i < fodderCount; i += 1) {
-        Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET));
+        Body *body = matchingBody([weird](const Body *body) {
+            return body->dangerLevel <= 3 && !(body->genFlags & weird);
         });
         if (body == NULL) {
             continue;
@@ -120,8 +141,10 @@ void MonsterGenerator::generate() {
             Ability *ability = matchingAbility([body](const Ability *ability) {
                 return ability->validForBody(*body) && ability->dangerBoost <= 2;
             });
-            monster.dangerLevel -= 1;
-            monster.applyAbility(*ability);
+            if (ability != NULL) {
+                monster.dangerLevel -= 1;
+                monster.applyAbility(*ability);
+            }
         }
     }
 
@@ -247,8 +270,8 @@ void MonsterGenerator::generate() {
                 maxDL = mook.dangerLevel - 2;
                 minDL = mook.dangerLevel/2 - 1;
             }
-            Body *body = matchingBody([minDL, maxDL, mook](const Body *body) {
-                return body->dangerLevel <= maxDL && body->dangerLevel >= minDL;
+            Body *body = matchingBody([minDL, maxDL, mook, weird](const Body *body) {
+                return body->dangerLevel <= maxDL && body->dangerLevel >= minDL && !(body->genFlags & weird);
             });
             if (body == NULL) {
                 continue;
@@ -463,8 +486,8 @@ void MonsterGenerator::generate() {
             if (body == NULL) {
                 // no mook available, let's find another suitable mob
                 minDL += 3;
-                Body *body = matchingBody([minDL, maxDL](const Body *body) {
-                    if (body->dangerLevel > minDL || body->dangerLevel < maxDL) {
+                Body *body = matchingBody([minDL, maxDL, weird](const Body *body) {
+                    if (body->dangerLevel > minDL || body->dangerLevel < maxDL || (body->genFlags & weird)) {
                         return false;
                     }
                     return (body->genFlags & GF_AQUATIC) > 0;
@@ -573,6 +596,9 @@ void MonsterGenerator::generate() {
         horde.extraRange = -1;
     }
     
+    // This marks the end of the standard generation
+    std::random_shuffle(monsters.begin(), monsters.end());
+    
     // Step 15: Rat trap monster ID
     int lowestMonsterId = fodderMonsters[0].get().monsterId;
     int lowestDL = fodderMonsters[0].get().dangerLevel;
@@ -587,6 +613,249 @@ void MonsterGenerator::generate() {
     // Step 16: TODO: populate the goblin warren
     
     // Step 17: "Vampire" boss
+    Body *vampireBody = matchingBody([weird](const Body *body) {
+        if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
+            return false;
+        }
+        return !(body->genFlags & weird) && body->dangerLevel >= 17 && body->dangerLevel <= 24;
+    });
+    Ability *vampireAbility = matchingAbility([](const Ability *ability) {
+        return (ability->abilFlags & MA_TRANSFERENCE);
+    });
+    if (vampireBody != NULL && vampireAbility != NULL) {
+        ChimeraMonster &vampire = newMonster(*vampireBody);
+        vampire.applyAbility(*vampireAbility);
+        vampireBossMonsterId = vampire.monsterId;
+    }
+    
+    // Step 18: Guardians
+    Body *guardianBody = NULL;
+    for (int i = 0; i < 100 && guardianBody == NULL; i += 1) {
+        guardianBody = matchingBody([weird](const Body *body) {
+            if (body->genFlags & weird) {
+                return false;
+            }
+            if (!(body->genFlags & GF_ARMED)) {
+                return false;
+            }
+            if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
+                return false;
+            }
+            if (!(body->dangerLevel > 15) && rand_percent(50)) {
+                return false;
+            }
+            return true;
+        });
+    }
+    if (guardianBody != NULL) {
+        guardianBody->abilFlags = 0;
+        guardianBody->accuracy = AccuracyType::ACCURATE;
+        guardianBody->baseColor = &white;
+        guardianBody->baseChar = toupper(guardianBody->baseChar);
+        guardianBody->defense = DefenseType::DEFENSELESS;
+        guardianBody->flags = guardFlag;
+        guardianBody->flavor =  std::string("Guarding the room is a weathered stone statue of a $BASE carrying a $WEAPON, ") +
+                                std::string("connected to the glowing glyphs on the floor by invisible strands of enchantment.");
+        guardianBody->gender = GenderType::NONE;
+        guardianBody->hp = 1000;
+        guardianBody->light = NO_LIGHT;
+        guardianBody->minDamage = 12;
+        guardianBody->maxDamage = 17;
+        guardianBody->periodicFeatureChance = 100;
+        guardianBody->periodicFeature = DF_GUARDIAN_STEP;
+        guardianBody->regenSpeed = RegenSpeedType::NONE;
+        
+        ChimeraMonster &guardian = newMonster(*guardianBody);
+        guardianMonsterId = guardian.monsterId;
+        guardian.mookName = guardianBody->baseName;
+        guardian.namePrefix = "guardian";
+        
+        ChimeraMonster &wingedGuardian = newMonster(*guardianBody);
+        wingedGuardianMonsterId = wingedGuardian.monsterId;
+        wingedGuardian.mookName = guardianBody->baseName;
+        wingedGuardian.namePrefix = "guardian";
+        wingedGuardian.displayColor = &blue;
+        wingedGuardian.bolts = {BOLT_BLINKING};
+        wingedGuardian.feature = DF_SILENT_GLYPH_GLOW;
+        
+        ChimeraMonster &charmGuardian = newMonster(*guardianBody);
+        charmSummonMonsterId = charmGuardian.monsterId;
+        charmGuardian.flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_IMMUNE_TO_FIRE | MONST_IMMUNE_TO_WEAPONS | MONST_DIES_IF_NEGATED | MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY);
+        wingedGuardian.mookName = guardianBody->baseName;
+        charmGuardian.namePrefix = "guardian";
+        charmGuardian.baseFlavor = "A spectral outline of a $BASE carrying a $WEAPON casts an ethereal light on its surroundings.";
+        charmGuardian.damage.lowerBound = 5;
+        charmGuardian.damage.upperBound = 12;
+        charmGuardian.displayColor = &spectralImageColor;
+        charmGuardian.feature = DF_NONE;
+        charmGuardian.lightType = SPECTRAL_IMAGE_LIGHT;
+    }
+    
+    // Step 19: Sentinels
+    Body *sentinelBody = NULL;
+    for (int i = 0; i < 100 && sentinelBody == NULL; i += 1) {
+        sentinelBody = matchingBody([weird](const Body *body) {
+            if (body->genFlags & weird) {
+                return false;
+            }
+            if (!(body->genFlags & GF_WIZARDLY)) {
+                return false;
+            }
+            if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
+                return false;
+            }
+            if (!(body->dangerLevel > 15) && rand_percent(50)) {
+                return false;
+            }
+            return true;
+        });
+    }
+    if (sentinelBody != NULL) {
+        sentinelBody->abilFlags = 0;
+        sentinelBody->accuracy = AccuracyType::ACCURATE;
+        sentinelBody->baseColor = &sentinelColor;
+        sentinelBody->baseChar = toupper(guardianBody->baseChar);
+        sentinelBody->blood = DF_RUBBLE_BLOOD;
+        sentinelBody->defense = DefenseType::DEFENSELESS;
+        sentinelBody->flags = (MONST_TURRET | MONST_CAST_SPELLS_SLOWLY | MONST_DIES_IF_NEGATED);
+        sentinelBody->flavor =  std::string("A crystal $BASE statue of indeterminable age, the $BASE sentinel holds aloft a $MAGIC that gleams with ") +
+                                std::string("ancient warding magic. Sentinels are always found in groups, and each will attempt to aid the others.");
+        sentinelBody->gender = GenderType::NONE;
+        sentinelBody->hp = 1000;
+        sentinelBody->light = SENTINEL_LIGHT;
+        sentinelBody->hp = 50;
+        sentinelBody->minDamage = 0;
+        sentinelBody->maxDamage = 0;
+        sentinelBody->regenSpeed = RegenSpeedType::NONE;
+        ChimeraMonster &sentinel = newMonster(*sentinelBody);
+        sentinelMonsterId = sentinel.monsterId;
+        sentinel.namePrefix = "sentinel";
+        std::vector<boltType> offenseBolts = { BOLT_SPARK, BOLT_SPARK, BOLT_POISON };
+        std::vector<boltType> defenseBolts = { BOLT_HEALING, BOLT_HEALING, BOLT_HASTE, BOLT_SHIELDING };
+        sentinel.bolts.push_back(offenseBolts[rand_range(0, offenseBolts.size() - 1)]);
+        sentinel.bolts.push_back(defenseBolts[rand_range(0, defenseBolts.size() - 1)]);
+    }
+    
+    // Step 20: Constant monsters
+    wardenMonsterId = 0;
+    spectralImageMonsterId = 0;
+    
+    // Step 21: Mirror totem
+    Body *mirrorBody = NULL;
+    mirrorBody = matchingBody([weird](const Body *body) {
+        if (!(body->genFlags & GF_TOTEM) || (body->genFlags & GF_ANIMAL)) {
+            return false;
+        }
+        return (body->genFlags & GF_WIZARDLY) || (body->genFlags & GF_SHAMANISTIC);
+    });
+    if (mirrorBody != NULL) {
+        ChimeraMonster &mirrorTotem = newMonster(*mirrorBody);
+        mirrorMonsterId = mirrorTotem.monsterId;
+        ChimeraMonster::replace(mirrorTotem.baseName, "$BASE", "mirror");
+        ChimeraMonster::replace(mirrorTotem.baseName, "$BASE", "ancient");
+        mirrorTotem.flags = (MONST_IMMUNE_TO_WEBS | MONST_NEVER_SLEEPS | MONST_IMMOBILE | MONST_INANIMATE | MONST_ALWAYS_HUNTING | MONST_WILL_NOT_USE_STAIRS |
+                             MONST_GETS_TURN_ON_ACTIVATION | MONST_ALWAYS_USE_ABILITY | MONST_REFLECT_4 | MONST_IMMUNE_TO_WEAPONS | MONST_IMMUNE_TO_FIRE);
+        mirrorTotem.bolts = {BOLT_BECKONING};
+        mirrorTotem.feature = DF_MIRROR_TOTEM_STEP;
+        mirrorTotem.lightType = NO_LIGHT;
+        mirrorTotem.featurePeriodicPercent = 100;
+    }
+    
+    // Step 22: Webber (if we have one)
+    for (ChimeraMonster *monster : monsters) {
+        for (boltType bolt : monster->bolts) {
+            if (bolt == BOLT_SPIDERWEB) {
+                webberMonsterId = monster->monsterId;
+                break;
+            }
+        }
+        if (webberMonsterId != 0) {
+            break;
+        }
+    }
+    
+    // Step 23: Digger
+    for (ChimeraMonster *existing : monsters) {
+        if (!(existing->genFlags & GF_DIGGER) || (existing->genFlags & (GF_BOSS_ONLY | GF_AQUATIC_ONLY | GF_KAMIKAZE))) {
+            continue;
+        }
+        diggerMonsterId = existing->monsterId;
+        if (existing->namePrefix.length() == 0 && existing->nameSuffix.length() == 0) {
+            if (existing->genFlags & GF_AMORPHOUS) {
+                existing->namePrefix = "wall";
+            } else if (existing->genFlags & GF_INSECTOID) {
+                existing->namePrefix = "burrowing";
+            } else {
+                existing->namePrefix = "tunnel";
+            }
+        }
+        existing->baseFlavor += "The " + existing->baseName + " is able to hibernate in walls when low on food, and at times even burst through them in ambush.";
+        existing->flags |= MONST_NEVER_SLEEPS;
+    }
+    if (diggerMonsterId == 0) {
+        Body *diggerBody = matchingBody([weird](const Body *body) {
+            return body->genFlags & GF_DIGGER;
+        });
+        // sloppy code duplication ahead
+        if (diggerBody != NULL) {
+            ChimeraMonster &digger = newMonster(*diggerBody);
+            diggerMonsterId = digger.monsterId;
+            if (diggerBody->genFlags & GF_AMORPHOUS) {
+                digger.namePrefix = "wall";
+            } else if (diggerBody->genFlags & GF_INSECTOID) {
+                digger.namePrefix = "burrowing";
+            } else {
+                digger.namePrefix = "tunnel";
+            }
+            digger.baseFlavor += "The " + digger.baseName + " is able to hibernate in walls when low on food, and at times even burst through them in ambush.";
+            digger.flags |= MONST_NEVER_SLEEPS;
+        }
+    }
+    
+    // Step 24: Spark turret (if we have one)
+    for (ChimeraMonster *monster : monsters) {
+        if (!(monster->genFlags & GF_TURRET)) {
+            continue;
+        }
+        for (boltType bolt : monster->bolts) {
+            if (bolt == BOLT_SPARK) {
+                sparkMonsterId = monster->monsterId;
+                break;
+            }
+        }
+        if (sparkMonsterId != 0) {
+            break;
+        }
+    }
+    
+    // Step 25: Undead (if we have one)
+    for (ChimeraMonster *monster : monsters) {
+        if (!(monster->genFlags & GF_UNDEAD)) {
+            undeadMonsterId = monster->monsterId;
+            break;
+        }
+    }
+    
+    // Step 26: Invisibility (if we have any)
+    for (ChimeraMonster *monster : monsters) {
+        if (!(monster->flags & MONST_INVISIBLE)) {
+            invisibleMonsterId = monster->monsterId;
+            break;
+        }
+    }
+    if (invisibleMonsterId == 0) {
+        // undead are close enough
+        invisibleMonsterId = undeadMonsterId;
+    }
+    
+    // Step 27: Conjuration
+    Body *conjurationBody = matchingBody([](const Body *body) {
+        return body->genFlags & GF_CONJURATION;
+    });
+    if (conjurationBody != NULL) {
+        ChimeraMonster &conjuration = newMonster(*conjurationBody);
+        conjurationMonsterId = conjuration.monsterId;
+    }
     
     std::string report = debugReport();
     std::cout << report;

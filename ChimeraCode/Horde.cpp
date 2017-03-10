@@ -193,6 +193,11 @@ int Horde::calculateFrequency() const {
     }
     
     frequency -= (this->memberCount() - 1);
+    if (purpose == HordePurposeType::THIEF) {
+        if (members.size() > 0) {
+            frequency /= members.front()->maxCount;
+        }
+    }
     frequency += extraFrequency;
     frequency = MAX(1, frequency);
     return frequency;

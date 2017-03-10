@@ -15,6 +15,17 @@
 int ChimeraMonster::nextChimeraId = 0;
 std::map<std::reference_wrapper<uchar>, std::string> ChimeraMonster::usedChars;
 
+static std::vector<std::string> flavorWeaponNames = {   "greatsword", "battleaxe", "broadsword", "lance",  "flail", "warhammer", "waraxe", "saber", "scythe",
+                                                        "claymore", "zweihander", "bardiche", "poleaxe", "mace", "morning star", "pike", "trident", "glaive",
+                                                        "halberd", "partisan", "voulge", "broad-bladed sword", "dull broadsword", "broken greatsword",
+                                                        "ancient claymore", "stone sword", "iron blade", "two-handed scimitar", "chipped longsword" };
+static std::vector<std::string> flavorMagicNames = {    "orb", "sphere", "ring", "ankh", "cross", "sceptre", "wand", "staff", "book", "tome", "iron tome",
+                                                        "metal skull", "wooden skull", "candelabra", "incense burner", "iron rod", "strand of beads",
+                                                        "clay icon", "statuette", "golden chalice", "single golden coin", "faded scroll", "silver shortsword",
+                                                        "silver dagger", "ox skull", "ceremonial mace", "torch", "torque", "stone codex" };
+static std::vector<std::string> flavorSwordNames = {    "rapier", "blade", "sword", "shortsword", "longsword", "dirk", "scimitar", "saber" };
+static std::vector<std::string> fodderNames =      {    "magpie", "rat", "songbird", "ferret", "jay", "crow", "spider", "hand", "wisp", "globe", "sphere" };
+
 ChimeraMonster::ChimeraMonster(Body &newBody) :
         hp(0),
         genFlags(0),
@@ -24,6 +35,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         displayName(""),
         nameSuffix(""),
         namePrefix(""),
+        baseFlavor(""),
         displayChar('?'),
         baseDisplayChar('?'),
         accuracy(AccuracyType::NORMAL),
@@ -96,9 +108,10 @@ creatureType ChimeraMonster::convertToStruct() {
     }
     if (accuracy == AccuracyType::ACCURATE) {
         creatureStruct.accuracy = (short)((float)creatureStruct.accuracy * 1.5f);
-    }
-    if (accuracy == AccuracyType::INACCURATE) {
+    } else if (accuracy == AccuracyType::INACCURATE) {
         creatureStruct.accuracy -= 30;
+    } else if (accuracy == AccuracyType::FIXED) {
+        creatureStruct.accuracy = 150;
     }
 
     if (hp < 10) {
@@ -232,8 +245,8 @@ std::string ChimeraMonster::debugReport() {
     if ((abilFlags & MA_ATTACKS_EXTEND) > 0) report += ".whip atk.";
     if ((abilFlags & MA_AVOID_CORRIDORS) > 0) report += ".nohalls.";
 
-    if (featureKamikaze) report += ".kamikaze ";
-    if (featurePeriodicPercent > 0) report += ".periodic ";
+    if (featureKamikaze) report += ".kamikaze.";
+    if (featurePeriodicPercent > 0) report += ".periodic.";
     
     
     report += "\n";
@@ -330,7 +343,7 @@ short ChimeraMonster::attackSpeedToTicksPerAttack(AttackSpeedType speed) {
 }
 
 void ChimeraMonster::generateFlavor() {
-    flavor = body.flavor;
+    flavor = baseFlavor;
     for (Ability &ability : abilities) {
         if (ability.flavorOverride.length() > 0) {
             flavor = ability.flavorOverride;
@@ -341,6 +354,10 @@ void ChimeraMonster::generateFlavor() {
     if (mookName.size() > 0) {
         replace(flavor, "$BASE", mookName);
     }
+    replace(flavor, "$WEAPON", flavorWeaponNames[rand_range(0, flavorWeaponNames.size() - 1)]);
+    replace(flavor, "$MAGIC", flavorMagicNames[rand_range(0, flavorMagicNames.size() - 1)]);
+    replace(flavor, "$SWORD", flavorSwordNames[rand_range(0, flavorSwordNames.size() - 1)]);
+    replace(flavor, "$FODDER", fodderNames[rand_range(0, fodderNames.size() - 1)]);
 }
 
 void ChimeraMonster::replace(std::string &source, const std::string &token, const std::string &replacement) {
@@ -385,6 +402,15 @@ void ChimeraMonster::generateName() {
         replace(name, "$BASE", mookName);
     }
     
+    std::string weapon = "";
+    while (weapon.length() <= 0 || weapon.length() > 10) {
+        weapon = flavorWeaponNames[rand_range(0, flavorWeaponNames.size() - 1)];
+    }
+    replace(name, "$WEAPON", weapon);
+    replace(name, "$MAGIC", flavorMagicNames[rand_range(0, flavorMagicNames.size() - 1)]);
+    replace(name, "$SWORD", flavorSwordNames[rand_range(0, flavorSwordNames.size() - 1)]);
+    replace(name, "$FODDER", fodderNames[rand_range(0, fodderNames.size() - 1)]);
+    
     if (name == "caustic bloat")            name = "bloat";
     if (name == "vampire jackal")           name = "chupacabra";
     if (name == "vampire dog")              name = "chupacabra";
@@ -408,6 +434,7 @@ void ChimeraMonster::generateName() {
     if (name == "winged quasit")            name = "gargoyle";
     if (name == "acolyte idol")             name = "demonic idol";
     if (name == "acolyte obelisk")          name = "obsidian obelisk";
+    if (name == "burrowing worm")           name = "underworm";
 
     displayName = name;
 }

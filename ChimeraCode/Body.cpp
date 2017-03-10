@@ -59,6 +59,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.dangerLevel = this->dangerLevel;
     
     monster.baseDisplayChar = this->baseChar;
+    monster.baseFlavor = this->flavor;
     
     this->inUse = true;
 
@@ -156,7 +157,6 @@ std::vector<Body *> Body::loadBodies() {
     body->accuracy = AccuracyType::INACCURATE;
     body->gender = GenderType::BOTH;
     body->genFlags = (GF_ANIMAL |GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
-    body->rarityPercent = 75;
     bodies.push_back(body);
 
     body = new Body();
@@ -277,6 +277,7 @@ std::vector<Body *> Body::loadBodies() {
 
     body = new Body();
     body->baseName = "ogre";
+    body->baseChar = 'O';
     body->flavor = "This lumbering creature carries an enormous club that $HESHE can swing with incredible force.";
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
@@ -300,7 +301,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::FAST;
     body->dangerLevel = 14;
     body->abilFlags = MA_SEIZES;
-    body->genFlags = (GF_AQUATIC | GF_AMORPHOUS);
+    body->genFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_UNDEAD);
     body->rarityPercent = 33;
     bodies.push_back(body);
 
@@ -344,7 +345,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 50;
     body->moveSpeed = MoveSpeedType::FAST;
     body->dangerLevel = 13;
-    body->genFlags = (GF_ARMED);
+    body->genFlags = (GF_ARMED | GF_UNDEAD);
     bodies.push_back(body);
 
     body = new Body();
@@ -357,7 +358,7 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 9;
     body->hp = 50;
     body->dangerLevel = 13;
-    body->genFlags = (GF_ARMED | GF_WIZARDLY | GF_SUPPORTS_CLASS);
+    body->genFlags = (GF_ARMED | GF_WIZARDLY | GF_SUPPORTS_CLASS | GF_UNDEAD);
     bodies.push_back(body);
 
     body = new Body();
@@ -385,7 +386,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 9;
     body->abilFlags = (MA_TRANSFERENCE);
     body->gender = GenderType::BOTH;
-    body->genFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
+    body->genFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY | GF_UNDEAD);
     body->rarityPercent = 25;
     bodies.push_back(body);
 
@@ -474,8 +475,19 @@ std::vector<Body *> Body::loadBodies() {
     body->moveSpeed = MoveSpeedType::SLOW;
     body->attackSpeed = AttackSpeedType::SLOW;
     body->dangerLevel = 13;
-    body->genFlags = (GF_ANIMAL | GF_INSECTOID | GF_AQUATIC);
+    body->genFlags = (GF_ANIMAL | GF_INSECTOID | GF_AQUATIC | GF_DIGGER);
     bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "armor";
+    body->flavor = "A suit of battered and pockmarked armor floats through the air, $HISHER $WEAPON swinging blindly before $HIMHER.";
+    body->baseChar = ']';
+    body->baseColor = &gray;
+    body->minDamage = 9;
+    body->maxDamage = 13;
+    body->hp = 60;
+    body->dangerLevel = 18;
+    body->genFlags = (GF_BOSSLIKE);
 
     body = new Body();
     body->baseName = "fury";
@@ -516,7 +528,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 100;
     body->dangerLevel = 23;
     body->defense = DefenseType::LOW;
-    body->flags = (GF_INSECTOID | GF_BOSSLIKE);
+    body->flags = (GF_INSECTOID | GF_BOSSLIKE | GF_DIGGER);
     bodies.push_back(body);
 
     body = new Body();
@@ -541,27 +553,42 @@ std::vector<Body *> Body::loadBodies() {
     body->baseColor = &darkRed;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 25;
-    body->maxDamage = 45;
+    body->maxDamage = 40;
     body->hp = 140;
     body->dangerLevel = 28;
     body->gender = GenderType::BOTH;
-    body->genFlags = (GF_WIZARDLY | GF_AQUATIC | GF_BOSSLIKE);
+    body->genFlags = (GF_WIZARDLY | GF_AQUATIC | GF_BOSSLIKE | GF_DIGGER);
     body->abilFlags = MA_ATTACKS_ALL_ADJACENT;
-    body->rarityPercent = 66;
     bodies.push_back(body);
 
     body = new Body();
     body->baseName = "jelly";
     body->flavor = "This mass of caustic pink goo slips across the ground in search of a warm meal.";
-    body->baseColor = &darkGreen;
+    body->baseColor = &pink;
     body->blood = DF_GREEN_BLOOD;
     body->minDamage = 1;
     body->maxDamage = 3;
     body->hp = 38;
     body->dangerLevel = 6;
     body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
-    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS);
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER);
     body->rarityPercent = 100;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "pudding";
+    body->flavor = "The rare cousin of the jelly, the pudding is bigger, stronger, and hungrier to boot.";
+    body->baseColor = &black;
+    body->blood = DF_PURPLE_BLOOD;
+    body->minDamage = 2;
+    body->maxDamage = 7;
+    body->hp = 100;
+    body->dangerLevel = 19;
+    body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER);
+    body->rarityPercent = 25;
     bodies.push_back(body);
     
     body = new Body();
@@ -774,7 +801,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "$BASE totem";
-    body->flavor = "A $BASE with some amount of magical ability has imbued this wooden totem with shamanistic power.";
+    body->flavor = "Some $BASE with an amount of magical ability has imbued this totem with shamanistic power.";
     body->baseChar = TOTEM_CHAR;
     body->baseColor = &green;
     body->blood = DF_RUBBLE_BLOOD;
@@ -798,7 +825,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL);
     bodies.push_back(body);
     
     body = new Body();
@@ -839,7 +866,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 35;
     body->dangerLevel = 21;
     body->defense = DefenseType::HIGH;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD);
     body->flags = MONST_INVISIBLE;
     bodies.push_back(body);
     
@@ -853,7 +880,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 15;
     body->dangerLevel = 11;
     body->defense = DefenseType::HIGH;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER | GF_UNDEAD);
     body->flags = (MONST_INVISIBLE);
     body->rarityPercent = 25;
     body->periodicFeatureChance = 15;
@@ -872,7 +899,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::NONE;
     body->dangerLevel = 26;
     body->flags = (MONST_DIES_IF_NEGATED);
-    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE);
+    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE |GF_DIGGER);
     bodies.push_back(body);
     
     body = new Body();
@@ -904,7 +931,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->periodicFeature = DF_ROT_GAS_PUFF;
     body->periodicFeatureChance = 100;
-    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE);
+    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE | GF_UNDEAD);
     bodies.push_back(body);
     
     body = new Body();
@@ -920,7 +947,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->periodicFeature = DF_ROT_GAS_PUFF;
     body->periodicFeatureChance = 20;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER);
     body->rarityPercent = 25;
     bodies.push_back(body);
     
@@ -934,7 +961,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 30;
     body->dangerLevel = 25;
     body->defense = DefenseType::DEFENSELESS;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     bodies.push_back(body);
     
@@ -949,7 +976,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 14;
     body->defense = DefenseType::DEFENSELESS;
     body->moveSpeed = MoveSpeedType::SLOW;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     body->rarityPercent = 25;
     bodies.push_back(body);
@@ -966,6 +993,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET);
+    body->regenSpeed = RegenSpeedType::NONE;
     body->flags = MONST_TURRET;
     body->reusable = true;
     body->rarityPercent = 100;
@@ -984,6 +1012,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_SHAMANISTIC);
+    body->regenSpeed = RegenSpeedType::NONE;
     body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
     body->reusable = true;
     body->rarityPercent = 25;
@@ -1002,9 +1031,65 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_WIZARDLY);
+    body->regenSpeed = RegenSpeedType::NONE;
     body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
     body->reusable = true;
     body->rarityPercent = 12;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "spectral $SWORD";
+    body->flavor = "Eldritch forces have coalesced to form this flickering, ethereal weapon.";
+    body->baseChar = WEAPON_CHAR;
+    body->baseColor = &spectralBladeColor;
+    body->flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_FLIES | MONST_WILL_NOT_USE_STAIRS |
+                   MB_DOES_NOT_TRACK_LEADER | MONST_DIES_IF_NEGATED | MONST_IMMUNE_TO_WEBS | MONST_NOT_LISTED_IN_SIDEBAR);
+    body->minDamage = 1;
+    body->maxDamage = 1;
+    body->accuracy = AccuracyType::FIXED;
+    body->hp = 1;
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->light = SPECTRAL_BLADE_LIGHT;
+    body->rarityPercent = 66;
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "eldritch $FODDER";
+    body->baseChar = '$';
+    body->flavor = "Ethereal energies shaped into concrete form zip and flicker in the air.";
+    body->baseColor = &spectralBladeColor;
+    body->flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_FLIES | MONST_WILL_NOT_USE_STAIRS |
+                   MB_DOES_NOT_TRACK_LEADER | MONST_DIES_IF_NEGATED | MONST_IMMUNE_TO_WEBS | MONST_NOT_LISTED_IN_SIDEBAR);
+    body->minDamage = 1;
+    body->maxDamage = 1;
+    body->accuracy = AccuracyType::FIXED;
+    body->hp = 1;
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->light = SPECTRAL_BLADE_LIGHT;
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "animate $WEAPON";
+    body->flavor = "Eldritch forces have coalesced to animate this ethereal weapon.";
+    body->baseChar = WEAPON_CHAR;
+    body->baseColor = &spectralBladeColor;
+    body->flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_FLIES | MONST_WILL_NOT_USE_STAIRS |
+                   MB_DOES_NOT_TRACK_LEADER | MONST_DIES_IF_NEGATED | MONST_IMMUNE_TO_WEBS | MONST_NOT_LISTED_IN_SIDEBAR);
+    body->minDamage = 1;
+    body->maxDamage = 1;
+    body->accuracy = AccuracyType::ACCURATE;
+    body->hp = 3;
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->moveSpeed = MoveSpeedType::FAST;
+    body->rarityPercent = 33;
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
     bodies.push_back(body);
     
     return bodies;

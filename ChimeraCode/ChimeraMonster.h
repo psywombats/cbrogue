@@ -41,6 +41,9 @@ enum GenerateFlag : int {
     GF_TURRET               = 1 << 18,
     GF_BOSSLIKE             = 1 << 19,
     GF_BOSS_ONLY            = 1 << 20,
+    GF_DIGGER               = 1 << 21,
+    GF_UNDEAD               = 1 << 22,
+    GF_CONJURATION          = 1 << 23,
 };
 
 enum class RegenSpeedType {
@@ -66,6 +69,7 @@ enum class AttackSpeedType {
 };
 
 enum class AccuracyType {
+    FIXED,
     ACCURATE,
     NORMAL,
     INACCURATE,
@@ -116,6 +120,7 @@ public:
 
     // flavor
     std::string baseName;
+    std::string baseFlavor;
     const color *displayColor;
     uchar baseDisplayChar;
     dungeonFeatureTypes bloodType;
@@ -150,6 +155,8 @@ public:
     unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
     int dangerLevel;
+    
+    static void replace(std::string &source, const std::string &token, const std::string &replacement);
 
 private:
 
@@ -159,7 +166,6 @@ private:
     
     static std::string boltToString(boltType bolt);
     static std::string dungeonFeatureToString(dungeonFeatureTypes feature);
-    static void replace(std::string &source, const std::string &token, const std::string &replacement);
     
     static int nextChimeraId;
     static std::map<std::reference_wrapper<uchar>, std::string> usedChars;

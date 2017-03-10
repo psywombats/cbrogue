@@ -255,7 +255,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "knight";
-    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a sword, ready to accurately strike $HISHER foes.";
+    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a $WEAPON, ready to accurately strike $HISHER foes.";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->hpBoost = 12;
@@ -305,7 +305,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "swordsman";
-    ability->flavorOverride = "This $BASE wields a shortsword and buckler and stands ready to engage in swordplay with the enemy.";
+    ability->flavorOverride = "This $BASE wields a $SWORD and buckler and stands ready to engage in swordplay with the enemy.";
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 4;
     ability->defense = DefenseType::HIGH;
@@ -317,11 +317,11 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "webweaver";
     ability->flavorAddition = "Spinnerets stand at attention, ready to fire vollies of webs to trap $HISHER victims.";
     ability->colorOverride = &white;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 2;
     ability->bolts = {BOLT_SPIDERWEB};
     ability->requiredFlags = GF_INSECTOID;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_IMMUNE_TO_WEBS);
-    ability->rarityPercent = 75;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -351,7 +351,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "shaman";
-    ability->flavorOverride = "This $BASE is particularly wizened and leers from under robes of fur and feathers, gesturing with $HISHER gnarled staff.";
+    ability->flavorOverride = "This $BASE is particularly wizened and leers from under robes of fur and feathers, gesturing with $HISHER $MAGIC.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HASTE};
@@ -362,7 +362,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "blademaster";
-    ability->flavorOverride = "Longsword in hand, this $BASE crosses great distances in an instant to cross swords with $HISHER enemies.";
+    ability->flavorOverride = "With $SWORD in hand, this $BASE crosses great distances in an instant to cross swords with $HISHER enemies.";
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_BLINKING};
@@ -382,7 +382,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "priest";
-    ability->flavorOverride = "Underneath the robe of this $BASE, many religious trinkets jangle and clank.";
+    ability->flavorOverride = "Underneath the robe of this $BASE, the $BASE priest carries $HISHER holy $MAGIC and $MAGIC.";
     ability->colorOverride = &darPriestessColor;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HEALING, BOLT_NEGATION, BOLT_HASTE};
@@ -394,7 +394,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "healer";
-    ability->flavorOverride = "This $BASE wears a laurel wreath and carries a metallic rod, brimming with arcane energy.";
+    ability->flavorOverride = "This $BASE wears a laurel wreath and carries a $MAGIC, brimming with arcane energy.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_HEALING, BOLT_SHIELDING};
@@ -493,7 +493,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "skirmisher";
-    ability->flavorOverride = "This $BASE towers above its peers and carries a crude, broadbladed sword and dances in and out of combat as the flow of fate decides.";
+    ability->flavorOverride = "This $BASE towers above its peers and carries a crude $WEAPON and dances in and out of combat as the flow of fate decides.";
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 5;
     ability->physique = PhysiqueType::BUFF;
@@ -543,7 +543,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "water";
-    ability->namePrefix = "$HESHE is able to skim the surface of the water on occassion dive below.";
+    ability->flavorAddition = "$HESHE is able to skim the surface of the water on occassion dive below.";
     ability->colorOverride = &lightBlue;
     ability->dangerBoost = 0;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
@@ -563,7 +563,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->nameSuffix = "brute";
-    ability->flavorOverride = "Looming over any fellow $BASE, this monster batters anything before $HIMHER with slow but earthshaking blows from $HISHER mace.";
+    ability->flavorOverride = "Looming over any fellow $BASE, this monster batters anything before $HIMHER with slow but earthshaking blows from $HISHER $WEAPON.";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->physique = PhysiqueType::BUFF;
@@ -575,7 +575,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "axeman";
-    ability->flavorOverride = "This $BASE growls as $HESHE hefts a stone battleaxe, capable of hewing down many foes before $HIMHER.";
+    ability->flavorOverride = "This $BASE growls as $HESHE hefts a stone waraxe, capable of hewing down many foes before $HIMHER.";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->physique = PhysiqueType::BUFF;

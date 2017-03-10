@@ -17,7 +17,6 @@ enum monsterTypes {
     MK_YOU,
     MK_SPECTRAL_IMAGE,
     MK_WARDEN_OF_YENDOR,
-    
     MK_RAT,
     MK_KOBOLD,
     MK_JACKAL,
@@ -179,7 +178,7 @@ short getSentinelMonsterId() {
 
 short getWardenMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (CHIMERAS_ENABLED && generator->wardenMonsterId > 0) {
         return MK_WARDEN_OF_YENDOR;
     } else {
         return generator->wardenMonsterId;
@@ -242,7 +241,7 @@ short getInvisibleMonsterId() {
 
 short getSpectralImageMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (CHIMERAS_ENABLED && generator->spectralImageMonsterId > 0) {
         return MK_SPECTRAL_IMAGE;
     } else {
         return generator->spectralImageMonsterId;
