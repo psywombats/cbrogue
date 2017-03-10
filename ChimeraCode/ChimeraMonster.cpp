@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 int ChimeraMonster::nextChimeraId = 0;
-std::set<std::reference_wrapper<uchar>> ChimeraMonster::usedChars = std::set<std::reference_wrapper<uchar>>();
+std::map<std::reference_wrapper<uchar>, std::string> ChimeraMonster::usedChars;
 
 ChimeraMonster::ChimeraMonster(Body &newBody) :
         hp(0),
@@ -28,6 +28,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         baseDisplayChar('?'),
         accuracy(AccuracyType::NORMAL),
         defense(DefenseType::NORMAL),
+        physique(PhysiqueType::NORMAL),
         bloodType(DF_NONE),
         feature(DF_NONE),
         featureKamikaze(false),
@@ -59,7 +60,6 @@ ChimeraMonster::~ChimeraMonster() {
 creatureType ChimeraMonster::convertToStruct() {
     creatureType creatureStruct = creatureType();
     
-    damage.lowerBound = MAX(damage.lowerBound, 0);
     memcpy(&creatureStruct.damage, &damage, sizeof(randomRange));
     
     generateName();
@@ -423,17 +423,27 @@ void ChimeraMonster::generateDisplayChar() {
     }
     displayChar = baseDisplayChar;
     
-    if (usedChars.find(displayChar) != usedChars.end()) {
+    if (otherSpeciesUsesChar() && !body.reusable) {
         if (islower(displayChar)) {
             displayChar = toupper(displayChar);
         } else {
             displayChar = tolower(displayChar);
         }
-        if (usedChars.find(displayChar) != usedChars.end()) {
+        while (otherSpeciesUsesChar()) {
             // someone else has BOTH letters? fuck
             uchar randomChars[] = {0x03D7,0x03D6,0x03B6,0x0376,0x03EA,0x03E0,0x054B,0x0556,0x07F7,0x0186,0x0518};
-            displayChar = randomChars[rand_range(0, sizeof(randomChars) / sizeof(randomChars[0]))];
+            displayChar = randomChars[rand_range(0, (sizeof(randomChars) / sizeof(uchar)) - 1)];
         }
+    }
+    usedChars[displayChar] = mookName.length() > 0 ? mookName : baseName;
+}
+
+bool ChimeraMonster::otherSpeciesUsesChar() {
+    if (usedChars.count(displayChar)) {
+        std::string user = usedChars[displayChar];
+        return (mookName.length() > 0 ? mookName : baseName) != user;
+    } else {
+        return false;
     }
 }
 

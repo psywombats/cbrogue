@@ -51,6 +51,7 @@ public:
     AttackSpeedType attackSpeed;
     AccuracyType accuracy;
     DefenseType defense;
+    PhysiqueType physique;
     
     // feature
     dungeonFeatureTypes featureKamikaze;

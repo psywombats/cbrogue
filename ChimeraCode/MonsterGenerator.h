@@ -25,6 +25,23 @@ public:
     void generate();
     std::vector<ChimeraMonster *> &getMonsters();
     std::vector<Horde *> &getHordes();
+    
+    short ratTrapMonsterId;
+    short warrenBossMonsterId;
+    short vampireBossMonsterId;
+    short wingedGuardianMonsterId;
+    short guardianMonsterId;
+    short sentinelMonsterId;
+    short wardenMonsterId;
+    short mirrorMonsterId;
+    short webberMonsterId;
+    short diggerMonsterId;
+    short sparkMonsterId;
+    short undeadMonsterId;
+    short invisibleMonsterId;
+    short spectralImageMonsterId;
+    short conjurationMonsterId;
+    short charmSummonMonsterId;
 
 private:
 
@@ -36,7 +53,8 @@ private:
     ChimeraMonster &newMonster(Body &body);
     ChimeraMonster &newMonster(const ChimeraMonster &baseMonster);
     Horde &newHorde(const ChimeraMonster &monster);
-
+    ChimeraMonster &generateBoss(int targetDL);
+    
     Body *matchingBody(const std::function<bool(const Body *)>& filter);
     Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);
 

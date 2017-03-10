@@ -172,6 +172,7 @@ extern const color ectoplasmColor;
 extern const color yendorLightColor;
 extern const color glyphColor;
 extern const color beckonColor;
+extern const color crystalWallLightColor;
 
 // these are from monster colors and exposed here for use in chimeras
 // why the hell is there one header for the whole project

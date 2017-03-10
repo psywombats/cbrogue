@@ -15,7 +15,9 @@
 
 enum monsterTypes {
     MK_YOU,
+    MK_SPECTRAL_IMAGE,
     MK_WARDEN_OF_YENDOR,
+    
     MK_RAT,
     MK_KOBOLD,
     MK_JACKAL,
@@ -74,7 +76,6 @@ enum monsterTypes {
     MK_FLAMEDANCER,
     
     MK_SPECTRAL_BLADE,
-    MK_SPECTRAL_IMAGE,
     MK_GUARDIAN,
     MK_WINGED_GUARDIAN,
     MK_CHARM_GUARDIAN,
@@ -123,67 +124,147 @@ monsterClass *getMonsterClassCatalog() {
 }
 
 short getRatTrapMonsterId() {
-    return MK_RAT;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_RAT;
+    } else {
+        return generator->ratTrapMonsterId;
+    }
 }
 
 short getWarrenBossMonsterId() {
-    return MK_GOBLIN_CHIEFTAN;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_GOBLIN_CHIEFTAN;
+    } else {
+        return generator->warrenBossMonsterId;
+    }
 }
 
 short getVampireBossMonsterId() {
-    return MK_VAMPIRE;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_VAMPIRE;
+    } else {
+        return generator->vampireBossMonsterId;
+    }
 }
 
 short getWingedGuardianMonsterId() {
-    return MK_WINGED_GUARDIAN;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_WINGED_GUARDIAN;
+    } else {
+        return generator->wingedGuardianMonsterId;
+    }
 }
 
 short getGuardianMonsterId() {
-    return MK_GUARDIAN;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_GUARDIAN;
+    } else {
+        return generator->guardianMonsterId;
+    }
 }
 
 short getSentinelMonsterId() {
-    return MK_SENTINEL;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_SENTINEL;
+    } else {
+        return generator->sentinelMonsterId;
+    }
 }
 
 short getWardenMonsterId() {
-    return MK_WARDEN_OF_YENDOR;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_WARDEN_OF_YENDOR;
+    } else {
+        return generator->wardenMonsterId;
+    }
 }
 
 short getMirrorMonsterId() {
-    return MK_MIRRORED_TOTEM;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_MIRRORED_TOTEM;
+    } else {
+        return generator->mirrorMonsterId;
+    }
 }
 
 short getWebberMonsterId() {
-    return MK_SPIDER;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_SPIDER;
+    } else {
+        return generator->webberMonsterId;
+    }
 }
 
 short getDiggerMonsterId() {
-    return MK_UNDERWORM;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_UNDERWORM;
+    } else {
+        return generator->diggerMonsterId;
+    }
 }
 
 short getSparkMonsterId() {
-    return MK_SPARK_TURRET;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_SPARK_TURRET;
+    } else {
+        return generator->sparkMonsterId;
+    }
 }
 
 short getUndeadMonsterId() {
-    return MK_ZOMBIE;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_ZOMBIE;
+    } else {
+        return generator->undeadMonsterId;
+    }
 }
 
 short getInvisibleMonsterId() {
-    return MK_PHANTOM;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_PHANTOM;
+    } else {
+        return generator->invisibleMonsterId;
+    }
 }
 
 short getSpectralImageMonsterId() {
-    return MK_SPECTRAL_IMAGE;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_SPECTRAL_IMAGE;
+    } else {
+        return generator->spectralImageMonsterId;
+    }
 }
 
 short getConjurationMonsterId() {
-    return MK_SPECTRAL_BLADE;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_SPECTRAL_BLADE;
+    } else {
+        return generator->conjurationMonsterId;
+    }
 }
 
 short getCharmSummonMonsterId() {
-    return MK_CHARM_GUARDIAN;
+    ensureCatalogsInitialized();
+    if (CHIMERAS_ENABLED) {
+        return MK_CHARM_GUARDIAN;
+    } else {
+        return generator->charmSummonMonsterId;
+    }
 }
 
 void resetMonsterGeneration() {
@@ -261,6 +342,14 @@ void initMonsterCatalog() {
     strcpy(catalog[id].absorbing, "studying");
     strcpy(catalog[id].absorbStatus, "Studying");
     strcpy(catalog[id].attack[0], "hit");
+    
+    id = MK_SPECTRAL_IMAGE;
+    catalog[id] = (creatureType) {0, "spectral sword",WEAPON_CHAR, &spectralImageColor, 1,0, 150,    {1, 1, 1},      0,  50,     100,    DF_NONE,        SPECTRAL_IMAGE_LIGHT,0,DF_NONE};
+    catalog[id].flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_FLIES | MONST_WILL_NOT_USE_STAIRS | MB_DOES_NOT_TRACK_LEADER | MONST_DIES_IF_NEGATED | MONST_IMMUNE_TO_WEBS);
+    strcpy(catalog[id].flavorText, "Eldritch energies bound up in your armor have leapt forth to project this spectral image.");
+    strcpy(catalog[id].absorbing, "gazing at");
+    strcpy(catalog[id].absorbStatus, "Gazing");
+    strcpy(catalog[id].attack[0], "hits");
     
     id = MK_WARDEN_OF_YENDOR;
     catalog[id] = (creatureType) {0, "Warden of Yendor",'Y', &yendorLightColor,1000,   0,    300,    {12, 17, 2},    0,  200,    200,    DF_RUBBLE,      YENDOR_LIGHT, 100, DF_NONE};
@@ -821,14 +910,6 @@ void initMonsterCatalog() {
     strcpy(catalog[id].absorbing, "gazing at");
     strcpy(catalog[id].absorbStatus, "Gazing");
     strcpy(catalog[id].attack[0], "nicks");
-    
-    id = MK_SPECTRAL_IMAGE;
-    catalog[id] = (creatureType) {0, "spectral sword",WEAPON_CHAR, &spectralImageColor, 1,0, 150,    {1, 1, 1},      0,  50,     100,    DF_NONE,        SPECTRAL_IMAGE_LIGHT,0,DF_NONE};
-    catalog[id].flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_FLIES | MONST_WILL_NOT_USE_STAIRS | MB_DOES_NOT_TRACK_LEADER | MONST_DIES_IF_NEGATED | MONST_IMMUNE_TO_WEBS);
-    strcpy(catalog[id].flavorText, "Eldritch energies bound up in your armor have leapt forth to project this spectral image.");
-    strcpy(catalog[id].absorbing, "gazing at");
-    strcpy(catalog[id].absorbStatus, "Gazing");
-    strcpy(catalog[id].attack[0], "hits");
     
     id = MK_GUARDIAN;
     catalog[id] = (creatureType) {0, "stone guardian",STATUE_CHAR, &white,   1000,   0,      200,    {12, 17, 2},    0,  100,    100,    DF_RUBBLE,      NO_LIGHT,  100,      DF_GUARDIAN_STEP};

@@ -113,6 +113,21 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 2;
     body->genFlags = (GF_INSECTOID | GF_ANIMAL);
     bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "rhino beetle";
+    body->flavor = "Intimidating despite its size, the rhino beetle is outfitted with a chitinous horn and dull black armor plates. $HESHE crawls slowly across the dungeon.";
+    body->baseColor = &darkGray;
+    body->blood = DF_RED_BLOOD;
+    body->minDamage = 5;
+    body->maxDamage = 7;
+    body->hp = 15;
+    body->dangerLevel = 3;
+    body->attackSpeed = AttackSpeedType::SLOW;
+    body->moveSpeed = MoveSpeedType::SLOW;
+    body->genFlags = (GF_INSECTOID | GF_ANIMAL);
+    body->rarityPercent = 33;
+    bodies.push_back(body);
 
     body = new Body();
     body->baseName = "jackal";
@@ -127,6 +142,22 @@ std::vector<Body *> Body::loadBodies() {
     body->genFlags = (GF_ANIMAL);
     body->rarityPercent = 75;
     bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "ape";
+    body->baseChar = 'A';
+    body->flavor = "The ape is a simian of the upper dungeon, and more intelligent (and violent) than the common monkey.";
+    body->baseColor = &darkGray;
+    body->blood = DF_RED_BLOOD;
+    body->minDamage = 3;
+    body->maxDamage = 6;
+    body->hp = 12;
+    body->dangerLevel = 4;
+    body->accuracy = AccuracyType::INACCURATE;
+    body->gender = GenderType::BOTH;
+    body->genFlags = (GF_ANIMAL |GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
+    body->rarityPercent = 75;
+    bodies.push_back(body);
 
     body = new Body();
     body->baseName = "hyena";
@@ -135,8 +166,9 @@ std::vector<Body *> Body::loadBodies() {
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
     body->maxDamage = 4;
-    body->hp = 9;
+    body->hp = 10;
     body->moveSpeed = MoveSpeedType::FAST;
+    body->regenSpeed = RegenSpeedType::FAST;
     body->dangerLevel = 4;
     body->genFlags = (GF_ANIMAL);
     body->flags = (MONST_FLEES_NEAR_DEATH);
@@ -209,8 +241,9 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 18;
     body->flags = (MONST_FLIES | MONST_FLITS);
     body->moveSpeed = MoveSpeedType::FAST;
-    body->dangerLevel = 6;
+    body->dangerLevel = 5;
     body->genFlags = (GF_ANIMAL);
+    body->rarityPercent = 66;
     bodies.push_back(body);
 
     body = new Body();
@@ -368,7 +401,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::VERY_FAST;
     body->dangerLevel = 15;
     body->gender = GenderType::BOTH;
-    body->genFlags = (GF_SUPPORTS_CLASS);
+    body->genFlags = (GF_SUPPORTS_CLASS | GF_BOSSLIKE);
     bodies.push_back(body);
 
     body = new Body();
@@ -459,6 +492,19 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 16;
     body->rarityPercent = 66;
     bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "demon";
+    body->flavor = "The demon is a fallen angel, atoning for its sins in heaven by scouring the darkest places of earth.";
+    body->baseChar = 'D';
+    body->baseColor = &darkRed;
+    body->minDamage = 15;
+    body->maxDamage = 20;
+    body->hp = 80;
+    body->dangerLevel = 21;
+    body->flags = (GF_WIZARDLY | GF_BOSSLIKE | GF_ARMED);
+    body->rarityPercent = 33;
+    bodies.push_back(body);
 
     body = new Body();
     body->baseName = "scorpion";
@@ -470,7 +516,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 100;
     body->dangerLevel = 23;
     body->defense = DefenseType::LOW;
-    body->flags = (GF_INSECTOID);
+    body->flags = (GF_INSECTOID | GF_BOSSLIKE);
     bodies.push_back(body);
 
     body = new Body();
@@ -499,7 +545,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 140;
     body->dangerLevel = 28;
     body->gender = GenderType::BOTH;
-    body->genFlags = (GF_WIZARDLY | GF_AQUATIC);
+    body->genFlags = (GF_WIZARDLY | GF_AQUATIC | GF_BOSSLIKE);
     body->abilFlags = MA_ATTACKS_ALL_ADJACENT;
     body->rarityPercent = 66;
     bodies.push_back(body);
@@ -553,8 +599,8 @@ std::vector<Body *> Body::loadBodies() {
     body->blood = DF_RED_BLOOD;
     body->minDamage = 0;
     body->maxDamage = 0;
-    body->hp = 15;
-    body->dangerLevel = 6;
+    body->hp = 14;
+    body->dangerLevel = 4;
     body->gender = GenderType::BOTH;
     body->genFlags = (GF_BURSTS | GF_KAMIKAZE);
     body->rarityPercent = 33;
@@ -598,7 +644,6 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 6;
     body->flags = (MONST_FLIES | MONST_FLITS);
     body->genFlags = (GF_THIEVING | GF_ANIMAL);
-    body->rarityPercent = 33;
     bodies.push_back(body);
     
     body = new Body();
@@ -713,7 +758,7 @@ std::vector<Body *> Body::loadBodies() {
     body = new Body();
     body->baseName = "sea monk";
     body->flavor = "The sea monk is a mute, disfigured form that lurks beneath the surface of the water for a purpose known only to $HISHER ancient mind.";
-    body->baseChar = '&';
+    body->baseChar = 0x00B1; // ±
     body->baseColor = &darkGray;
     body->minDamage = 9;
     body->maxDamage = 16;
@@ -827,7 +872,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::NONE;
     body->dangerLevel = 26;
     body->flags = (MONST_DIES_IF_NEGATED);
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE);
     bodies.push_back(body);
     
     body = new Body();
@@ -859,7 +904,7 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->periodicFeature = DF_ROT_GAS_PUFF;
     body->periodicFeatureChance = 100;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_BOSSLIKE);
     bodies.push_back(body);
     
     body = new Body();
@@ -900,8 +945,8 @@ std::vector<Body *> Body::loadBodies() {
     body->baseChar = 'G';
     body->minDamage = 8;
     body->maxDamage = 12;
-    body->hp = 18;
-    body->dangerLevel = 12;
+    body->hp = 15;
+    body->dangerLevel = 14;
     body->defense = DefenseType::DEFENSELESS;
     body->moveSpeed = MoveSpeedType::SLOW;
     body->genFlags = (GF_NO_SPECIALS);

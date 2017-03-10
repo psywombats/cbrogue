@@ -106,7 +106,7 @@ void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag,
     if ((this->leader.flags & flag) > 0) {
         bool spawnsSpecial = true;
         for (HordeMember *member : this->members) {
-            if ((member->member.flags & flag) == 0) {
+            if (!(member->member.flags & flag)) {
                 spawnsSpecial = false;
                 break;
             }
@@ -127,14 +127,26 @@ int Horde::calculateDL() const {
     if (this->purpose == HordePurposeType::TOTEM) {
         danger += this->members.size() * 2;
     } else {
-        if (this->members.size() >= 1) {
-            danger += CLAMP(this->members.front()->member.dangerLevel / 2, 2, 9);
-        }
-        if (this->members.size() >= 2) {
-            danger += CLAMP(this->members.front()->member.dangerLevel / 3, 2, 7);
-        }
-        if (this->members.size() >= 3) {
-            danger += CLAMP(this->members.front()->member.dangerLevel / 4, 2, 5);
+        if (members.size() > 0) {
+            if (purpose == HordePurposeType::FODDER) {
+                danger += 1;
+            } else {
+                int totalDanger = 0;
+                int count = 0;
+                for (HordeMember *member : members) {
+                    int avgMembers = (member->maxCount + member->minCount + 1) / 2;
+                    count += avgMembers;
+                    totalDanger += member->member.dangerLevel * avgMembers;
+                }
+                int avgDanger = totalDanger / count;
+                if (avgDanger + 2 <= danger) {
+                    // this is a swarm of similar DL monsters
+                    danger += CLAMP(count, 2, 4);
+                } else {
+                    // the leader is powerful (mage?) with some trailing minions
+                    danger += members.size() + CLAMP(avgDanger / 4, 0, 4);
+                }
+            }
         }
     }
     return danger;
@@ -174,8 +186,8 @@ int Horde::dangerDelta() const {
 int Horde::calculateFrequency() const {
     int frequency;
     switch (this->purpose) {
-        case HordePurposeType::FODDER:              frequency = 15;                 break;
-        case HordePurposeType::KAMIKAZE:            frequency = 4;                  break;
+        case HordePurposeType::FODDER:              frequency = 12;                 break;
+        case HordePurposeType::KAMIKAZE:            frequency = 5;                  break;
         case HordePurposeType::THIEF:               frequency = 8;                  break;
         default:                                    frequency = 10;                 break;
     }

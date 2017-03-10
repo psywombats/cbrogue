@@ -13,6 +13,7 @@
 #include <functional>
 #include <vector>
 #include <set>
+#include <map>
 #include "MonsterGlobals.h"
 #include "IncludeGlobals.h"
 
@@ -38,6 +39,8 @@ enum GenerateFlag : int {
     GF_MOOKISH              = 1 << 16,
     GF_NO_SPECIALS          = 1 << 17,
     GF_TURRET               = 1 << 18,
+    GF_BOSSLIKE             = 1 << 19,
+    GF_BOSS_ONLY            = 1 << 20,
 };
 
 enum class RegenSpeedType {
@@ -73,6 +76,12 @@ enum class DefenseType {
     LOW,
     NORMAL,
     HIGH,
+};
+
+enum class PhysiqueType {
+    SPELLCASTER,
+    NORMAL,
+    BUFF,
 };
 
 enum class GenderType {
@@ -121,6 +130,7 @@ public:
     RegenSpeedType regenSpeed;
     MoveSpeedType moveSpeed;
     AttackSpeedType attackSpeed;
+    PhysiqueType physique;
     
     // feature
     dungeonFeatureTypes feature;
@@ -152,7 +162,7 @@ private:
     static void replace(std::string &source, const std::string &token, const std::string &replacement);
     
     static int nextChimeraId;
-    static std::set<std::reference_wrapper<uchar>> usedChars;
+    static std::map<std::reference_wrapper<uchar>, std::string> usedChars;
 
     void generateName();
     void generateDisplayChar();
@@ -161,6 +171,8 @@ private:
     AbsorbFlavorType generateAbsorbFlavor() const;
     std::list<std::string> generateAttackFlavor() const;
     std::string generateSummonFlavor() const;
+    
+    bool otherSpeciesUsesChar();
 
     // generation
     std::list<std::reference_wrapper<Ability>> abilities;

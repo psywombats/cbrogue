@@ -63,6 +63,37 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
     if (defense != DefenseType::NORMAL) {
         monster.defense = defense;
     }
+    if (physique != PhysiqueType::NORMAL) {
+        monster.physique = physique;
+    }
+    
+    int origHp = monster.hp;
+    switch (physique) {
+        case PhysiqueType::BUFF:
+            monster.hp += 5;
+            monster.hp += (float)monster.dangerLevel * 1.25f;
+            
+            monster.damage.lowerBound += (monster.dangerLevel / 5) + 1;
+            monster.damage.upperBound += (monster.dangerLevel / 3) + 1;
+            
+            break;
+        case PhysiqueType::SPELLCASTER:
+            monster.hp = (float)monster.dangerLevel * 1.33;
+            monster.hp += 8;
+            monster.hp = MIN(monster.hp, origHp);
+            
+            monster.damage.lowerBound = MAX(1, monster.dangerLevel / 10);
+            monster.damage.upperBound = MAX(1, monster.dangerLevel / 4);
+            monster.hp += hpBoost;
+            monster.damage.lowerBound += minDamageBoost;
+            monster.damage.upperBound += maxDamageBoost;
+            
+            break;
+        case PhysiqueType::NORMAL:
+            break;
+    }
+    
+    monster.damage.lowerBound = MAX(monster.damage.lowerBound, 0);
     
     monster.namePrefix = namePrefix;
     monster.nameSuffix = nameSuffix;
@@ -218,14 +249,13 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "This individual ripples with muscles underneath $HISHER skin.";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 2;
-    ability->minDamageBoost = 2;
-    ability->maxDamageBoost = 6;
+    ability->physique = PhysiqueType::BUFF;
     ability->requiredFlags = GF_ANIMAL;
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "knight";
-    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a lance, ready to accurately strike $HISHER foes.";
+    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a sword, ready to accurately strike $HISHER foes.";
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->hpBoost = 12;
@@ -259,7 +289,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "scout";
     ability->flavorOverride = "Lightly armed and armored, this $BASE often travels ahead of the crowd to identify new threats.";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 2;
     ability->moveSpeed = MoveSpeedType::FAST;
     ability->requiredFlags = GF_SUPPORTS_CLASS;
     abilities.push_back(ability);
@@ -268,7 +298,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "winged";
     ability->flavorAddition = "A pair of misshapen wings bear $HIMHER aloft over other $BASE.";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 1;
     ability->flags = (MONST_FLIES | MONST_FLITS);
     ability->moveSpeed = MoveSpeedType::FAST;
     abilities.push_back(ability);
@@ -277,7 +307,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "swordsman";
     ability->flavorOverride = "This $BASE wields a shortsword and buckler and stands ready to engage in swordplay with the enemy.";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 5;
+    ability->dangerBoost = 4;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
     ability->requiredFlags = (GF_ARMED);
@@ -300,9 +330,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &goblinMysticColor;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_SHIELDING};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -2;
-    ability->minDamageBoost = -2;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->rarityPercent = 100;
@@ -314,9 +342,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -1;
-    ability->minDamageBoost = -1;
+    ability->maxDamageBoost = 2;
+    ability->minDamageBoost = 0;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = GF_SUPPORTS_CLASS;
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -327,11 +355,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HASTE};
-    ability->hpBoost = -6;
-    ability->maxDamageBoost = -3;
-    ability->minDamageBoost = -3;
-    ability->requiredFlags = (GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
-    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->requiredFlags = (GF_SHAMANISTIC | GF_SUPPORTS_CLASS | GF_PACK_MEMBER);
+    ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CAST_SPELLS_SLOWLY);
     ability->rarityPercent = 100;
     abilities.push_back(ability);
 
@@ -339,7 +364,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "blademaster";
     ability->flavorOverride = "Longsword in hand, this $BASE crosses great distances in an instant to cross swords with $HISHER enemies.";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 3;
     ability->bolts = {BOLT_BLINKING};
     ability->defense = DefenseType::HIGH;
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
@@ -359,12 +384,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "priest";
     ability->flavorOverride = "Underneath the robe of this $BASE, many religious trinkets jangle and clank.";
     ability->colorOverride = &darPriestessColor;
-    ability->dangerBoost = 7;
+    ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HEALING, BOLT_NEGATION, BOLT_HASTE};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -5;
-    ability->minDamageBoost = -5;
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 100;
@@ -372,14 +394,11 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "healer";
-    ability->flavorOverride = "This $BASE is outfitted with a dirty white robe and carries a metallic rod, brimming with arcane energy.";
+    ability->flavorOverride = "This $BASE wears a laurel wreath and carries a metallic rod, brimming with arcane energy.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
-    ability->dangerBoost = 6;
+    ability->dangerBoost = 4;
     ability->bolts = {BOLT_HEALING, BOLT_SHIELDING};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -6;
-    ability->minDamageBoost = -6;
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     ability->rarityPercent = 100;
@@ -391,9 +410,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &darMageColor;
     ability->dangerBoost = 6;
     ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -5;
-    ability->minDamageBoost = -5;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
@@ -405,10 +422,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -5;
-    ability->minDamageBoost = -5;
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
@@ -417,12 +431,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "air mage";
     ability->flavorOverride = "Spark and streaks of white dance around this $BASE, belying $HISHER mastery over lightning.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 2;
     ability->bolts = {BOLT_SPARK};
-    ability->hpBoost = -4;
-    ability->maxDamageBoost = -5;
-    ability->minDamageBoost = -5;
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
@@ -432,11 +443,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "Brimstone falls from $HISHER maw and burns disfigure $HISHER breast.";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->light = LAVA_LIGHT;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 6;
     ability->bolts = {BOLT_FIRE};
-    ability->hpBoost = -2;
-    ability->maxDamageBoost = -1;
-    ability->minDamageBoost = -1;
     ability->requiredFlags = (GF_ANIMAL);
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     abilities.push_back(ability);
@@ -448,20 +456,22 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->light = IMP_LIGHT;
     ability->dangerBoost = 8;
     ability->bolts = {BOLT_NEGATION, BOLT_SLOW_2, BOLT_DISCORD, BOLT_SPARK};
-    ability->hpBoost = -2;
-    ability->maxDamageBoost = -1;
-    ability->minDamageBoost = -1;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->defense = DefenseType::HIGH;
+    ability->maxDamageBoost = 2;
+    ability->hpBoost = 5;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->namePrefix = "poison-spitting";
-    ability->flavorAddition = "A poison gland in the back of $HISHER throat shoots globs of venom at $HISHER prey.";
+    ability->flavorAddition = "A poison gland in the back of $HISHER throat shoots globs of weakening venom at $HISHER prey.";
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_POISON_DART};
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->hpBoost = 10;
     ability->attackSpeed = AttackSpeedType::TOTEM;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     ability->requiredFlags = (GF_INSECTOID);
@@ -473,7 +483,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 10;
     ability->bolts = {BOLT_ACID_TURRET_ATTACK};
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->hpBoost = 10;
     ability->attackSpeed = AttackSpeedType::TURRET;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
     ability->requiredFlags = (GF_INSECTOID);
@@ -482,11 +493,12 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "skirmisher";
-    ability->flavorOverride = "This $BASE carries a crude, broadbladed sword and dances in and out of combat as the flow of fate decides.";
+    ability->flavorOverride = "This $BASE towers above its peers and carries a crude, broadbladed sword and dances in and out of combat as the flow of fate decides.";
     ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 1;
+    ability->dangerBoost = 5;
+    ability->physique = PhysiqueType::BUFF;
     ability->flags = (MONST_FLEES_NEAR_DEATH);
-    ability->regenSpeed = RegenSpeedType::FAST;
+    ability->regenSpeed = RegenSpeedType::VERY_FAST;
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
@@ -494,7 +506,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "mirror";
     ability->flavorOverride = "Instead of hide or hair, $HISHER body is covered in weird metal plates.";
     ability->colorOverride = &beckonColor;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 2;
     ability->flags = MONST_REFLECT_4;
     ability->forbiddenFlags = (GF_SUPPORTS_CLASS | GF_ANIMAL);
     ability->rarityPercent = 33;
@@ -505,8 +517,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "Molten skin mars $HISHER appearance and the ground smolders before this $BASE.";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->light = SALAMANDER_LIGHT;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 1;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_FIERY);
+    ability->forbiddenFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -522,7 +535,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "waterbreathing";
     ability->flavorAddition = "$HESHE is covered in gills that flap and gasp in the open air.";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 2;
+    ability->dangerBoost = 1;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
     ability->requiredFlags = (GF_ANIMAL | GF_AQUATIC);
     ability->rarityPercent = 33;
@@ -532,7 +545,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "water";
     ability->namePrefix = "$HESHE is able to skim the surface of the water on occassion dive below.";
     ability->colorOverride = &lightBlue;
-    ability->dangerBoost = 2;
+    ability->dangerBoost = 0;
     ability->flags = (MONST_IMMUNE_TO_WATER | MONST_SUBMERGES);
     ability->requiredFlags = (GF_INSECTOID);
     abilities.push_back(ability);
@@ -541,26 +554,43 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->nameSuffix = "spearman";
     ability->flavorOverride = "Carrying a pike almost twice $HISHER height, this $BASE is capable of piercing two enemies at once.";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 1;
+    ability->dangerBoost = 0;
     ability->abilFlags = (MA_ATTACKS_PENETRATE);
     ability->requiredFlags = (GF_ARMED);
     ability->forbiddenFlags = (GF_PACK_MEMBER);
+    ability->rarityPercent = 33;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "brute";
+    ability->flavorOverride = "Looming over any fellow $BASE, this monster batters anything before $HIMHER with slow but earthshaking blows from $HISHER mace.";
+    ability->colorMod = ColorModFlavor::COMBAT;
+    ability->dangerBoost = 3;
+    ability->physique = PhysiqueType::BUFF;
+    ability->maxDamageBoost = 2;
+    ability->attackSpeed = AttackSpeedType::SLOW;
+    ability->requiredFlags = (GF_ARMED);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "axeman";
     ability->flavorOverride = "This $BASE growls as $HESHE hefts a stone battleaxe, capable of hewing down many foes before $HIMHER.";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 1;
+    ability->dangerBoost = 4;
+    ability->physique = PhysiqueType::BUFF;
+    ability->hpBoost = -5;
+    ability->defense = DefenseType::LOW;
     ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_ALL_ADJACENT);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
 
     ability = new Ability();
     ability->nameSuffix = "dominatrix";
     ability->flavorOverride = "A curious $BASE, this individual wields a long-reaching whip, not to mention some unusual leather gear.";
     ability->colorOverride = &pink;
-    ability->dangerBoost = 2;
+    ability->dangerBoost = 1;
     ability->requiredFlags = (GF_ARMED);
     ability->abilFlags = (MA_ATTACKS_EXTEND);
     ability->rarityPercent = 33;
@@ -580,7 +610,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "The $BASE is covered with an alluring, pulsing membrane that glows many colors in the light. Surely touching $HIMHER would have pleasant effects...";
     ability->colorOverride = &rainbow;
     ability->light = UNICORN_LIGHT;
-    ability->dangerBoost = 5;
+    ability->dangerBoost = 3;
     ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_HIT_HALLUCINATE);
     ability->rarityPercent = 75;
@@ -590,9 +620,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "vampire";
     ability->flavorAddition = "$HISHER teeth appear sharper than usual, and $HISHER eyes gleam hungrily in the dark.";
     ability->colorOverride = &gray;
-    ability->dangerBoost = 4;
-    ability->requiredFlags = (GF_ANIMAL);
+    ability->dangerBoost = 2;
+    ability->hpBoost = 10;
     ability->abilFlags = (MA_TRANSFERENCE);
+    ability->forbiddenFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -610,7 +641,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "sticky";
     ability->flavorAddition = "$HESHE is covered in a mucus membrane that adheres to the floor behind $HIMHER.";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 2;
     ability->requiredFlags = (GF_AMORPHOUS);
     ability->abilFlags = (MA_SEIZES);
     ability->rarityPercent = 33;
@@ -660,7 +691,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "pit";
     ability->flavorAddition = "When disturbed, the magical liquid $HESHE carries will open a chasm beneath $HIMHER.";
     ability->colorOverride = &lightBlue;
-    ability->dangerBoost = 6;
+    ability->dangerBoost = 7;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_HOLE_POTION;
     ability->featureMessage = "bursts, causing the floor underneath $HIMHER to disappear!";
@@ -716,7 +747,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "stink";
     ability->flavorAddition = "And for some reason, $HESHE smells absolutely terrible.";
     ability->colorOverride = &teal;
-    ability->dangerBoost = 14;
+    ability->dangerBoost = 13;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_DEWAR_METHANE;
     ability->featureMessage = "bursts, and an offensive odor accompanies the hiss of escaping methane!";
@@ -727,7 +758,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "gassy";
     ability->flavorAddition = "The sparkling gas $HESHE carries will rapidly expand on detonation, confusing any caught in the blast.";
     ability->colorOverride = &confusionGasColor;
-    ability->dangerBoost = 15;
+    ability->dangerBoost = 14;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_CONFUSION_GAS_CLOUD_POTION;
     ability->featureMessage = "bursts, and the air starts to shimmer and sparkle!";
@@ -757,6 +788,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->light = IMP_LIGHT;
     ability->dangerBoost = 12;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->hpBoost = 10;
+    ability->minDamageBoost = 2;
+    ability->maxDamageBoost = 4;
     ability->defense = DefenseType::HIGH;
     ability->accuracy = AccuracyType::ACCURATE;
     ability->requiredFlags = (GF_THIEVING);
@@ -771,7 +806,11 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "Hiding under a hooded cloak and with a variety of magic at $HISHER disposal, this $BASE is a professional thief.";
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 11;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->defense = DefenseType::HIGH;
+    ability->hpBoost = 12;
+    ability->minDamageBoost = 2;
+    ability->maxDamageBoost = 5;
     ability->requiredFlags = (GF_THIEVING);
     ability->bolts = {BOLT_SLOW_2, BOLT_HASTE};
     ability->requiredFlags = (GF_THIEVING | GF_SUPPORTS_CLASS);
@@ -786,10 +825,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &ogreColor;
     ability->dangerBoost = 8;
     ability->moveSpeed = MoveSpeedType::FAST;
-    ability->hpBoost = -6;
-    ability->maxDamageBoost = -3;
-    ability->minDamageBoost = -3;
-    ability->defense = DefenseType::LOW;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_THIEVING);
     ability->forbiddenFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_INSECTOID);
     ability->abilFlags = (MA_HIT_STEAL_FLEE);
@@ -799,7 +835,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "river";
     ability->flavorOverride = "While other $BASE roam the dungeon proper, this aquatic $BASE is more at home in the deep lakes that dot the depths.";
     ability->colorOverride = &brown;
-    ability->dangerBoost = -3;
+    ability->dangerBoost = 0;
     ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER);
     ability->requiredFlags = (GF_AQUATIC);
     ability->forbiddenFlags = (GF_AQUATIC_ONLY);
@@ -810,7 +846,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "abyssal";
     ability->flavorOverride = "Entirely devoid of eyes and relying on unknown senses to guide $HIMHER, this $BASE would look more at home in the botom of the ocean than wandering the dungeon halls.";
     ability->colorOverride = &darkGray;
-    ability->dangerBoost = 0;
+    ability->dangerBoost = 2;
     ability->regenSpeed = RegenSpeedType::VERY_FAST;
     ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER | MONST_FLEES_NEAR_DEATH);
     ability->requiredFlags = (GF_AQUATIC);
@@ -832,9 +868,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "razortooth";
     ability->flavorAddition = "$HISHER knifelike teeth significantly overbite $HISHER jaw.";
     ability->colorMod = ColorModFlavor::COMBAT;
-    ability->dangerBoost = 3;
-    ability->minDamageBoost = 2;
-    ability->maxDamageBoost = 4;
+    ability->physique = PhysiqueType::BUFF;
     ability->hpBoost = 5;
     ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 75;
@@ -845,6 +879,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "Foreign, aquatic toxins give its hit a poisonous punch.";
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 3;
+    ability->hpBoost = -5;
     ability->abilFlags = MA_POISONS;
     ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
     ability->rarityPercent = 75;
@@ -872,21 +907,11 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "swarm";
-    ability->flavorAddition = "$HESHE is an opportunistic predator that attacks and retreats in groups.";
-    ability->colorMod = ColorModFlavor::MOBILITY;
-    ability->dangerBoost = 3;
-    ability->flags = MONST_FLEES_NEAR_DEATH;
-    ability->defense = DefenseType::HIGH;
-    ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_PACK_MEMBER | GF_ANIMAL);
-    ability->rarityPercent = 100;
-    abilities.push_back(ability);
-    
-    ability = new Ability();
     ability->nameSuffix = "caller";
     ability->flavorOverride = "The sirenic calls of this shaman $BASE spread discord amongst $HISHER enemies and restore life to the denizens of the lake.";
     ability->colorOverride = &yellow;
-    ability->dangerBoost = 5;
+    ability->dangerBoost = 0;
+    ability->physique = PhysiqueType::SPELLCASTER;
     ability->bolts = {BOLT_HEALING, BOLT_DISCORD};
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_SUPPORTS_CLASS | GF_PACK_MEMBER);
@@ -907,6 +932,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "Oldest among the $BASE, this elder is well-versed in debilitating spells -- $HISHER eons beneath the surface have only sharpened $HISHER abilities.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
+    ability->hpBoost = -5;
     ability->bolts = {BOLT_DISCORD, BOLT_SLOW_2};
     ability->defense = DefenseType::LOW;
     ability->flags = (MONST_MAINTAINS_DISTANCE);
@@ -922,7 +948,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->nameSuffix = "totem";
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_HEALING, BOLT_SLOW_2};
@@ -930,7 +955,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->nameSuffix = "statue";
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_BECKONING, BOLT_HASTE};
@@ -938,7 +962,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->nameSuffix = "idol";
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_CONJURATION, BOLT_INVISIBILITY};
@@ -947,8 +970,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->namePrefix = "crystalline";
-//    ability->colorOverride = &darkTurquoise;
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_SHIELDING};
@@ -957,9 +978,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->namePrefix = "onyx";
-//    ability->colorOverride = &black;
-//    ability->light = DARKNESS_CLOUD_LIGHT;
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_HASTE};
@@ -969,6 +987,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "arrow";
+    ability->flavorAddition = "$HESHE automatically acquires targets and fires arrows from a spring-loaded mechanism.";
     ability->colorOverride = &black;
     ability->dangerBoost = 9;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
@@ -980,6 +999,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "spark";
+    ability->flavorAddition = "When intruders approach, magical sigils spring to life and $HESHE fires arcs of lightning across the room.";
     ability->colorOverride = &lightningColor;
     ability->light = SPARK_TURRET_LIGHT;
     ability->dangerBoost = 14;
@@ -991,6 +1011,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "electric";
+    ability->flavorAddition = "$HESHE is powered by electrical crystals capable of shocking intruders from across the dungeon.";
     ability->colorOverride = &lightningColor;
     ability->dangerBoost = 11;
     ability->bolts = {BOLT_SPARK};
@@ -1000,6 +1021,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "acid";
+    ability->flavorAddition = "$HESHE conceals a store of acid that $HESHE liberally applies to anything nearby.";
     ability->colorOverride = &acidBackColor;
     ability->dangerBoost = 17;
     ability->minDamageBoost = 1;
@@ -1007,10 +1029,12 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->accuracy = AccuracyType::ACCURATE;
     ability->bolts = {BOLT_ACID_TURRET_ATTACK};
     ability->requiredFlags = (GF_TURRET);
+    ability->forbiddenFlags = (GF_SHAMANISTIC | GF_WIZARDLY);
     abilities.push_back(ability);
     
     ability = new Ability();
     ability->namePrefix = "flame";
+    ability->flavorAddition = "Great streams of fire emanate from $HESHE to set distant intruders alight.";
     ability->colorOverride = &lavaForeColor;
     ability->light = LAVA_LIGHT;
     ability->dangerBoost = 19;
@@ -1022,6 +1046,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "dart";
+    ability->flavorAddition = "$HESHE is outfitted with a bolt of poisonous darts.";
     ability->colorOverride = &centipedeColor;
     ability->dangerBoost = 17;
     ability->minDamageBoost = 1;
@@ -1034,6 +1059,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "oppulent";
+    ability->flavorAddition = "Strange, white lights flow almost imperceptibly across $HISHER surface.";
     ability->colorOverride = &white;
     ability->dangerBoost = 10;
     ability->bolts = {BOLT_SLOW_2};
@@ -1042,11 +1068,63 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "hypnotic";
-    ability->colorOverride = &white;
+    ability->flavorAddition = "Its lustrous surface gleams maddeningly in the dark.";
+    ability->colorOverride = &discordColor;
     ability->light = SPECTRAL_BLADE_LIGHT;
     ability->dangerBoost = 18;
     ability->bolts = {BOLT_DISCORD};
     ability->requiredFlags = (GF_TURRET | GF_WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "flameshroud";
+    ability->flavorOverride = "Fire and smoke congeal to form the silhouette of a $BASE, concealed completely behind an aura of raging flames.";
+    ability->colorOverride = &fireForeColor;
+    ability->light = FLAMEDANCER_LIGHT;
+    ability->dangerBoost = 5;
+    ability->bolts = {BOLT_FIRE};
+    ability->requiredFlags = (GF_BOSS_ONLY);
+    ability->featurePeriodic = DF_FLAMEDANCER_CORONA;
+    ability->featurePeriodicPercent= 100;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "dragon";
+    ability->flavorOverride = "A fearsome hybrid between a $BASE and a dragon, this reptile breaths terrifying hellfire sure to incinerate all that stand before $HIMHER.";
+    ability->colorOverride = &dragonColor;
+    ability->light = FLAMEDANCER_LIGHT;
+    ability->dangerBoost = 10;
+    ability->bolts = {BOLT_DRAGONFIRE};
+    ability->flags = MONST_IMMUNE_TO_FIRE;
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_ANIMAL);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "lightning";
+    ability->flavorOverride = "Only the thin outline of a $BASE is visible in a rush of sparks and ozone.";
+    ability->colorOverride = &lightningColor;
+    ability->light = SENTINEL_LIGHT;
+    ability->dangerBoost = 4;
+    ability->bolts = {BOLT_SPARK, BOLT_BLINKING};
+    ability->requiredFlags = (GF_BOSS_ONLY);
+    ability->flags = MONST_FLEES_NEAR_DEATH;
+    ability->regenSpeed = RegenSpeedType::VERY_FAST;
+    ability->moveSpeed = MoveSpeedType::FAST;
+    ability->defense = DefenseType::HIGH;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "crystalline";
+    ability->flavorOverride = "This jumble of green and turquoise crystal superficially resembles a $BASE, emitting both a faint light and sure malevolence.";
+    ability->colorOverride = &crystalWallLightColor;
+    ability->light = CRYSTAL_WALL_LIGHT;
+    ability->dangerBoost = 6;
+    ability->physique = PhysiqueType::BUFF;
+    ability->bolts = {BOLT_SPARK};
+    ability->requiredFlags = (GF_BOSS_ONLY);
+    ability->regenSpeed = RegenSpeedType::NONE;
+    ability->defense = DefenseType::HIGH;
+    ability->flags = MONST_REFLECT_4;
     abilities.push_back(ability);
 
     return abilities;

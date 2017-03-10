@@ -42,8 +42,8 @@ void MonsterGenerator::generate() {
     abilities = Ability::loadModifierAbilities();
 
     // Step 1: Let's put together some constants
-    int fodderCount = 3;
-    int mookCount = rand_range(6, 7);
+    int fodderCount = rand_range(3, 4);
+    int mookCount = 7;
     int maxMookDL = AMULET_LEVEL + 3;
     int maxAquaDL = AMULET_LEVEL + 6;
     int maxThiefDL = AMULET_LEVEL - 3;
@@ -79,20 +79,7 @@ void MonsterGenerator::generate() {
     std::vector<Body *> mookBodies;
     std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> mookMinions;
 
-    // Step 2: Generate the fodder
-    for (int i = 0; i < fodderCount; i += 1) {
-        Body *body = matchingBody([](const Body *body) {
-            return body->dangerLevel <= 3 && !(body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET));
-        });
-        if (body == NULL) {
-            continue;
-        }
-        ChimeraMonster &monster = newMonster(*body);
-        monster.genFlags |= GF_MOOKISH;
-        fodderMonsters.push_back(monster);
-    }
-
-    // Step 3: Generate the vanilla mooks
+    // Step 2: Generate the vanilla mooks
     for (int i = 0; i < mookCount; i += 1) {
         Body *body = matchingBody([maxMookDL, mookCount, i, specialistOnlyMook](const Body *body) {
             if (body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET)) {
@@ -115,6 +102,26 @@ void MonsterGenerator::generate() {
             monster.genFlags |= GF_MOOKISH;
             mookMonsters.push_back(monster);
             mookBodies.push_back(body);
+        }
+    }
+    
+    // Step 3: Generate the fodder
+    for (int i = 0; i < fodderCount; i += 1) {
+        Body *body = matchingBody([](const Body *body) {
+            return body->dangerLevel <= 3 && !(body->genFlags & (GF_KAMIKAZE | GF_THIEVING_ONLY | GF_AQUATIC_ONLY | GF_TOTEM | GF_TURRET));
+        });
+        if (body == NULL) {
+            continue;
+        }
+        ChimeraMonster &monster = newMonster(*body);
+        monster.genFlags |= GF_MOOKISH;
+        fodderMonsters.push_back(monster);
+        if (i == 0) {
+            Ability *ability = matchingAbility([body](const Ability *ability) {
+                return ability->validForBody(*body) && ability->dangerBoost <= 2;
+            });
+            monster.dangerLevel -= 1;
+            monster.applyAbility(*ability);
         }
     }
 
@@ -162,6 +169,7 @@ void MonsterGenerator::generate() {
             if (ability != NULL) {
                 ChimeraMonster &monster = newMonster(*specialistMookBody);
                 monster.genFlags |= GF_MOOKISH;
+                monster.mookName = specialistMookBody->baseName;
                 if (i > 0) {
                     monster.genFlags |= GF_PACK_MEMBER;
                 }
@@ -210,6 +218,7 @@ void MonsterGenerator::generate() {
                 // two mutant types and a hunting party
                 ChimeraMonster &monster2 = newMonster(mook);
                 monster2.genFlags |= GF_PACK_MEMBER;
+                monster2.mookName = monster.baseName;
 
                 Ability *ability2 = matchingAbility([monster2](const Ability *ability) {
                     return ability->validForMonster(monster2);
@@ -255,11 +264,13 @@ void MonsterGenerator::generate() {
                 continue;
             }
             monster.applyAbility(*ability);
+            monster.mookName = body->baseName;
             Horde &horde = newHorde(monster);
 
             if (!solo) {
                 ChimeraMonster &monster2 = newMonster(*body);
-                monster.genFlags |= GF_PACK_MEMBER;
+                monster2.genFlags |= GF_PACK_MEMBER;
+                monster2.mookName = body->baseName;
                 Ability *ability = matchingAbility([monster2](const Ability *ability) {
                     return ability->validForMonster(monster2);
                 });
@@ -293,6 +304,7 @@ void MonsterGenerator::generate() {
         });
         if (burst != NULL) {
             monster.applyAbility(*burst);
+            monster.mookName = kamikazeBody->baseName;
             kamikazes.push_back(monster);
             Horde &horde = newHorde(monster);
             horde.purpose = HordePurposeType::KAMIKAZE;
@@ -309,7 +321,13 @@ void MonsterGenerator::generate() {
     
     // Step 11: Thieves
     std::vector<std::reference_wrapper<ChimeraMonster>> thieves;
+    int retries = 0;
     for (int i = 0; i < thiefMonstersCount; i += 1) {
+        retries += 1;
+        if (retries > 100) {
+            retries = 0;
+            break;
+        }
         Body *body;
         if (rand_percent(80)) {
             body = matchingBody([](const Body *body) {
@@ -327,7 +345,7 @@ void MonsterGenerator::generate() {
                 return false;
             }
             int minDL = i * (maxThiefDL / thiefMonstersCount) - 3;
-            int maxDL = (i+1) * (maxThiefDL / thiefMonstersCount);
+            int maxDL = (i+1) * (maxThiefDL / thiefMonstersCount) - 1;
             int dl = (ability->dangerBoost + body->dangerLevel);
             return (ability->requiredFlags & GF_THIEVING) > 0  && dl >= minDL && dl <= maxDL;
         });
@@ -335,6 +353,7 @@ void MonsterGenerator::generate() {
             i -= 1;
             continue;
         }
+        retries = 0;
         ChimeraMonster &monster = newMonster(*body);
         monster.mookName = body->baseName;
         monster.genFlags |= GF_THIEVING;
@@ -554,6 +573,21 @@ void MonsterGenerator::generate() {
         horde.extraRange = -1;
     }
     
+    // Step 15: Rat trap monster ID
+    int lowestMonsterId = fodderMonsters[0].get().monsterId;
+    int lowestDL = fodderMonsters[0].get().dangerLevel;
+    for (ChimeraMonster &fodder : fodderMonsters) {
+        if (fodder.dangerLevel < lowestDL) {
+            lowestMonsterId = fodder.monsterId;
+        }
+    }
+    ratTrapMonsterId = lowestMonsterId;
+    
+    
+    // Step 16: TODO: populate the goblin warren
+    
+    // Step 17: "Vampire" boss
+    
     std::string report = debugReport();
     std::cout << report;
     return;
@@ -603,6 +637,10 @@ Ability *MonsterGenerator::matchingAbility(const std::function<bool(const Abilit
         }
     }
     return NULL;
+}
+
+ChimeraMonster &MonsterGenerator::generateBoss(int targetDL) {
+    
 }
 
 std::string MonsterGenerator::debugReport() const {
