@@ -50,8 +50,8 @@ private:
     std::vector<Ability *> abilities;
     std::vector<Horde *> hordes;
 
-    ChimeraMonster &newMonster(Body &body);
-    ChimeraMonster &newMonster(const ChimeraMonster &baseMonster);
+    ChimeraMonster *newMonster(Body &body);
+    ChimeraMonster *newMonster(ChimeraMonster *baseMonster);
     Horde &newHorde(const ChimeraMonster &monster);
     ChimeraMonster &generateBoss(int targetDL);
     

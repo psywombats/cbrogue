@@ -119,9 +119,9 @@ void MonsterGenerator::generate() {
             specialistMookBody = body;
             specialistMookBody->inUse = true;
         } else {
-            ChimeraMonster &monster = newMonster(*body);
-            monster.genFlags |= GF_MOOKISH;
-            mookMonsters.push_back(monster);
+            ChimeraMonster *monster = newMonster(*body);
+            monster->genFlags |= GF_MOOKISH;
+            mookMonsters.push_back(*monster);
             mookBodies.push_back(body);
         }
     }
@@ -134,16 +134,16 @@ void MonsterGenerator::generate() {
         if (body == NULL) {
             continue;
         }
-        ChimeraMonster &monster = newMonster(*body);
-        monster.genFlags |= GF_MOOKISH;
-        fodderMonsters.push_back(monster);
+        ChimeraMonster *monster = newMonster(*body);
+        monster->genFlags |= GF_MOOKISH;
+        fodderMonsters.push_back(*monster);
         if (i == 0) {
             Ability *ability = matchingAbility([body](const Ability *ability) {
                 return ability->validForBody(*body) && ability->dangerBoost <= 2;
             });
             if (ability != NULL) {
-                monster.dangerLevel -= 1;
-                monster.applyAbility(*ability);
+                monster->dangerLevel -= 1;
+                monster->applyAbility(*ability);
             }
         }
     }
@@ -190,14 +190,14 @@ void MonsterGenerator::generate() {
                 }
             });
             if (ability != NULL) {
-                ChimeraMonster &monster = newMonster(*specialistMookBody);
-                monster.genFlags |= GF_MOOKISH;
-                monster.mookName = specialistMookBody->baseName;
+                ChimeraMonster *monster = newMonster(*specialistMookBody);
+                monster->genFlags |= GF_MOOKISH;
+                monster->baseMookName = specialistMookBody->baseName;
                 if (i > 0) {
-                    monster.genFlags |= GF_PACK_MEMBER;
+                    monster->genFlags |= GF_PACK_MEMBER;
                 }
-                monster.applyAbility(*ability);
-                specialistMooks.push_back(monster);
+                monster->applyAbility(*ability);
+                specialistMooks.push_back(*monster);
             }
         }
         j = 0;
@@ -221,42 +221,41 @@ void MonsterGenerator::generate() {
         int choice = rand_range(0, 3);
         if (choice == 0 || choice == 1 || choice == 2) {
             // a mutant...
-            ChimeraMonster &monster = newMonster(mook);
-            monster.genFlags |= GF_PACK_MEMBER;
+            ChimeraMonster *monster = newMonster(&mook);
+            monster->genFlags |= GF_PACK_MEMBER;
             Ability *ability = matchingAbility([monster](const Ability *ability) {
-                return ability->validForMonster(monster);
+                return ability->validForMonster(*monster);
             });
             if (ability == NULL) {
                 continue;
             }
-            monster.applyAbility(*ability);
-            mookSet.push_back(monster);
-            newHorde(monster);
+            monster->applyAbility(*ability);
+            mookSet.push_back(*monster);
+            newHorde(*monster);
 
             if (choice == 1) {
                 // and some followers?
-                Horde &horde = newHorde(monster);
+                Horde &horde = newHorde(*monster);
                 horde.addMember(mook, 2, rand_range(2, 4));
             } else if (choice == 2) {
                 // two mutant types and a hunting party
-                ChimeraMonster &monster2 = newMonster(mook);
-                monster2.genFlags |= GF_PACK_MEMBER;
-                monster2.mookName = monster.baseName;
+                ChimeraMonster *monster2 = newMonster(&mook);
+                monster2->genFlags |= GF_PACK_MEMBER;
 
                 Ability *ability2 = matchingAbility([monster2](const Ability *ability) {
-                    return ability->validForMonster(monster2);
+                    return ability->validForMonster(*monster2);
                 });
                 if (ability2 == NULL) {
                     continue;
                 }
-                monster2.applyAbility(*ability2);
-                mookSet.push_back(monster2);
+                monster2->applyAbility(*ability2);
+                mookSet.push_back(*monster2);
 
-                Horde &horde = newHorde(monster2);
-                horde.addMember(monster, 1, 1);
+                Horde &horde = newHorde(*monster2);
+                horde.addMember(*monster, 1, 1);
 
-                Horde &horde2 = newHorde(monster2);
-                horde2.addMember(monster, 1, 1);
+                Horde &horde2 = newHorde(*monster2);
+                horde2.addMember(*monster, 1, 1);
                 horde2.addMember(mook, rand_range(1, 2), 2);
             }
         } else if (choice == 3) {
@@ -276,32 +275,32 @@ void MonsterGenerator::generate() {
             if (body == NULL) {
                 continue;
             }
-            ChimeraMonster &monster = newMonster(*body);
+            ChimeraMonster *monster = newMonster(*body);
             if (!solo) {
-                monster.genFlags |= GF_PACK_MEMBER;
+                monster->genFlags |= GF_PACK_MEMBER;
             }
             Ability *ability = matchingAbility([monster](const Ability *ability) {
-                return ability->validForMonster(monster);
+                return ability->validForMonster(*monster);
             });
             if (ability == NULL) {
                 continue;
             }
-            monster.applyAbility(*ability);
-            monster.mookName = body->baseName;
-            Horde &horde = newHorde(monster);
+            monster->applyAbility(*ability);
+            monster->baseMookName = body->baseName;
+            Horde &horde = newHorde(*monster);
 
             if (!solo) {
-                ChimeraMonster &monster2 = newMonster(*body);
-                monster2.genFlags |= GF_PACK_MEMBER;
-                monster2.mookName = body->baseName;
+                ChimeraMonster *monster2 = newMonster(*body);
+                monster2->genFlags |= GF_PACK_MEMBER;
+                monster2->baseMookName = body->baseName;
                 Ability *ability = matchingAbility([monster2](const Ability *ability) {
-                    return ability->validForMonster(monster2);
+                    return ability->validForMonster(*monster2);
                 });
                 if (ability == NULL) {
                     continue;
                 }
-                monster2.applyAbility(*ability);
-                horde.addMember(monster2, 1, 1);
+                monster2->applyAbility(*ability);
+                horde.addMember(*monster2, 1, 1);
             }
         }
         if (mookSet.size() > 0) {
@@ -315,9 +314,9 @@ void MonsterGenerator::generate() {
         return body->genFlags & GF_KAMIKAZE;
     });
     for (int i = 0; i < kamikazeMonstersCount; i += 1) {
-        ChimeraMonster &monster = newMonster(*kamikazeBody);
+        ChimeraMonster *monster = newMonster(*kamikazeBody);
         Ability *burst = matchingAbility([i, monster, kamikazeMonstersCount, kamikazeBody](const Ability *ability) {
-            if (!ability->validForMonster(monster)) {
+            if (!ability->validForMonster(*monster)) {
                 return false;
             }
             int minDL = i * (AMULET_LEVEL / kamikazeMonstersCount) - 1;
@@ -326,10 +325,10 @@ void MonsterGenerator::generate() {
             return (ability->requiredFlags & GF_BURSTS) > 0 && dl >= minDL && dl <= maxDL;
         });
         if (burst != NULL) {
-            monster.applyAbility(*burst);
-            monster.mookName = kamikazeBody->baseName;
-            kamikazes.push_back(monster);
-            Horde &horde = newHorde(monster);
+            monster->applyAbility(*burst);
+            monster->baseMookName = kamikazeBody->baseName;
+            kamikazes.push_back(*monster);
+            Horde &horde = newHorde(*monster);
             horde.purpose = HordePurposeType::KAMIKAZE;
             horde.extraRange += (2 - i);
         }
@@ -377,12 +376,12 @@ void MonsterGenerator::generate() {
             continue;
         }
         retries = 0;
-        ChimeraMonster &monster = newMonster(*body);
-        monster.mookName = body->baseName;
-        monster.genFlags |= GF_THIEVING;
-        monster.applyAbility(*ability);
-        thieves.push_back(monster);
-        Horde &horde = newHorde(monster);
+        ChimeraMonster *monster = newMonster(*body);
+        monster->baseMookName = body->baseName;
+        monster->genFlags |= GF_THIEVING;
+        monster->applyAbility(*ability);
+        thieves.push_back(*monster);
+        Horde &horde = newHorde(*monster);
         horde.purpose = HordePurposeType::THIEF;
         horde.extraRange = -i;
     }
@@ -407,9 +406,9 @@ void MonsterGenerator::generate() {
             if (body == NULL) {
                 continue;
             }
-            ChimeraMonster &monster = newMonster(*body);
-            monster.genFlags |= GF_MOOKISH;
-            Horde &horde = newHorde(monster);
+            ChimeraMonster *monster = newMonster(*body);
+            monster->genFlags |= GF_MOOKISH;
+            Horde &horde = newHorde(*monster);
             horde.purpose = HordePurposeType::AQUA;
             horde.extraRange = MAX(0, (3-i));
             
@@ -417,8 +416,8 @@ void MonsterGenerator::generate() {
                 // let's make a group for it
                 if (rand_percent(75)) {
                     // a simple group
-                    Horde &horde = newHorde(monster);
-                    horde.addMember(monster, 2, 4);
+                    Horde &horde = newHorde(*monster);
+                    horde.addMember(*monster, 2, 4);
                     horde.extraRange = 1;
                 } else {
                     // a fancy group
@@ -426,46 +425,44 @@ void MonsterGenerator::generate() {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForBodyWithFlags(monster.body, 0);
+                        return ability->validForBodyWithFlags(monster->body, 0);
                     });
                     Ability *groupAbility = matchingAbility([monster](const Ability *ability) {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForBodyWithFlags(monster.body, GF_PACK_MEMBER);
+                        return ability->validForBodyWithFlags(monster->body, GF_PACK_MEMBER);
                     });
                     if (soloAbility == NULL || groupAbility == NULL) {
                         continue;
                     }
-                    ChimeraMonster &soloMonster = newMonster(monster);
-                    ChimeraMonster &groupMonster = newMonster(monster);
-                    soloMonster.mookName = monster.baseName;
-                    groupMonster.mookName = monster.baseName;
-                    groupMonster.genFlags |= GF_PACK_MEMBER;
-                    groupMonster.applyAbility(*groupAbility);
-                    soloMonster.applyAbility(*soloAbility);
-                    Horde &monoHorde = newHorde(soloMonster);
-                    monoHorde.addMember(soloMonster, rand_range(1, 2), 2);
+                    ChimeraMonster *soloMonster = newMonster(monster);
+                    ChimeraMonster *groupMonster = newMonster(monster);
+                    groupMonster->genFlags |= GF_PACK_MEMBER;
+                    groupMonster->applyAbility(*groupAbility);
+                    soloMonster->applyAbility(*soloAbility);
+                    Horde &monoHorde = newHorde(*soloMonster);
+                    monoHorde.addMember(*soloMonster, rand_range(1, 2), 2);
                     monoHorde.purpose = HordePurposeType::AQUA;
-                    Horde &groupHorde = newHorde(groupMonster);
-                    groupHorde.addMember(soloMonster, 1, 2);
-                    groupHorde.addMember(monster, 1, 2);
+                    Horde &groupHorde = newHorde(*groupMonster);
+                    groupHorde.addMember(*soloMonster, 1, 2);
+                    groupHorde.addMember(*monster, 1, 2);
                     groupHorde.purpose = HordePurposeType::AQUA;
                 }
             } else {
                 // let's make a variant of it
-                ChimeraMonster &variantMonster = newMonster(monster);
+                ChimeraMonster *variantMonster = newMonster(monster);
                 Ability *ability = matchingAbility([variantMonster](const Ability *ability) {
                     if (!(ability->requiredFlags & GF_AQUATIC)) {
                         if (rand_percent(50)) return false;
                     }
-                    return ability->validForMonster(variantMonster);
+                    return ability->validForMonster(*variantMonster);
                 });
                 if (ability != NULL) {
-                    variantMonster.applyAbility(*ability);
+                    variantMonster->applyAbility(*ability);
                 }
-                Horde &groupHorde = newHorde(variantMonster);
-                groupHorde.addMember(monster, 0, 2);
+                Horde &groupHorde = newHorde(*variantMonster);
+                groupHorde.addMember(*monster, 0, 2);
                 groupHorde.extraRange = 1;
             }
         } else {
@@ -508,9 +505,9 @@ void MonsterGenerator::generate() {
                 i -= 1;
                 continue;
             }
-            ChimeraMonster &monster = newMonster(*body);
-            monster.applyAbility(*ability);
-            Horde &horde = newHorde(monster);
+            ChimeraMonster *monster = newMonster(*body);
+            monster->applyAbility(*ability);
+            Horde &horde = newHorde(*monster);
             horde.purpose = HordePurposeType::AQUA;
             horde.extraRange = 1;
         }
@@ -530,44 +527,44 @@ void MonsterGenerator::generate() {
             continue;
         }
         j += 1;
-        ChimeraMonster &totem = newMonster(*body);
-        totem.mookName = mook.baseName;
-        totem.genFlags |= mook.genFlags;
-        totem.displayColor = mook.displayColor;
+        ChimeraMonster *totem = newMonster(*body);
+        totem->baseMook = &mook;
+        totem->genFlags |= mook.genFlags;
+        totem->displayColor = mook.displayColor;
         if (mook.dangerLevel > 10) {
-            totem.hp += 40;
+            totem->hp += 40;
         }
         if (mook.dangerLevel > 20) {
-            totem.hp += 30;
+            totem->hp += 30;
         }
         Ability *ability = matchingAbility([totem](const Ability *ability) {
-            return ability->validForMonster(totem) && (ability->requiredFlags & GF_TOTEM);
+            return ability->validForMonster(*totem) && (ability->requiredFlags & GF_TOTEM);
         });
-        totem.applyAbility(*ability);
+        totem->applyAbility(*ability);
         
         // basic group
-        Horde &baseHorde = newHorde(totem);
+        Horde &baseHorde = newHorde(*totem);
         baseHorde.purpose = HordePurposeType::TOTEM;
         baseHorde.addMember(mook, 2, 4);
         
         if (rand_percent(50) && mookSet.size() > 1) {
             // colony
-            Horde &colonyHorde = newHorde(totem);
+            Horde &colonyHorde = newHorde(*totem);
             colonyHorde.purpose = HordePurposeType::TOTEM;
-            colonyHorde.addMember(totem, 1, 2);
+            colonyHorde.addMember(*totem, 1, 2);
             colonyHorde.addMember(mook, 3, 6);
             colonyHorde.addMember(mookSet[1], 1, rand_range(1, 2));
         }
         if (mookSet.size() > 1) {
             // group
-            Horde &groupHorde = newHorde(totem);
+            Horde &groupHorde = newHorde(*totem);
             groupHorde.purpose = HordePurposeType::TOTEM;
             groupHorde.addMember(mook, 2, 3);
             groupHorde.addMember(mookSet[1], 1, 2);
         }
         if (mookSet.size() > 2) {
             // big group
-            Horde &groupHorde = newHorde(totem);
+            Horde &groupHorde = newHorde(*totem);
             groupHorde.purpose = HordePurposeType::TOTEM;
             groupHorde.addMember(mook, 2, 4);
             groupHorde.addMember(mookSet[1], 0, rand_range(1, 2));
@@ -589,9 +586,9 @@ void MonsterGenerator::generate() {
         if (ability == NULL) {
             continue;
         }
-        ChimeraMonster &turret = newMonster(*body);
-        turret.applyAbility(*ability);
-        Horde &horde = newHorde(turret);
+        ChimeraMonster *turret = newMonster(*body);
+        turret->applyAbility(*ability);
+        Horde &horde = newHorde(*turret);
         horde.purpose = HordePurposeType::TURRET;
         horde.extraRange = -1;
     }
@@ -623,9 +620,9 @@ void MonsterGenerator::generate() {
         return (ability->abilFlags & MA_TRANSFERENCE);
     });
     if (vampireBody != NULL && vampireAbility != NULL) {
-        ChimeraMonster &vampire = newMonster(*vampireBody);
-        vampire.applyAbility(*vampireAbility);
-        vampireBossMonsterId = vampire.monsterId;
+        ChimeraMonster *vampire = newMonster(*vampireBody);
+        vampire->applyAbility(*vampireAbility);
+        vampireBossMonsterId = vampire->monsterId;
     }
     
     // Step 18: Guardians
@@ -665,30 +662,31 @@ void MonsterGenerator::generate() {
         guardianBody->periodicFeature = DF_GUARDIAN_STEP;
         guardianBody->regenSpeed = RegenSpeedType::NONE;
         
-        ChimeraMonster &guardian = newMonster(*guardianBody);
-        guardianMonsterId = guardian.monsterId;
-        guardian.mookName = guardianBody->baseName;
-        guardian.namePrefix = "guardian";
+        ChimeraMonster *guardian = newMonster(*guardianBody);
+        guardianMonsterId = guardian->monsterId;
+        guardian->baseMookName = guardianBody->baseName;
+        guardian->namePrefix = "guardian";
         
-        ChimeraMonster &wingedGuardian = newMonster(*guardianBody);
-        wingedGuardianMonsterId = wingedGuardian.monsterId;
-        wingedGuardian.mookName = guardianBody->baseName;
-        wingedGuardian.namePrefix = "guardian";
-        wingedGuardian.displayColor = &blue;
-        wingedGuardian.bolts = {BOLT_BLINKING};
-        wingedGuardian.feature = DF_SILENT_GLYPH_GLOW;
+        ChimeraMonster *wingedGuardian = newMonster(*guardianBody);
+        wingedGuardianMonsterId = wingedGuardian->monsterId;
+        wingedGuardian->baseMookName = guardianBody->baseName;
+        wingedGuardian->namePrefix = "guardian";
+        wingedGuardian->displayColor = &blue;
+        wingedGuardian->bolts = {BOLT_BLINKING};
+        wingedGuardian->feature = DF_SILENT_GLYPH_GLOW;
         
-        ChimeraMonster &charmGuardian = newMonster(*guardianBody);
-        charmSummonMonsterId = charmGuardian.monsterId;
-        charmGuardian.flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_IMMUNE_TO_FIRE | MONST_IMMUNE_TO_WEAPONS | MONST_DIES_IF_NEGATED | MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY);
-        wingedGuardian.mookName = guardianBody->baseName;
-        charmGuardian.namePrefix = "guardian";
-        charmGuardian.baseFlavor = "A spectral outline of a $BASE carrying a $WEAPON casts an ethereal light on its surroundings.";
-        charmGuardian.damage.lowerBound = 5;
-        charmGuardian.damage.upperBound = 12;
-        charmGuardian.displayColor = &spectralImageColor;
-        charmGuardian.feature = DF_NONE;
-        charmGuardian.lightType = SPECTRAL_IMAGE_LIGHT;
+        ChimeraMonster *charmGuardian = newMonster(*guardianBody);
+        charmSummonMonsterId = charmGuardian->monsterId;
+        charmGuardian->flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_IMMUNE_TO_FIRE | MONST_IMMUNE_TO_WEAPONS |
+                                MONST_DIES_IF_NEGATED | MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY);
+        wingedGuardian->baseMookName = guardianBody->baseName;
+        charmGuardian->namePrefix = "guardian";
+        charmGuardian->baseFlavor = "A spectral outline of a $BASE carrying a $WEAPON casts an ethereal light on its surroundings.";
+        charmGuardian->damage.lowerBound = 5;
+        charmGuardian->damage.upperBound = 12;
+        charmGuardian->displayColor = &spectralImageColor;
+        charmGuardian->feature = DF_NONE;
+        charmGuardian->lightType = SPECTRAL_IMAGE_LIGHT;
     }
     
     // Step 19: Sentinels
@@ -727,13 +725,13 @@ void MonsterGenerator::generate() {
         sentinelBody->minDamage = 0;
         sentinelBody->maxDamage = 0;
         sentinelBody->regenSpeed = RegenSpeedType::NONE;
-        ChimeraMonster &sentinel = newMonster(*sentinelBody);
-        sentinelMonsterId = sentinel.monsterId;
-        sentinel.namePrefix = "sentinel";
+        ChimeraMonster *sentinel = newMonster(*sentinelBody);
+        sentinelMonsterId = sentinel->monsterId;
+        sentinel->namePrefix = "sentinel";
         std::vector<boltType> offenseBolts = { BOLT_SPARK, BOLT_SPARK, BOLT_POISON };
         std::vector<boltType> defenseBolts = { BOLT_HEALING, BOLT_HEALING, BOLT_HASTE, BOLT_SHIELDING };
-        sentinel.bolts.push_back(offenseBolts[rand_range(0, offenseBolts.size() - 1)]);
-        sentinel.bolts.push_back(defenseBolts[rand_range(0, defenseBolts.size() - 1)]);
+        sentinel->bolts.push_back(offenseBolts[rand_range(0, offenseBolts.size() - 1)]);
+        sentinel->bolts.push_back(defenseBolts[rand_range(0, defenseBolts.size() - 1)]);
     }
     
     // Step 20: Constant monsters
@@ -749,16 +747,16 @@ void MonsterGenerator::generate() {
         return (body->genFlags & GF_WIZARDLY) || (body->genFlags & GF_SHAMANISTIC);
     });
     if (mirrorBody != NULL) {
-        ChimeraMonster &mirrorTotem = newMonster(*mirrorBody);
-        mirrorMonsterId = mirrorTotem.monsterId;
-        ChimeraMonster::replace(mirrorTotem.baseName, "$BASE", "mirror");
-        ChimeraMonster::replace(mirrorTotem.baseName, "$BASE", "ancient");
-        mirrorTotem.flags = (MONST_IMMUNE_TO_WEBS | MONST_NEVER_SLEEPS | MONST_IMMOBILE | MONST_INANIMATE | MONST_ALWAYS_HUNTING | MONST_WILL_NOT_USE_STAIRS |
-                             MONST_GETS_TURN_ON_ACTIVATION | MONST_ALWAYS_USE_ABILITY | MONST_REFLECT_4 | MONST_IMMUNE_TO_WEAPONS | MONST_IMMUNE_TO_FIRE);
-        mirrorTotem.bolts = {BOLT_BECKONING};
-        mirrorTotem.feature = DF_MIRROR_TOTEM_STEP;
-        mirrorTotem.lightType = NO_LIGHT;
-        mirrorTotem.featurePeriodicPercent = 100;
+        ChimeraMonster *mirrorTotem = newMonster(*mirrorBody);
+        mirrorMonsterId = mirrorTotem->monsterId;
+        ChimeraMonster::replace(mirrorTotem->baseName, "$BASE", "mirror");
+        ChimeraMonster::replace(mirrorTotem->baseName, "$BASE", "ancient");
+        mirrorTotem->flags = (MONST_IMMUNE_TO_WEBS | MONST_NEVER_SLEEPS | MONST_IMMOBILE | MONST_INANIMATE | MONST_ALWAYS_HUNTING | MONST_WILL_NOT_USE_STAIRS |
+                              MONST_GETS_TURN_ON_ACTIVATION | MONST_ALWAYS_USE_ABILITY | MONST_REFLECT_4 | MONST_IMMUNE_TO_WEAPONS | MONST_IMMUNE_TO_FIRE);
+        mirrorTotem->bolts = {BOLT_BECKONING};
+        mirrorTotem->feature = DF_MIRROR_TOTEM_STEP;
+        mirrorTotem->lightType = NO_LIGHT;
+        mirrorTotem->featurePeriodicPercent = 100;
     }
     
     // Step 22: Webber (if we have one)
@@ -775,41 +773,34 @@ void MonsterGenerator::generate() {
     }
     
     // Step 23: Digger
+    ChimeraMonster *digger = NULL;
     for (ChimeraMonster *existing : monsters) {
         if (!(existing->genFlags & GF_DIGGER) || (existing->genFlags & (GF_BOSS_ONLY | GF_AQUATIC_ONLY | GF_KAMIKAZE))) {
             continue;
         }
-        diggerMonsterId = existing->monsterId;
-        if (existing->namePrefix.length() == 0 && existing->nameSuffix.length() == 0) {
-            if (existing->genFlags & GF_AMORPHOUS) {
-                existing->namePrefix = "wall";
-            } else if (existing->genFlags & GF_INSECTOID) {
-                existing->namePrefix = "burrowing";
-            } else {
-                existing->namePrefix = "tunnel";
-            }
-        }
-        existing->baseFlavor += "The " + existing->baseName + " is able to hibernate in walls when low on food, and at times even burst through them in ambush.";
-        existing->flags |= MONST_NEVER_SLEEPS;
+        digger = existing;
     }
-    if (diggerMonsterId == 0) {
+    if (digger == NULL) {
         Body *diggerBody = matchingBody([weird](const Body *body) {
             return body->genFlags & GF_DIGGER;
         });
-        // sloppy code duplication ahead
         if (diggerBody != NULL) {
-            ChimeraMonster &digger = newMonster(*diggerBody);
-            diggerMonsterId = digger.monsterId;
-            if (diggerBody->genFlags & GF_AMORPHOUS) {
-                digger.namePrefix = "wall";
-            } else if (diggerBody->genFlags & GF_INSECTOID) {
-                digger.namePrefix = "burrowing";
-            } else {
-                digger.namePrefix = "tunnel";
-            }
-            digger.baseFlavor += "The " + digger.baseName + " is able to hibernate in walls when low on food, and at times even burst through them in ambush.";
-            digger.flags |= MONST_NEVER_SLEEPS;
+            digger = newMonster(*diggerBody);
         }
+    }
+    if (digger != NULL) {
+        diggerMonsterId = digger->monsterId;
+        if (digger->namePrefix.length() == 0 && digger->nameSuffix.length() == 0) {
+            if (digger->genFlags & GF_AMORPHOUS) {
+                digger->namePrefix = "wall";
+            } else if (digger->genFlags & GF_INSECTOID) {
+                digger->namePrefix = "burrowing";
+            } else {
+                digger->namePrefix = "tunnel";
+            }
+        }
+        digger->baseFlavor += "The " + digger->baseName + " is able to hibernate in walls when low on food, and at times even burst through them in ambush.";
+        digger->flags |= MONST_NEVER_SLEEPS;
     }
     
     // Step 24: Spark turret (if we have one)
@@ -853,8 +844,8 @@ void MonsterGenerator::generate() {
         return body->genFlags & GF_CONJURATION;
     });
     if (conjurationBody != NULL) {
-        ChimeraMonster &conjuration = newMonster(*conjurationBody);
-        conjurationMonsterId = conjuration.monsterId;
+        ChimeraMonster *conjuration = newMonster(*conjurationBody);
+        conjurationMonsterId = conjuration->monsterId;
     }
     
     std::string report = debugReport();
@@ -926,17 +917,17 @@ std::string MonsterGenerator::debugReport() const {
     return report;
 }
 
-ChimeraMonster &MonsterGenerator::newMonster(Body &body) {
+ChimeraMonster *MonsterGenerator::newMonster(Body &body) {
     ChimeraMonster *monster = new ChimeraMonster(body);
     monsters.push_back(monster);
-    return *monster;
+    return monster;
 }
 
-ChimeraMonster &MonsterGenerator::newMonster(const ChimeraMonster &baseMonster) {
-    ChimeraMonster *monster = new ChimeraMonster(baseMonster.body);
-    monster->mookName = baseMonster.baseName;
+ChimeraMonster *MonsterGenerator::newMonster(ChimeraMonster *baseMonster) {
+    ChimeraMonster *monster = new ChimeraMonster(baseMonster->body);
+    monster->baseMook = baseMonster;
     monsters.push_back(monster);
-    return *monster;
+    return monster;
 }
 
 Horde &MonsterGenerator::newHorde(const ChimeraMonster &monster) {

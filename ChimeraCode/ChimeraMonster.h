@@ -150,7 +150,8 @@ public:
 
     // generation
     Body &body;
-    std::string mookName;
+    ChimeraMonster *baseMook;
+    std::string baseMookName;
     std::string nameSuffix, namePrefix;
     unsigned long genFlags;             // bitset of GenerateFlag
     int monsterId;
@@ -178,6 +179,7 @@ private:
     std::list<std::string> generateAttackFlavor() const;
     std::string generateSummonFlavor() const;
     
+    const std::string &getBaseName();
     bool otherSpeciesUsesChar();
 
     // generation

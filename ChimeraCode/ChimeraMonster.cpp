@@ -31,7 +31,8 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         genFlags(0),
         abilFlags(0),
         flags(0),
-        mookName(""),
+        baseMook(NULL),
+        baseMookName(""),
         displayName(""),
         nameSuffix(""),
         namePrefix(""),
@@ -351,9 +352,7 @@ void ChimeraMonster::generateFlavor() {
             flavor += " " + ability.flavorAddition;
         }
     }
-    if (mookName.size() > 0) {
-        replace(flavor, "$BASE", mookName);
-    }
+    replace(flavor, "$BASE", getBaseName());
     replace(flavor, "$WEAPON", flavorWeaponNames[rand_range(0, flavorWeaponNames.size() - 1)]);
     replace(flavor, "$MAGIC", flavorMagicNames[rand_range(0, flavorMagicNames.size() - 1)]);
     replace(flavor, "$SWORD", flavorSwordNames[rand_range(0, flavorSwordNames.size() - 1)]);
@@ -398,9 +397,7 @@ void ChimeraMonster::generateName() {
         name += " " + nameSuffix;
     }
     
-    if (mookName.size() > 0) {
-        replace(name, "$BASE", mookName);
-    }
+    replace(name, "$BASE", getBaseName());
     
     std::string weapon = "";
     while (weapon.length() <= 0 || weapon.length() > 10) {
@@ -462,15 +459,25 @@ void ChimeraMonster::generateDisplayChar() {
             displayChar = randomChars[rand_range(0, (sizeof(randomChars) / sizeof(uchar)) - 1)];
         }
     }
-    usedChars[displayChar] = mookName.length() > 0 ? mookName : baseName;
+    usedChars[displayChar] = getBaseName();
 }
 
 bool ChimeraMonster::otherSpeciesUsesChar() {
     if (usedChars.count(displayChar)) {
         std::string user = usedChars[displayChar];
-        return (mookName.length() > 0 ? mookName : baseName) != user;
+        return getBaseName() != user;
     } else {
         return false;
+    }
+}
+
+const std::string &ChimeraMonster::getBaseName() {
+    if (baseMook != NULL) {
+        return baseMook->baseName;
+    } else if (baseMookName.length() > 0) {
+        return baseMookName;
+    } else {
+        return baseName;
     }
 }
 
