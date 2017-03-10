@@ -31,6 +31,7 @@ Body::Body() :
         moveSpeed(MoveSpeedType::NORMAL),
         attackSpeed(AttackSpeedType::NORMAL),
         regenSpeed(RegenSpeedType::NORMAL),
+        summon(SummonType::NONE),
         maxDamage(0),
         minDamage(0) {
 
@@ -49,6 +50,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.moveSpeed = this->moveSpeed;
     monster.attackSpeed = this->attackSpeed;
     monster.regenSpeed = this->regenSpeed;
+    monster.summon = this->summon;
 
     monster.baseName = this->baseName;
     monster.gender = this->gender;
@@ -557,6 +559,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 140;
     body->dangerLevel = 28;
     body->gender = GenderType::BOTH;
+    body->flags = (MONST_CARRY_ITEM_100);
     body->genFlags = (GF_WIZARDLY | GF_AQUATIC | GF_BOSSLIKE | GF_DIGGER);
     body->abilFlags = MA_ATTACKS_ALL_ADJACENT;
     bodies.push_back(body);
@@ -961,7 +964,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 30;
     body->dangerLevel = 25;
     body->defense = DefenseType::DEFENSELESS;
-    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD);
+    body->genFlags = (GF_NO_SPECIALS);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     bodies.push_back(body);
     
@@ -997,6 +1000,39 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = MONST_TURRET;
     body->reusable = true;
     body->rarityPercent = 100;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "sorceror";
+    body->baseChar = 'S';
+    body->flavor = "The dessicated form of a singularly foul summoner who holds dominion over the nether planes.";
+    body->baseColor = &white;
+    body->minDamage = 2;
+    body->maxDamage = 6;
+    body->hp = 35;
+    body->abilFlags = MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25;
+    body->summon = SummonType::SPAWN_UNRELATED_MOOK;
+    body->defense = DefenseType::HIGH;
+    body->light = LICH_LIGHT;
+    body->genFlags = (GF_NO_SPECIALS | GF_WIZARDLY);
+    body->dangerLevel = 25;
+    body->rarityPercent = 25;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "ratking";
+    body->baseChar = 'R';
+    body->flavor = "Many forms writhe and twist beneath the purple rags of the rat king, and bursting from the seams pour dozens of rats, snakes, worms, birds and all variety of fauna.";
+    body->baseColor = &brown;
+    body->minDamage = 7;
+    body->maxDamage = 10;
+    body->hp = 60;
+    body->abilFlags = MONST_MAINTAINS_DISTANCE;
+    body->summon = SummonType::SPAWN_FODDER;
+    body->defense = DefenseType::HIGH;
+    body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER);
+    body->dangerLevel = 19;
+    body->rarityPercent = 25;
     bodies.push_back(body);
     
     body = new Body();

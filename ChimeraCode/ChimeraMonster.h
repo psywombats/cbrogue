@@ -95,6 +95,15 @@ enum class GenderType {
     FEMALE_ONLY,
 };
 
+enum class SummonType {
+    NONE,
+    SPAWN_BASE_MOOK,
+    SPAWN_UNRELATED_MOOK,
+    SPAWN_FODDER,
+    TRANSFORM_MOOK,
+    CONJURATION,
+};
+
 struct AbsorbFlavorType {
     std::string message;
     std::string status;
@@ -136,6 +145,7 @@ public:
     MoveSpeedType moveSpeed;
     AttackSpeedType attackSpeed;
     PhysiqueType physique;
+    SummonType summon;
     
     // feature
     dungeonFeatureTypes feature;

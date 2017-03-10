@@ -44,6 +44,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         physique(PhysiqueType::NORMAL),
         bloodType(DF_NONE),
         feature(DF_NONE),
+        summon(SummonType::NONE),
         featureKamikaze(false),
         featurePeriodicPercent(0),
         featureMessage(""),

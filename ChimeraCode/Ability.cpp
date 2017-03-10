@@ -22,6 +22,7 @@ Ability::Ability() :
         featurePeriodic(DF_NONE),
         featureMessage(""),
         featurePeriodicPercent(0),
+        summon(SummonType::NONE),
         regenSpeed(RegenSpeedType::NORMAL),
         moveSpeed(MoveSpeedType::NORMAL),
         attackSpeed(AttackSpeedType::NORMAL),
@@ -65,6 +66,9 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
     }
     if (physique != PhysiqueType::NORMAL) {
         monster.physique = physique;
+    }
+    if (summon != SummonType::NONE) {
+        monster.summon = summon;
     }
     
     int origHp = monster.hp;
@@ -206,13 +210,13 @@ const color *Ability::blendColor(const color *baseColor) const {
         }
     case ColorModFlavor::SPELLCASTING:
         if (baseColor == &darkPurple) {
-            return &white;
+            return &darMageColor;
         } else if (baseColor == &brown) {
-            return &green;
+            return &teal;
         } else if (baseColor == &darkGreen) {
             return &pink;
         } else {
-            return &teal;
+            return &goblinMysticColor;
         }
     case ColorModFlavor::FIRE:
         if (baseColor == &darkGray || baseColor == &darkGreen) {
@@ -233,6 +237,14 @@ const color *Ability::blendColor(const color *baseColor) const {
             return &black;
         } else {
             return &darkTurquoise;
+        }
+    case ColorModFlavor::SUMMONING:
+        if (baseColor == &brown || baseColor == &darkGreen) {
+            return &goblinConjurerColor;
+        } else if (baseColor == &white || baseColor == &gray || baseColor == &darkGray) {
+            return &ectoplasmColor;
+        } else {
+            return &teal;
         }
     case ColorModFlavor::NONE:
         return baseColor;
@@ -350,7 +362,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "shaman";
+    ability->nameSuffix = "seer";
     ability->flavorOverride = "This $BASE is particularly wizened and leers from under robes of fur and feathers, gesturing with $HISHER $MAGIC.";
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
@@ -1126,6 +1138,53 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->defense = DefenseType::HIGH;
     ability->flags = MONST_REFLECT_4;
     abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "were";
+    ability->flavorOverride = "This hunched and furred form could be a human wearing $BASE skin, or else a malformed $BASE learned to walk upright. $HESHE seems able to switch forms at will.";
+    ability->colorMod = ColorModFlavor::SUMMONING;
+    ability->dangerBoost = 1;
+    ability->summon = SummonType::TRANSFORM_MOOK;
+    ability->requiredFlags = (GF_ANIMAL);
+    ability->forbiddenFlags = (GF_AQUATIC | GF_SUPPORTS_CLASS);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "conjurer";
+    ability->flavorOverride = "When this $BASE waves $HISHER $MAGIC, hidden energy manifests itself in front of $HIMHER.";
+    ability->colorMod = ColorModFlavor::SUMMONING;
+    ability->dangerBoost = 1;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->summon = SummonType::CONJURATION;
+    ability->flags = (MONST_CARRY_ITEM_25);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS);
+    ability->rarityPercent = 75;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "summoner";
+    ability->flavorOverride = "The $MAGIC in the hand of this $BASE binds $HIMHER to $HISHER allies, only a spell away.";
+    ability->colorMod = ColorModFlavor::SUMMONING;
+    ability->dangerBoost = 4;
+    ability->physique = PhysiqueType::SPELLCASTER;
+    ability->bolts = {BOLT_HASTE};
+    ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_MAINTAINS_DISTANCE);
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
+    ability->rarityPercent = 33;
+    
+    ability = new Ability();
+    ability->nameSuffix = "shaman";
+    ability->flavorOverride = "An old and ruined $BASE, that nevertheless inspires fear and awe in $HISHER myriad companions.";
+    ability->colorMod = ColorModFlavor::SUMMONING;
+    ability->dangerBoost = 6;
+    ability->hpBoost = -5;
+    ability->maxDamageBoost = -1;
+    ability->bolts = {BOLT_SHIELDING, BOLT_SPARK};
+    ability->flags = MONST_CAST_SPELLS_SLOWLY;
+    ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
+    ability->rarityPercent = 33;
 
     return abilities;
 }

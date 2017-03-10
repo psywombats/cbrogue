@@ -23,6 +23,7 @@ enum class ColorModFlavor {
     MOBILITY,
     FIRE,
     TOTEM,
+    SUMMONING,
 };
 
 /**
@@ -52,6 +53,7 @@ public:
     AccuracyType accuracy;
     DefenseType defense;
     PhysiqueType physique;
+    SummonType summon;
     
     // feature
     dungeonFeatureTypes featureKamikaze;

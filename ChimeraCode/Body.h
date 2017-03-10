@@ -37,6 +37,7 @@ public:
     MoveSpeedType moveSpeed;
     RegenSpeedType regenSpeed;
     AttackSpeedType attackSpeed;
+    SummonType summon;
     unsigned long flags;                // monsterBehaviorTypes bitset
     unsigned long abilFlags;            // monsterAbilityTypes bitset
 
