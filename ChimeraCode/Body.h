@@ -47,6 +47,7 @@ public:
     uchar baseChar;
     const color *baseColor;
     lightType light;
+    std::vector<std::string> hitMessages;
 
     // generation
     unsigned long genFlags;            // generateFlag bitset

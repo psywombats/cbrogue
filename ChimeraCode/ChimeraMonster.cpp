@@ -15,7 +15,7 @@
 int ChimeraMonster::nextChimeraId = 0;
 std::map<std::reference_wrapper<uchar>, std::string> ChimeraMonster::usedChars;
 
-static std::vector<std::string> flavorWeaponNames = {   "greatsword", "battleaxe", "broadsword", "lance",  "flail", "warhammer", "waraxe", "saber", "scythe",
+static std::vector<std::string> flavorWeaponNames = {   "greatsword", "battleaxe", "broadsword", "lance", "flail", "warhammer", "waraxe", "saber", "scythe",
                                                         "claymore", "zweihander", "bardiche", "poleaxe", "mace", "morning star", "pike", "trident", "glaive",
                                                         "halberd", "partisan", "voulge", "broad-bladed sword", "dull broadsword", "broken greatsword",
                                                         "ancient claymore", "stone sword", "iron blade", "two-handed scimitar", "chipped longsword" };
@@ -95,6 +95,10 @@ creatureType ChimeraMonster::convertToStruct() {
     creatureStruct.bloodType = bloodType;
     creatureStruct.intrinsicLightType = lightType;
     
+    for (unsigned long i = 0; i < this->hitMessages.size(); i += 1) {
+        strcpy(creatureStruct.attack[i], hitMessages[i].c_str());
+    }
+    
     if (hp < 10) {
         creatureStruct.accuracy = 70;
     } else if (hp < 19) {
@@ -106,7 +110,7 @@ creatureType ChimeraMonster::convertToStruct() {
     } else if (hp < 95){
         creatureStruct.accuracy = 150;
     } else {
-        creatureStruct.accuracy = 225;
+        creatureStruct.accuracy = 200;
     }
     if (accuracy == AccuracyType::ACCURATE) {
         creatureStruct.accuracy = (short)((float)creatureStruct.accuracy * 1.5f);

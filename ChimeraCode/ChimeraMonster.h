@@ -135,6 +135,7 @@ public:
     dungeonFeatureTypes bloodType;
     lightType lightType;
     GenderType gender;
+    std::vector<std::string> hitMessages;
 
     // rpg
     short hp;

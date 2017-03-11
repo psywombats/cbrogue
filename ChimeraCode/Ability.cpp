@@ -71,6 +71,11 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
         monster.summon = summon;
     }
     
+    if (hitMessages.size() > 0) {
+        // overwrite the existing messages
+        monster.hitMessages = hitMessages;
+    }
+    
     int origHp = monster.hp;
     switch (physique) {
         case PhysiqueType::BUFF:
@@ -267,7 +272,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "knight";
-    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a $WEAPON, ready to accurately strike $HISHER foes.";
+    ability->flavorOverride = "This $BASE wears chainmail and holds aloft a $SWORD, ready to accurately strike $HISHER foes.";
+    ability->hitMessages = { "strikes", "hits", "stabs" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->hpBoost = 12;
@@ -318,6 +324,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "swordsman";
     ability->flavorOverride = "This $BASE wields a $SWORD and buckler and stands ready to engage in swordplay with the enemy.";
+    ability->hitMessages = { "strikes", "hits", "stabs" };
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 4;
     ability->defense = DefenseType::HIGH;
@@ -339,6 +346,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "mystic";
     ability->flavorOverride = "This $BASE is unarmed, but $HISHER fingers ripple with an innate magic that $HESHE uses to shield $HISHER allies.";
+    ability->hitMessages = { "bops", "tweaks", "kicks" };
     ability->colorOverride = &goblinMysticColor;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_SHIELDING};
@@ -351,6 +359,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "archer";
     ability->flavorOverride = "Wielding a sinew-stringed bow, this $BASE is capable of firing projectiles at range.";
+    ability->hitMessages = { "shoots" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
@@ -364,6 +373,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "seer";
     ability->flavorOverride = "This $BASE is particularly wizened and leers from under robes of fur and feathers, gesturing with $HISHER $MAGIC.";
+    ability->hitMessages = { "whacks", "kicks" };
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HASTE};
@@ -375,6 +385,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "blademaster";
     ability->flavorOverride = "With $SWORD in hand, this $BASE crosses great distances in an instant to cross swords with $HISHER enemies.";
+    ability->hitMessages = { "pierces", "slashes", "grazes" };
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_BLINKING};
@@ -395,6 +406,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "priest";
     ability->flavorOverride = "Underneath the robe of this $BASE, the $BASE priest carries $HISHER holy $MAGIC and $MAGIC.";
+    ability->hitMessages = { "bludgeons", "elbows" };
     ability->colorOverride = &darPriestessColor;
     ability->dangerBoost = 5;
     ability->bolts = {BOLT_SPARK, BOLT_HEALING, BOLT_NEGATION, BOLT_HASTE};
@@ -407,6 +419,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "healer";
     ability->flavorOverride = "This $BASE wears a laurel wreath and carries a $MAGIC, brimming with arcane energy.";
+    ability->hitMessages = { "headbutts", "trounces" };
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_HEALING, BOLT_SHIELDING};
@@ -419,6 +432,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "battlemage";
     ability->flavorOverride = "The hands of this $BASE radiate a sickly light, indicating $HISHER eldritch power far above the average $BASE.";
+    ability->hitMessages = { "whacks", "slaps" };
     ability->colorOverride = &darMageColor;
     ability->dangerBoost = 6;
     ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
@@ -431,6 +445,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "fire mage";
     ability->flavorOverride = "The many gowns and scarves worn by this $BASE would give $HIMHER a more dignified air if they weren't singed and smelling strongly of sulfur.";
+    ability->hitMessages = { "singes", "shinkicks" };
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE};
@@ -442,6 +457,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "air mage";
     ability->flavorOverride = "Spark and streaks of white dance around this $BASE, belying $HISHER mastery over lightning.";
+    ability->hitMessages = { "singes", "eyepokes" };
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 2;
     ability->bolts = {BOLT_SPARK};
@@ -505,12 +521,14 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "skirmisher";
-    ability->flavorOverride = "This $BASE towers above its peers and carries a crude $WEAPON and dances in and out of combat as the flow of fate decides.";
+    ability->flavorOverride = "This well-built $BASE wields a $WEAPON with ease and dances in and out of combat as the flow of battle decides.";
+    ability->hitMessages = { "strikes", "hits", "attacks" };
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 5;
     ability->physique = PhysiqueType::BUFF;
-    ability->flags = (MONST_FLEES_NEAR_DEATH);
+    ability->flags = (MONST_FLEES_NEAR_DEATH | MONST_FLITS);
     ability->regenSpeed = RegenSpeedType::VERY_FAST;
+    ability->moveSpeed = MoveSpeedType::FAST;
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
 
@@ -536,7 +554,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "cinder";
-    ability->flavorAddition = "A blackened, stony countenance grants $HIMHER immunity to fire.";
+    ability->flavorAddition = "A blackened, stony skin grants $HIMHER immunity to fire.";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->dangerBoost = 1;
     ability->flags = (MONST_IMMUNE_TO_FIRE | MONST_SUBMERGES);
@@ -565,6 +583,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "spearman";
     ability->flavorOverride = "Carrying a pike almost twice $HISHER height, this $BASE is capable of piercing two enemies at once.";
+    ability->hitMessages = { "skewers", "impales", "jabs" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 0;
     ability->abilFlags = (MA_ATTACKS_PENETRATE);
@@ -576,6 +595,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "brute";
     ability->flavorOverride = "Looming over any fellow $BASE, this monster batters anything before $HIMHER with slow but earthshaking blows from $HISHER $WEAPON.";
+    ability->hitMessages = { "pulverizes", "bashes" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 3;
     ability->physique = PhysiqueType::BUFF;
@@ -588,6 +608,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "axeman";
     ability->flavorOverride = "This $BASE growls as $HESHE hefts a stone waraxe, capable of hewing down many foes before $HIMHER.";
+    ability->hitMessages = { "slashes", "slices", "mutilates", "crushes" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->physique = PhysiqueType::BUFF;
@@ -601,6 +622,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "dominatrix";
     ability->flavorOverride = "A curious $BASE, this individual wields a long-reaching whip, not to mention some unusual leather gear.";
+    ability->hitMessages = { "whips", "slashes" };
     ability->colorOverride = &pink;
     ability->dangerBoost = 1;
     ability->requiredFlags = (GF_ARMED);
@@ -611,6 +633,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "whiptail";
     ability->flavorAddition = "$HISHER tail flashes through the air with a menacing crack.";
+    ability->hitMessages = { "whips", "tailwhips", "strikes" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 1;
     ability->requiredFlags = (GF_INSECTOID);
@@ -641,6 +664,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "grappler";
     ability->flavorOverride = "Despite not wielding a weapon, this $BASE is more than capable of grabbing and battering $HISHER victims.";
+    ability->hitMessages = { "punches", "backhands", "chokes" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->dangerBoost = 4;
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
@@ -680,6 +704,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "acid";
     ability->flavorAddition = "$HESHE sizzles and hisses with a corrossive compound sure to degrade weapons and armor.";
+    ability->hitMessages = { "dissolves", "engulfs", "burns" };
     ability->colorOverride = &acidBackColor;
     ability->dangerBoost = 6;
     ability->requiredFlags = (GF_AMORPHOUS);
@@ -745,7 +770,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "shattering";
-    ability->flavorAddition = "The magical energy fuelling $HIMHER will erode the surrounding walls when $HESHE detonates.";
+    ability->flavorAddition = "The magical energy fueling $HIMHER will erode the surrounding walls when $HESHE detonates.";
     ability->light = SENTINEL_LIGHT;
     ability->colorOverride = &teal;
     ability->dangerBoost = 4;
@@ -797,6 +822,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "impish";
     ability->flavorAddition = "Curious, kleptomaniac magics seem to move $HIMHER as if possessed.";
+    ability->hitMessages = { "slices", "cuts" };
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->light = IMP_LIGHT;
     ability->dangerBoost = 12;
@@ -816,6 +842,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "rogue";
     ability->flavorOverride = "Hiding under a hooded cloak and with a variety of magic at $HISHER disposal, this $BASE is a professional thief.";
+    ability->hitMessages = { "stabs", "punches", "cuts" };
     ability->colorMod = ColorModFlavor::MOBILITY;
     ability->dangerBoost = 11;
     ability->physique = PhysiqueType::SPELLCASTER;
@@ -845,7 +872,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "river";
-    ability->flavorOverride = "While other $BASE roam the dungeon proper, this aquatic $BASE is more at home in the deep lakes that dot the depths.";
+    ability->flavorOverride = "While other $BASE roam the dungeon proper, the aquatic $BASE is more at home in the deep lakes that dot the depths.";
     ability->colorOverride = &brown;
     ability->dangerBoost = 0;
     ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER);
@@ -869,6 +896,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "electric";
     ability->flavorAddition = "$HESHE possesses a specialized organ that allows $HIMHER to subdue $HISHER prey with electric shocks.";
+    ability->hitMessages = { "shocks" };
     ability->colorOverride = &yellow;
     ability->dangerBoost = 3;
     ability->bolts = {BOLT_SPARK};
@@ -879,6 +907,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "razortooth";
     ability->flavorAddition = "$HISHER knifelike teeth significantly overbite $HISHER jaw.";
+    ability->hitMessages = { "bites", "gnaws on" };
     ability->colorMod = ColorModFlavor::COMBAT;
     ability->physique = PhysiqueType::BUFF;
     ability->hpBoost = 5;
@@ -889,6 +918,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "stinging";
     ability->flavorAddition = "Foreign, aquatic toxins give its hit a poisonous punch.";
+    ability->hitMessages = { "stings", "shocks" };
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 3;
     ability->hpBoost = -5;
@@ -933,6 +963,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "spearfisher";
     ability->flavorAddition = "The spear $HESHE carries is tipped with an ennervating toxin that softens the muscles.";
+    ability->hitMessages = { "impales", "wounds", "hits" };
     ability->colorMod = ColorModFlavor::POISONOUS;
     ability->dangerBoost = 4;
     ability->abilFlags = (MA_CAUSES_WEAKNESS | MA_ATTACKS_PENETRATE);
@@ -942,6 +973,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "elder";
     ability->flavorOverride = "Oldest among the $BASE, this elder is well-versed in debilitating spells -- $HISHER eons beneath the surface have only sharpened $HISHER abilities.";
+    ability->hitMessages = { "claps", "whacks" };
     ability->colorMod = ColorModFlavor::SPELLCASTING;
     ability->dangerBoost = 5;
     ability->hpBoost = -5;
@@ -952,7 +984,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-//    ability->nameSuffix = "totem";
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 1;
     ability->bolts = {BOLT_SPARK, BOLT_SHIELDING};
@@ -1091,6 +1122,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "flameshroud";
     ability->flavorOverride = "Fire and smoke congeal to form the silhouette of a $BASE, concealed completely behind an aura of raging flames.";
+    ability->hitMessages = { "scorches", "burns", "torches" };
     ability->colorOverride = &fireForeColor;
     ability->light = FLAMEDANCER_LIGHT;
     ability->dangerBoost = 5;
@@ -1114,6 +1146,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->namePrefix = "lightning";
     ability->flavorOverride = "Only the thin outline of a $BASE is visible in a rush of sparks and ozone.";
+    ability->hitMessages = { "shocks", "cuts", "electrocutes" };
     ability->colorOverride = &lightningColor;
     ability->light = SENTINEL_LIGHT;
     ability->dangerBoost = 4;
@@ -1151,12 +1184,13 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->nameSuffix = "conjurer";
-    ability->flavorOverride = "When this $BASE waves $HISHER $MAGIC, hidden energy manifests itself in front of $HIMHER.";
+    ability->flavorOverride = "As this $BASE waves a $MAGIC, hidden energy manifests itself in front of $HIMHER.";
+    ability->hitMessages = { "wallops", "fwips" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 1;
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->summon = SummonType::CONJURATION;
-    ability->flags = (MONST_CARRY_ITEM_25);
+    ability->flags = (MONST_CARRY_ITEM_25 | MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
     ability->rarityPercent = 75;
     abilities.push_back(ability);
@@ -1164,6 +1198,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "summoner";
     ability->flavorOverride = "The $MAGIC in the hand of this $BASE binds $HIMHER to $HISHER allies, only a spell away.";
+    ability->hitMessages = { "punches", "trips" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 4;
     ability->physique = PhysiqueType::SPELLCASTER;
@@ -1175,7 +1210,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->nameSuffix = "shaman";
-    ability->flavorOverride = "An old and ruined $BASE, that nevertheless inspires fear and awe in $HISHER myriad companions.";
+    ability->flavorOverride = "An old and ruined $BASE that nevertheless inspires fear and awe in $HISHER myriad companions.";
+    ability->hitMessages = { "swats", "bites" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 6;
     ability->hpBoost = -5;
