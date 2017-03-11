@@ -60,7 +60,7 @@ void MonsterGenerator::generate() {
 
     // Step 1: Let's put together some constants
     int fodderCount = rand_range(3, 4);
-    int mookCount = 7;
+    int mookCount = rand_range(8, 9);
     int maxMookDL = AMULET_LEVEL + 3;
     int maxAquaDL = AMULET_LEVEL + 6;
     int maxThiefDL = AMULET_LEVEL - 3;
@@ -70,6 +70,7 @@ void MonsterGenerator::generate() {
     int aquaMonstersCount = 3;
     int totemsCount = 2;
     int turretsCount = 4;
+    int targetCaptives = 15;
     
     for (int i = 0; i < 2; i += 1) {
     int roll = rand_range(0, 100);
@@ -212,12 +213,14 @@ void MonsterGenerator::generate() {
                 horde.addMember(monster, 0, rand_range(1, 2));
             }
         }
+        mookMinions.push_back(specialistMooks);
     }
 
     // Step 9: variations on the mooks
     for (ChimeraMonster &mook : mookMonsters) {
         std::vector<std::reference_wrapper<ChimeraMonster>> mookSet;
         mookSet.push_back(mook);
+        mookMinions.push_back(mookSet);
         int choice = rand_range(0, 3);
         if (choice == 0 || choice == 1 || choice == 2) {
             // a mutant...
@@ -261,6 +264,7 @@ void MonsterGenerator::generate() {
         } else if (choice == 3) {
             // shit out of luck, we make someone new
             int minDL, maxDL;
+            std::vector<std::reference_wrapper<ChimeraMonster>> newSet;
             bool solo = rand_percent(50);
             if (solo) {
                 maxDL = mook.dangerLevel + 1;
@@ -276,6 +280,9 @@ void MonsterGenerator::generate() {
                 continue;
             }
             ChimeraMonster *monster = newMonster(*body);
+            Horde &horde = newHorde(*monster);
+            newSet.push_back(*monster);
+            mookMinions.push_back(newSet);
             if (!solo) {
                 monster->genFlags |= GF_PACK_MEMBER;
             }
@@ -287,8 +294,7 @@ void MonsterGenerator::generate() {
             }
             monster->applyAbility(*ability);
             monster->baseMookName = body->baseName;
-            Horde &horde = newHorde(*monster);
-
+            
             if (!solo) {
                 ChimeraMonster *monster2 = newMonster(*body);
                 monster2->genFlags |= GF_PACK_MEMBER;
@@ -301,10 +307,8 @@ void MonsterGenerator::generate() {
                 }
                 monster2->applyAbility(*ability);
                 horde.addMember(*monster2, 1, 1);
+                newSet.push_back(*monster2);
             }
-        }
-        if (mookSet.size() > 0) {
-            mookMinions.push_back(mookSet);
         }
     }
     
@@ -520,6 +524,9 @@ void MonsterGenerator::generate() {
             break;
         }
         ChimeraMonster &mook = mookSet[0];
+        if (mook.baseMook == NULL) {
+            continue;
+        }
         Body *body = matchingBody([mook](const Body *body) {
             return body->genFlags == ((mook.genFlags & body->genFlags) | GF_TOTEM);
         });
@@ -652,6 +659,7 @@ void MonsterGenerator::generate() {
         guardianBody->baseChar = toupper(guardianBody->baseChar);
         guardianBody->defense = DefenseType::DEFENSELESS;
         guardianBody->flags = guardFlag;
+        guardianBody->abilFlags = 0;
         guardianBody->flavor =  std::string("Guarding the room is a weathered stone statue of a $BASE carrying a $WEAPON, ") +
                                 std::string("connected to the glowing glyphs on the floor by invisible strands of enchantment.");
         guardianBody->gender = GenderType::NONE;
@@ -854,7 +862,7 @@ void MonsterGenerator::generate() {
             case SummonType::CONJURATION: {
                 Horde &horde = newHorde(*monster);
                 horde.purpose = HordePurposeType::CONJURATION;
-                horde.addMember(*conjuration, 3 + monster->dangerLevel / 10, 5 + monster->dangerLevel / 8);
+                horde.addMember(*conjuration, 3 + monster->dangerLevel / 12, 5 + monster->dangerLevel / 10);
                 break;
             }
             case SummonType::SPAWN_BASE_MOOK: {
@@ -905,6 +913,109 @@ void MonsterGenerator::generate() {
                 break;
             }
         }
+    }
+    
+    // Step 29: Captives
+    std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> allVanillaSets;
+    std::vector<std::reference_wrapper<Horde>> captiveHordes;
+    for (ChimeraMonster &thief : thieves) {
+        allVanillaSets.push_back(std::vector<std::reference_wrapper<ChimeraMonster>>({ thief }));
+    }
+    for (ChimeraMonster &fodder : fodderMonsters) {
+        allVanillaSets.push_back(std::vector<std::reference_wrapper<ChimeraMonster>>({ fodder }));
+    }
+    for (auto minionSet : mookMinions) {
+        allVanillaSets.push_back(minionSet);
+    }
+    
+    // find the captive
+    for (unsigned long i = 0; i < allVanillaSets.size(); i += 1) {
+        std::vector<std::reference_wrapper<ChimeraMonster>> mookSet = allVanillaSets[i];
+        for (ChimeraMonster &captive : mookSet) {
+            if (captive.genFlags & (GF_UNDEAD | GF_BRAINLESS)) {
+                continue;
+            }
+            if (captive.flags & (MONST_IMMUNE_TO_WEAPONS)) {
+                continue;
+            }
+            if (captive.summon != SummonType::NONE && rand_percent(75)) {
+                continue;
+            }
+            if ((captive.abilFlags & (MA_HIT_STEAL_FLEE)) && !((captive.genFlags & GF_ANIMAL) && captive.dangerLevel < 8)) {
+                continue;
+            }
+            if (captive.genFlags & (GF_AMORPHOUS | GF_INSECTOID | GF_ANIMAL)) {
+                if (!(captive.genFlags & (GF_SHAMANISTIC | GF_WIZARDLY | GF_ARMED | GF_SUPPORTS_CLASS | GF_THIEVING))) {
+                    continue;
+                }
+            }
+            captive.generateName();
+            if (captive.getBaseName() != captive.getDisplayName() && !(captive.flags & MONST_MAINTAINS_DISTANCE)) {
+                continue;
+            }
+            Horde &horde = newHorde(captive);
+            captiveHordes.push_back(horde);
+            horde.purpose = HordePurposeType::CAPTIVE;
+            if (captive.abilFlags & MA_HIT_STEAL_FLEE) {
+                horde.extraDanger = -4;
+            }
+            
+            // find the captor(s)
+            for (int j = i + 1; j >= 0; j -= 1) {
+                if (j >= (int)allVanillaSets.size()) {
+                    continue;
+                }
+                std::vector<std::reference_wrapper<ChimeraMonster>> mookSet = allVanillaSets[j];
+                if (mookSet[0].get().getBaseName() == captive.getBaseName()) {
+                    continue;
+                }
+                if (mookSet[0].get().abilFlags & (MA_HIT_STEAL_FLEE)) {
+                    continue;
+                }
+                if (mookSet[0].get().genFlags & (GF_ANIMAL | GF_INSECTOID | GF_BRAINLESS | GF_AMORPHOUS)) {
+                    if (!(mookSet[0].get().genFlags & (GF_WIZARDLY | GF_SHAMANISTIC | GF_ARMED | GF_SUPPORTS_CLASS))) {
+                        continue;
+                    }
+                }
+                int dangerDelta = mookSet[0].get().dangerLevel - horde.calculateDL();
+                if (dangerDelta > 5) {
+                    continue;
+                } else if (dangerDelta > 2) {
+                    horde.addMember(mookSet[0], 1, 1);
+                    horde.extraDanger = dangerDelta - 1;
+                } else if (dangerDelta > 0) {
+                    horde.addMember(mookSet[0], 2, 3);
+                } else {
+                    if (mookSet.size() > 1) {
+                        for (ChimeraMonster &captor : mookSet) {
+                            horde.addMember(captor, (dangerDelta > -5 ? 1 : 2), (dangerDelta > -2 ? 1 : 2));
+                        }
+                    } else {
+                        horde.addMember(mookSet[0], (dangerDelta > -3 ? 2 : 3), (dangerDelta > -6 ? 3 : 4));
+                    }
+                }
+                break;
+            }
+            if (horde.memberCount() == 1) {
+                for (ChimeraMonster &captor : fodderMonsters) {
+                    if (captor.genFlags & (GF_ARMED | GF_SUPPORTS_CLASS | GF_WIZARDLY | GF_SHAMANISTIC)) {
+                        horde.addMember(captor, 2, 3);
+                        break;
+                    }
+                }
+                if (horde.memberCount() == 1) {
+                    for (ChimeraMonster &captor : mookMonsters) {
+                        if (captor.genFlags & (GF_ARMED | GF_SUPPORTS_CLASS | GF_WIZARDLY | GF_SHAMANISTIC)) {
+                            horde.addMember(captor, 1, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for (int i = captiveHordes.size(); i < targetCaptives; i += 1) {
+        captiveHordes[rand_range(0, captiveHordes.size() - 1)].get().extraFrequency += 1;
     }
     
     std::string report = debugReport();

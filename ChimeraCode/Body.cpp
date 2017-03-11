@@ -272,7 +272,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 15;
     body->accuracy = AccuracyType::INACCURATE;
     body->dangerLevel = 2;
-    body->genFlags = (GF_AMORPHOUS | GF_BURSTS);
+    body->genFlags = (GF_AMORPHOUS | GF_BURSTS | GF_BRAINLESS);
     body->rarityPercent = 33;
     bodies.push_back(body);
 
@@ -351,6 +351,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 20;
     body->accuracy = AccuracyType::ACCURATE;
     body->defense = DefenseType::HIGH;
+    body->genFlags = (GF_BRAINLESS);
     body->dangerLevel = 11;
     bodies.push_back(body);
 
@@ -394,7 +395,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 50;
     body->defense = DefenseType::LOW;
     body->dangerLevel = 10;
-    body->genFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_BURSTS);
+    body->genFlags = (GF_AQUATIC | GF_AMORPHOUS | GF_BURSTS | GF_BRAINLESS);
     body->rarityPercent = 33;
     bodies.push_back(body);
 
@@ -505,7 +506,7 @@ std::vector<Body *> Body::loadBodies() {
     body->moveSpeed = MoveSpeedType::SLOW;
     body->attackSpeed = AttackSpeedType::SLOW;
     body->dangerLevel = 13;
-    body->genFlags = (GF_ANIMAL | GF_INSECTOID | GF_AQUATIC | GF_DIGGER);
+    body->genFlags = (GF_ANIMAL | GF_INSECTOID | GF_AQUATIC | GF_DIGGER | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -518,7 +519,8 @@ std::vector<Body *> Body::loadBodies() {
     body->maxDamage = 13;
     body->hp = 60;
     body->dangerLevel = 18;
-    body->genFlags = (GF_BOSSLIKE);
+    body->genFlags = (GF_BOSSLIKE | GF_BRAINLESS);
+    bodies.push_back(body);
 
     body = new Body();
     body->baseName = "fury";
@@ -562,7 +564,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 100;
     body->dangerLevel = 23;
     body->defense = DefenseType::LOW;
-    body->flags = (GF_INSECTOID | GF_BOSSLIKE | GF_DIGGER);
+    body->genFlags = (GF_INSECTOID | GF_BOSSLIKE | GF_DIGGER);
     bodies.push_back(body);
 
     body = new Body();
@@ -610,7 +612,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 6;
     body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER);
+    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER | GF_BRAINLESS);
     body->rarityPercent = 100;
     bodies.push_back(body);
     
@@ -626,7 +628,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 19;
     body->abilFlags = (MA_CLONE_SELF_ON_DEFEND);
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER);
+    body->genFlags = (GF_AMORPHOUS | GF_NO_SPECIALS | GF_DIGGER | GF_BRAINLESS);
     body->rarityPercent = 25;
     bodies.push_back(body);
     
@@ -641,7 +643,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 4;
     body->dangerLevel = 1;
     body->flags = (MONST_FLIES | MONST_FLITS);
-    body->genFlags = (GF_BURSTS | GF_KAMIKAZE);
+    body->genFlags = (GF_BURSTS | GF_KAMIKAZE | GF_BRAINLESS);
     body->rarityPercent = 66;
     bodies.push_back(body);
     
@@ -657,7 +659,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 2;
     body->dangerLevel = 3;
     body->moveSpeed = MoveSpeedType::FAST;
-    body->genFlags = (GF_BURSTS | GF_KAMIKAZE | GF_ANIMAL);
+    body->genFlags = (GF_BURSTS | GF_KAMIKAZE | GF_ANIMAL | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -865,7 +867,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_BRAINLESS);
     body->reusable = true;
     bodies.push_back(body);
     
@@ -881,7 +883,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL);
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -896,7 +898,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_WIZARDLY);
+    body->genFlags = (GF_TOTEM | GF_WIZARDLY | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -911,7 +913,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_WIZARDLY);
+    body->genFlags = (GF_TOTEM | GF_WIZARDLY | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -1067,17 +1069,17 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "rat king";
-    body->baseChar = 'R';
+    body->baseChar = 'K';
     body->flavor = "Many forms writhe and twist beneath the purple rags of the rat king, and bursting from the seams pour dozens of rats, snakes, worms, birds and all variety of fauna.";
-    body->hitMessages = { "engulfs", "repeatedly bites", "swarms" };
+    body->hitMessages = { "engulfs", "swarms" };
     body->baseColor = &brown;
     body->minDamage = 7;
     body->maxDamage = 10;
-    body->hp = 60;
+    body->hp = 35;
     body->abilFlags = MONST_MAINTAINS_DISTANCE;
     body->summon = SummonType::SPAWN_FODDER;
     body->defense = DefenseType::HIGH;
-    body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER);
+    body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER | GF_UNDEAD | GF_DIGGER);
     body->dangerLevel = 15;
     body->rarityPercent = 25;
     bodies.push_back(body);
@@ -1094,7 +1096,7 @@ std::vector<Body *> Body::loadBodies() {
     body->dangerLevel = 0;
     body->defense = DefenseType::DEFENSELESS;
     body->attackSpeed = AttackSpeedType::TURRET;
-    body->genFlags = (GF_TURRET);
+    body->genFlags = (GF_TURRET | GF_BRAINLESS);
     body->regenSpeed = RegenSpeedType::NONE;
     body->flags = MONST_TURRET;
     body->reusable = true;
@@ -1116,7 +1118,7 @@ std::vector<Body *> Body::loadBodies() {
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_SHAMANISTIC);
     body->regenSpeed = RegenSpeedType::NONE;
-    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
+    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED | GF_BRAINLESS);
     body->reusable = true;
     body->rarityPercent = 25;
     bodies.push_back(body);
@@ -1136,7 +1138,7 @@ std::vector<Body *> Body::loadBodies() {
     body->attackSpeed = AttackSpeedType::TURRET;
     body->genFlags = (GF_TURRET | GF_WIZARDLY);
     body->regenSpeed = RegenSpeedType::NONE;
-    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED);
+    body->flags = (MONST_TURRET | MONST_DIES_IF_NEGATED | GF_BRAINLESS);
     body->reusable = true;
     body->rarityPercent = 12;
     bodies.push_back(body);
@@ -1158,7 +1160,7 @@ std::vector<Body *> Body::loadBodies() {
     body->moveSpeed = MoveSpeedType::FAST;
     body->light = SPECTRAL_BLADE_LIGHT;
     body->rarityPercent = 66;
-    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -1177,7 +1179,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::NONE;
     body->moveSpeed = MoveSpeedType::FAST;
     body->light = SPECTRAL_BLADE_LIGHT;
-    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS | GF_BRAINLESS);
     bodies.push_back(body);
     
     body = new Body();
@@ -1196,7 +1198,7 @@ std::vector<Body *> Body::loadBodies() {
     body->regenSpeed = RegenSpeedType::NONE;
     body->moveSpeed = MoveSpeedType::FAST;
     body->rarityPercent = 33;
-    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS);
+    body->genFlags = (GF_CONJURATION | GF_NO_SPECIALS | GF_BRAINLESS);
     bodies.push_back(body);
     
     return bodies;

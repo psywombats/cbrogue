@@ -25,6 +25,7 @@ enum class HordePurposeType {
     TURRET,
     SUMMON,
     CONJURATION,
+    CAPTIVE,
 };
 
 class Horde {
@@ -42,18 +43,19 @@ public:
     void addMember(const ChimeraMonster &member, short min, short max);
     std::string debugReport() const;
     int memberCount() const;
+    int calculateDL() const;
 
     HordePurposeType purpose;
     
     int extraRange;
     int extraFrequency;
+    int extraDanger;
 
 private:
 
     const ChimeraMonster &leader;
     std::list<HordeMember *> members;
-
-    int calculateDL() const;
+    
     int minDL() const;
     int maxDL() const;
     int dangerDelta() const;

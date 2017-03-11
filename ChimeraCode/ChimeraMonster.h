@@ -44,6 +44,7 @@ enum GenerateFlag : int {
     GF_DIGGER               = 1 << 21,
     GF_UNDEAD               = 1 << 22,
     GF_CONJURATION          = 1 << 23,
+    GF_BRAINLESS            = 1 << 24,
 };
 
 enum class RegenSpeedType {
@@ -124,6 +125,8 @@ public:
 
     std::string debugReport();
     const std::string &getDisplayName() const;
+    const std::string &getBaseName() const;
+    void generateName();
 
     void applyAbility(Ability &ability);
 
@@ -182,7 +185,6 @@ private:
     static int nextChimeraId;
     static std::map<std::reference_wrapper<uchar>, std::string> usedChars;
 
-    void generateName();
     void generateDisplayChar();
     void generateFlavor();
     
@@ -190,7 +192,6 @@ private:
     std::list<std::string> generateAttackFlavor() const;
     std::string generateSummonFlavor() const;
     
-    const std::string &getBaseName();
     bool otherSpeciesUsesChar();
 
     // generation

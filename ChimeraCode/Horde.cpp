@@ -12,6 +12,7 @@ Horde::Horde(const ChimeraMonster &newLeader) :
         purpose(HordePurposeType::GENERAL),
         extraRange(0),
         extraFrequency(0),
+        extraDanger(0),
         leader(newLeader) {
     this->members = std::list<HordeMember *>();
 }
@@ -52,6 +53,7 @@ std::string Horde::debugReport() const {
     if (tempStruct.flags & HORDE_SUMMONED_AT_DISTANCE) report += "[distance summon] ";
     if (tempStruct.flags & HORDE_MACHINE_WATER_MONSTER) report += "[watermon] ";
     if (tempStruct.flags & HORDE_MACHINE_LEGENDARY_ALLY) report += "[legendally] ";
+    report += "\n";
 
     for (HordeMember *member : this->members) {
         report += "  " + member->member.getDisplayName() + " {" + printInt(member->minCount) + "-" + printInt(member->maxCount) + "}\n";
@@ -104,9 +106,14 @@ hordeType Horde::convertToStruct() const {
     }
     if (this->purpose == HordePurposeType::SUMMON || this->purpose == HordePurposeType::CONJURATION) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_IS_SUMMONED);
+        hordeStruct.minLevel = 0;
+        hordeStruct.maxLevel = 0;
     }
     if (this->purpose == HordePurposeType::CONJURATION) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_DIES_ON_LEADER_DEATH);
+    }
+    if (this->purpose == HordePurposeType::CAPTIVE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_LEADER_CAPTIVE);
     }
 
     hordeStruct.leaderType = leader.monsterId;
@@ -143,11 +150,14 @@ void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag,
 }
 
 int Horde::calculateDL() const {
-    int danger = leader.dangerLevel;
+    int danger = leader.dangerLevel + extraDanger;
     for (HordeMember *member : this->members) {
         if (member->member.dangerLevel > danger) {
             danger = member->member.dangerLevel;
         }
+    }
+    if (this->purpose == HordePurposeType::CAPTIVE) {
+        return leader.dangerLevel - 1;
     }
     if (this->purpose == HordePurposeType::TOTEM) {
         danger += this->members.size() * 2;
@@ -163,13 +173,18 @@ int Horde::calculateDL() const {
                     count += avgMembers;
                     totalDanger += member->member.dangerLevel * avgMembers;
                 }
-                int avgDanger = totalDanger / count;
-                if (avgDanger + 2 <= danger) {
-                    // this is a swarm of similar DL monsters
-                    danger += CLAMP(count, 2, 4);
-                } else {
-                    // the leader is powerful (mage?) with some trailing minions
-                    danger += members.size() + CLAMP(avgDanger / 4, 0, 4);
+//                int avgDanger = totalDanger / count;
+//                if (avgDanger + 2 <= danger) {
+//                    // this is a swarm of similar DL monsters
+//                    danger += CLAMP(count, 2, 4);
+//                } else {
+//                    // the leader is powerful (mage?) with some trailing minions
+//                    danger += members.size() + CLAMP(avgDanger / 4, 0, 4);
+//                }
+                danger += members.size();
+                danger += count / 3;
+                if (leader.genFlags & GF_NO_SPECIALS) {
+                    danger += (count * 3);
                 }
             }
         }
@@ -214,13 +229,15 @@ int Horde::calculateFrequency() const {
         case HordePurposeType::FODDER:              frequency = 12;                 break;
         case HordePurposeType::KAMIKAZE:            frequency = 5;                  break;
         case HordePurposeType::THIEF:               frequency = 8;                  break;
+        case HordePurposeType::CAPTIVE:             frequency = 1;                  break;
         default:                                    frequency = 10;                 break;
     }
-    
-    frequency -= (this->memberCount() - 1);
-    if (purpose == HordePurposeType::THIEF) {
-        if (members.size() > 0) {
-            frequency /= members.front()->maxCount;
+    if (purpose != HordePurposeType::CONJURATION && purpose != HordePurposeType::SUMMON) {
+        frequency -= (this->memberCount() - 1);
+        if (purpose == HordePurposeType::THIEF) {
+            if (members.size() > 0) {
+                frequency /= members.front()->maxCount;
+            }
         }
     }
     frequency += extraFrequency;

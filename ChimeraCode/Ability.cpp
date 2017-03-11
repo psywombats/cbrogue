@@ -441,7 +441,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "The hands of this $BASE radiate a sickly light, indicating $HISHER eldritch power far above the average $BASE.";
     ability->hitMessages = { "whacks", "slaps" };
     ability->colorOverride = &darMageColor;
-    ability->dangerBoost = 6;
+    ability->dangerBoost = 7;
     ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->defense = DefenseType::LOW;
@@ -1014,7 +1014,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
-    ability->bolts = {BOLT_CONJURATION, BOLT_INVISIBILITY};
+    ability->summon = SummonType::CONJURATION;
+    ability->bolts = {BOLT_INVISIBILITY};
     ability->requiredFlags = (GF_TOTEM | GF_WIZARDLY);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -1031,6 +1032,14 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_FIRE, BOLT_HASTE};
+    ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
+    ability->rarityPercent = 12;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 4;
+    ability->summon = SummonType::SPAWN_BASE_MOOK;
     ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     ability->rarityPercent = 12;
     abilities.push_back(ability);
@@ -1194,12 +1203,12 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "As this $BASE waves a $MAGIC, hidden energy manifests itself in front of $HIMHER.";
     ability->hitMessages = { "wallops", "swats" };
     ability->colorMod = ColorModFlavor::SUMMONING;
-    ability->dangerBoost = 1;
+    ability->dangerBoost = 2;
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->summon = SummonType::CONJURATION;
     ability->flags = (MONST_CARRY_ITEM_25 | MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
-    ability->rarityPercent = 75;
+    ability->rarityPercent = 100;
     abilities.push_back(ability);
     
     ability = new Ability();

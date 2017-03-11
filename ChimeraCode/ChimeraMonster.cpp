@@ -443,6 +443,7 @@ void ChimeraMonster::generateName() {
     if (name == "acolyte idol")             name = "demonic idol";
     if (name == "acolyte obelisk")          name = "obsidian obelisk";
     if (name == "burrowing worm")           name = "underworm";
+    if (name == "monkey bandit")            name = "lemur";
 
     displayName = name;
 }
@@ -482,7 +483,7 @@ bool ChimeraMonster::otherSpeciesUsesChar() {
     }
 }
 
-const std::string &ChimeraMonster::getBaseName() {
+const std::string &ChimeraMonster::getBaseName() const {
     if (baseMook != NULL) {
         return baseMook->baseName;
     } else if (baseMookName.length() > 0) {
