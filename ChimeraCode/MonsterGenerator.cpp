@@ -595,6 +595,7 @@ void MonsterGenerator::generate() {
     
     // This marks the end of the standard generation
     std::random_shuffle(monsters.begin(), monsters.end());
+    std::random_shuffle(mookMonsters.begin(), mookMonsters.end());
     
     // Step 15: Rat trap monster ID
     int lowestMonsterId = fodderMonsters[0].get().monsterId;
@@ -840,12 +841,70 @@ void MonsterGenerator::generate() {
     }
     
     // Step 27: Conjuration
+    ChimeraMonster *conjuration;
     Body *conjurationBody = matchingBody([](const Body *body) {
         return body->genFlags & GF_CONJURATION;
     });
-    if (conjurationBody != NULL) {
-        ChimeraMonster *conjuration = newMonster(*conjurationBody);
-        conjurationMonsterId = conjuration->monsterId;
+    conjuration = newMonster(*conjurationBody);
+    conjurationMonsterId = conjuration->monsterId;
+    
+    // Step 28: Summoner hoards
+    for (ChimeraMonster *monster : monsters) {
+        switch (monster->summon) {
+            case SummonType::CONJURATION: {
+                Horde &horde = newHorde(*monster);
+                horde.purpose = HordePurposeType::CONJURATION;
+                horde.addMember(*conjuration, 3 + monster->dangerLevel / 10, 5 + monster->dangerLevel / 8);
+                break;
+            }
+            case SummonType::SPAWN_BASE_MOOK: {
+                Horde &horde = newHorde(*monster);
+                horde.purpose = HordePurposeType::SUMMON;
+                int deltaDL = monster->dangerLevel - monster->baseMook->dangerLevel;
+                horde.addMember(*(monster->baseMook), 1 + deltaDL / 10, 1 + deltaDL / 6);
+                break;
+            }
+            case SummonType::SPAWN_UNRELATED_MOOK: {
+                for (ChimeraMonster &mook : mookMonsters) {
+                    if (mook.dangerLevel >= monster->dangerLevel/2 - 1 && mook.dangerLevel <= monster->dangerLevel/3 - 2) {
+                        Horde &horde = newHorde(*monster);
+                        horde.addMember(mook, 2, 3);
+                        horde.purpose = HordePurposeType::SUMMON;
+                        if (rand_percent(40)) {
+                            break;
+                        }
+                    } else if (mook.dangerLevel >= monster->dangerLevel * 1/2 && mook.dangerLevel <= monster->dangerLevel * 2/3) {
+                        Horde &horde = newHorde(*monster);
+                        horde.addMember(mook, 1, 1);
+                        horde.purpose = HordePurposeType::SUMMON;
+                        if (rand_percent(40)) {
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            case SummonType::SPAWN_FODDER: {
+                for (ChimeraMonster &fodder : fodderMonsters) {
+                    Horde &horde = newHorde(*monster);
+                    horde.purpose = HordePurposeType::SUMMON;
+                    horde.addMember(fodder, 1, rand_range(1, 4));
+                    if (rand_percent(30)) {
+                        break;
+                    }
+                }
+                break;
+            }
+            case SummonType::TRANSFORM_MOOK: {
+                Horde &horde = newHorde(*monster);
+                horde.purpose = HordePurposeType::SUMMON;
+                horde.addMember(*(monster->baseMook), 3, 3);
+                break;
+            }
+            case SummonType::NONE: {
+                break;
+            }
+        }
     }
     
     std::string report = debugReport();

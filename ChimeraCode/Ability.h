@@ -41,6 +41,7 @@ public:
     bool validForMonster(const ChimeraMonster &monster) const;
     bool validForBody(const Body &body) const;
     bool validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const;
+    bool validForBodyWithFlags(const Body &body, unsigned long ignoredFlags, const ChimeraMonster *baseMonster) const;
 
     // rpg
     int hpBoost;

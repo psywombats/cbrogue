@@ -23,6 +23,8 @@ enum class HordePurposeType {
     AQUA,
     TOTEM,
     TURRET,
+    SUMMON,
+    CONJURATION,
 };
 
 class Horde {
@@ -35,7 +37,7 @@ public:
     /**
      * Convert to what the rest of Brogue uses.
      */
-    hordeType convertToStruct();
+    hordeType convertToStruct() const;
 
     void addMember(const ChimeraMonster &member, short min, short max);
     std::string debugReport() const;
@@ -56,7 +58,7 @@ private:
     int maxDL() const;
     int dangerDelta() const;
     int calculateFrequency() const;
-    void applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile);
+    void applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile) const;
 };
 
 class HordeMember {

@@ -138,7 +138,7 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 }
 
 bool Ability::validForMonster(const ChimeraMonster &monster) const {
-    return validForBody(monster.body);
+    return validForBodyWithFlags(monster.body, 0, &monster);
 }
 
 bool Ability::validForBody(const Body &body) const {
@@ -146,6 +146,10 @@ bool Ability::validForBody(const Body &body) const {
 }
 
 bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const {
+    return validForBodyWithFlags(body, ignoredFlags, NULL);
+}
+
+bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags, const ChimeraMonster *baseMonster) const {
     unsigned long effectiveRequiredFlags = (requiredFlags & (~ignoredFlags));
     if ((effectiveRequiredFlags & body.genFlags) != effectiveRequiredFlags) {
         return false;
@@ -171,8 +175,11 @@ bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags
     if (body.defense == DefenseType::DEFENSELESS && defense != DefenseType::NORMAL) {
         return false;
     }
-    if (dangerBoost + body.dangerLevel > 32) {
+    if (dangerBoost + body.dangerLevel > 33) {
         // no one would see this monstrosity, it's probably like an explosive horror or something
+        return false;
+    }
+    if ((summon == SummonType::SPAWN_BASE_MOOK || summon == SummonType::TRANSFORM_MOOK) && (baseMonster == NULL || baseMonster->baseMook == NULL)) {
         return false;
     }
     
@@ -1174,7 +1181,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->namePrefix = "were";
-    ability->flavorOverride = "This hunched and furred form could be a human wearing $BASE skin, or else a malformed $BASE learned to walk upright. $HESHE seems able to switch forms at will.";
+    ability->flavorOverride = "This hunched and furred form could be a human wearing $BASE skin, or else a malformed $BASE learned to walk upright. $HESHE is able to switch forms at will.";
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 1;
     ability->summon = SummonType::TRANSFORM_MOOK;
@@ -1185,7 +1192,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "conjurer";
     ability->flavorOverride = "As this $BASE waves a $MAGIC, hidden energy manifests itself in front of $HIMHER.";
-    ability->hitMessages = { "wallops", "fwips" };
+    ability->hitMessages = { "wallops", "swats" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 1;
     ability->physique = PhysiqueType::SPELLCASTER;
@@ -1197,7 +1204,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     
     ability = new Ability();
     ability->nameSuffix = "summoner";
-    ability->flavorOverride = "The $MAGIC in the hand of this $BASE binds $HIMHER to $HISHER allies, only a spell away.";
+    ability->flavorOverride = "The $MAGIC in the hand of this $BASE binds $HIMHER to $HISHER allies, only one dark incantation away.";
     ability->hitMessages = { "punches", "trips" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 4;
@@ -1211,7 +1218,6 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability = new Ability();
     ability->nameSuffix = "shaman";
     ability->flavorOverride = "An old and ruined $BASE that nevertheless inspires fear and awe in $HISHER myriad companions.";
-    ability->hitMessages = { "swats", "bites" };
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 6;
     ability->hpBoost = -5;

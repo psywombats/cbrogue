@@ -171,9 +171,15 @@ creatureType ChimeraMonster::convertToStruct() {
             bloodType = DF_GREEN_BLOOD;
         }
     }
+    
+    if (summon != SummonType::NONE) {
+        creatureStruct.abilityFlags |= MA_CAST_SUMMON;
+        if (summon == SummonType::TRANSFORM_MOOK) {
+            creatureStruct.abilityFlags = MA_ENTER_SUMMONS;
+        }
+    }
 
     // TODO
-    //short DFChance;                     // percent chance to spawn the dungeon feature per awake turn
     //char summonMessage[DCOLS * 2];
 
     return creatureStruct;

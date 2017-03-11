@@ -31,7 +31,27 @@ std::string Horde::debugReport() const {
     std::string report = "";
 
     report += leader.getDisplayName() + " (DL " + printInt(minDL()) + "-" + printInt(maxDL());
-    report += "  freq. " + printInt(calculateFrequency()) + ")\n";
+    report += "  freq. " + printInt(calculateFrequency()) + ") ";
+    
+    hordeType tempStruct = convertToStruct();
+    if (tempStruct.flags & HORDE_NEVER_OOD) report += "[never ood] ";
+    if (tempStruct.flags & HORDE_IS_SUMMONED) report += "[summoned] ";
+    if (tempStruct.flags & HORDE_MACHINE_MUD) report += "[mud] ";
+    if (tempStruct.flags & HORDE_MACHINE_BOSS) report += "[boss] ";
+    if (tempStruct.flags & HORDE_MACHINE_ONLY) report += "[machine only] ";
+    if (tempStruct.flags & HORDE_MACHINE_THIEF) report += "[thief] ";
+    if (tempStruct.flags & HORDE_LEADER_CAPTIVE) report += "[captive] ";
+    if (tempStruct.flags & HORDE_MACHINE_KENNEL) report += "[kennel] ";
+    if (tempStruct.flags & HORDE_MACHINE_STATUE) report += "[statue] ";
+    if (tempStruct.flags & HORDE_MACHINE_TURRET) report += "[turret] ";
+    if (tempStruct.flags & HORDE_VAMPIRE_FODDER) report += "[vampire food] ";
+    if (tempStruct.flags & HORDE_MACHINE_GOBLIN_WARREN) report += "[warren] ";
+    if (tempStruct.flags & HORDE_ALLIED_WITH_PLAYER) report += "[allied] ";
+    if (tempStruct.flags & HORDE_DIES_ON_LEADER_DEATH) report += "[leaderbased] ";
+    if (tempStruct.flags & HORDE_NO_PERIODIC_SPAWN) report += "[nospawn] ";
+    if (tempStruct.flags & HORDE_SUMMONED_AT_DISTANCE) report += "[distance summon] ";
+    if (tempStruct.flags & HORDE_MACHINE_WATER_MONSTER) report += "[watermon] ";
+    if (tempStruct.flags & HORDE_MACHINE_LEGENDARY_ALLY) report += "[legendally] ";
 
     for (HordeMember *member : this->members) {
         report += "  " + member->member.getDisplayName() + " {" + printInt(member->minCount) + "-" + printInt(member->maxCount) + "}\n";
@@ -44,7 +64,7 @@ int Horde::memberCount() const {
     return this->members.size() + 1;
 }
 
-hordeType Horde::convertToStruct() {
+hordeType Horde::convertToStruct() const {
     hordeType hordeStruct = hordeType();
 
     int danger = this->calculateDL();
@@ -79,9 +99,14 @@ hordeType Horde::convertToStruct() {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
         hordeStruct.spawnsIn = WALL;
     }
-    
     if (this->purpose == HordePurposeType::AQUA) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NEVER_OOD);
+    }
+    if (this->purpose == HordePurposeType::SUMMON || this->purpose == HordePurposeType::CONJURATION) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_IS_SUMMONED);
+    }
+    if (this->purpose == HordePurposeType::CONJURATION) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_DIES_ON_LEADER_DEATH);
     }
 
     hordeStruct.leaderType = leader.monsterId;
@@ -102,7 +127,7 @@ hordeType Horde::convertToStruct() {
     return hordeStruct;
 }
 
-void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile) {
+void Horde::applySpecialSpawn(hordeType &hordeStruct, monsterBehaviorFlags flag, tileType tile) const {
     if ((this->leader.flags & flag) > 0) {
         bool spawnsSpecial = true;
         for (HordeMember *member : this->members) {

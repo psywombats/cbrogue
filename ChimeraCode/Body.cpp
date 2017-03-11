@@ -1061,12 +1061,12 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::HIGH;
     body->light = LICH_LIGHT;
     body->genFlags = (GF_NO_SPECIALS | GF_WIZARDLY);
-    body->dangerLevel = 25;
-    body->rarityPercent = 25;
+    body->dangerLevel = 30;
+    body->rarityPercent = 33;
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "ratking";
+    body->baseName = "rat king";
     body->baseChar = 'R';
     body->flavor = "Many forms writhe and twist beneath the purple rags of the rat king, and bursting from the seams pour dozens of rats, snakes, worms, birds and all variety of fauna.";
     body->hitMessages = { "engulfs", "repeatedly bites", "swarms" };
@@ -1078,7 +1078,7 @@ std::vector<Body *> Body::loadBodies() {
     body->summon = SummonType::SPAWN_FODDER;
     body->defense = DefenseType::HIGH;
     body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER);
-    body->dangerLevel = 19;
+    body->dangerLevel = 15;
     body->rarityPercent = 25;
     bodies.push_back(body);
     
