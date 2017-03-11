@@ -71,7 +71,7 @@ char annotationPathname[BROGUE_FILENAME_MAX];   // pathname of annotation file
 unsigned long previousGameSeed;
 
 #pragma mark Colors
-//                                  Red     Green   Blue    RedRand GreenRand   BlueRand    Rand    Dances?
+//                            Red     Green   Blue    RedRand GreenRand   BlueRand    Rand    Dances?
 // basic colors
 color white =                 {100,   100,    100,    0,      0,          0,          0,      false};
 color gray =                  {50,    50,     50,     0,      0,          0,          0,      false};

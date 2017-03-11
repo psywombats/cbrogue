@@ -39,6 +39,7 @@ public:
 
     void applyToMonster(ChimeraMonster &monster);
     bool validForMonster(const ChimeraMonster &monster) const;
+    bool validForMonsterWithFlags(const ChimeraMonster &monster, unsigned long ignoredFlags) const;
     bool validForBody(const Body &body) const;
     bool validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const;
     bool validForBodyWithFlags(const Body &body, unsigned long ignoredFlags, const ChimeraMonster *baseMonster) const;

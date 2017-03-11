@@ -53,7 +53,6 @@ private:
     ChimeraMonster *newMonster(Body &body);
     ChimeraMonster *newMonster(ChimeraMonster *baseMonster);
     Horde &newHorde(const ChimeraMonster &monster);
-    ChimeraMonster &generateBoss(int targetDL);
     
     Body *matchingBody(const std::function<bool(const Body *)>& filter);
     Ability *matchingAbility(const std::function<bool(const Ability *)>& filter);

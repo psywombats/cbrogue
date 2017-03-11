@@ -442,6 +442,8 @@ void ChimeraMonster::generateName() {
     if (name == "winged quasit")            name = "gargoyle";
     if (name == "acolyte idol")             name = "demonic idol";
     if (name == "acolyte obelisk")          name = "obsidian obelisk";
+    if (name == "acolyte archmage")         name = "archmage";
+    if (name == "skeleton lord")            name = "skeletal lord";
     if (name == "burrowing worm")           name = "underworm";
     if (name == "monkey bandit")            name = "lemur";
 

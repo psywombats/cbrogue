@@ -26,6 +26,10 @@ enum class HordePurposeType {
     SUMMON,
     CONJURATION,
     CAPTIVE,
+    BLOODBAG,
+    KENNEL,
+    DUNGEON_CAPTIVE,
+    BOSS,
 };
 
 class Horde {
@@ -50,6 +54,8 @@ public:
     int extraRange;
     int extraFrequency;
     int extraDanger;
+    int overrideFloorMin;
+    int overrideFloorMax;
 
 private:
 

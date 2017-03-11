@@ -70,6 +70,7 @@ void MonsterGenerator::generate() {
     int aquaMonstersCount = 3;
     int totemsCount = 2;
     int turretsCount = 4;
+    int bossCount = 4;
     int targetCaptives = 15;
     
     for (int i = 0; i < 2; i += 1) {
@@ -220,7 +221,6 @@ void MonsterGenerator::generate() {
     for (ChimeraMonster &mook : mookMonsters) {
         std::vector<std::reference_wrapper<ChimeraMonster>> mookSet;
         mookSet.push_back(mook);
-        mookMinions.push_back(mookSet);
         int choice = rand_range(0, 3);
         if (choice == 0 || choice == 1 || choice == 2) {
             // a mutant...
@@ -282,7 +282,6 @@ void MonsterGenerator::generate() {
             ChimeraMonster *monster = newMonster(*body);
             Horde &horde = newHorde(*monster);
             newSet.push_back(*monster);
-            mookMinions.push_back(newSet);
             if (!solo) {
                 monster->genFlags |= GF_PACK_MEMBER;
             }
@@ -309,7 +308,9 @@ void MonsterGenerator::generate() {
                 horde.addMember(*monster2, 1, 1);
                 newSet.push_back(*monster2);
             }
+            mookMinions.push_back(newSet);
         }
+        mookMinions.push_back(mookSet);
     }
     
     // Step 10: Kamikaze fun
@@ -429,13 +430,13 @@ void MonsterGenerator::generate() {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForBodyWithFlags(monster->body, 0);
+                        return ability->validForMonster(*monster);
                     });
                     Ability *groupAbility = matchingAbility([monster](const Ability *ability) {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForBodyWithFlags(monster->body, GF_PACK_MEMBER);
+                        return ability->validForMonsterWithFlags(*monster, GF_PACK_MEMBER);
                     });
                     if (soloAbility == NULL || groupAbility == NULL) {
                         continue;
@@ -524,11 +525,12 @@ void MonsterGenerator::generate() {
             break;
         }
         ChimeraMonster &mook = mookSet[0];
-        if (mook.baseMook == NULL) {
-            continue;
-        }
         Body *body = matchingBody([mook](const Body *body) {
-            return body->genFlags == ((mook.genFlags & body->genFlags) | GF_TOTEM);
+            if (!(body->genFlags & GF_TOTEM)) {
+                return false;
+            }
+            unsigned long reqMookFlags = body->genFlags & (~GF_TOTEM);
+            return reqMookFlags == (mook.genFlags & reqMookFlags);
         });
         if (body == NULL) {
             continue;
@@ -699,48 +701,50 @@ void MonsterGenerator::generate() {
     }
     
     // Step 19: Sentinels
-    Body *sentinelBody = NULL;
-    for (int i = 0; i < 100 && sentinelBody == NULL; i += 1) {
-        sentinelBody = matchingBody([weird](const Body *body) {
-            if (body->genFlags & weird) {
-                return false;
-            }
-            if (!(body->genFlags & GF_WIZARDLY)) {
-                return false;
-            }
-            if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
-                return false;
-            }
-            if (!(body->dangerLevel > 15) && rand_percent(50)) {
-                return false;
-            }
-            return true;
-        });
-    }
-    if (sentinelBody != NULL) {
-        sentinelBody->abilFlags = 0;
-        sentinelBody->accuracy = AccuracyType::ACCURATE;
-        sentinelBody->baseColor = &sentinelColor;
-        sentinelBody->baseChar = toupper(guardianBody->baseChar);
-        sentinelBody->blood = DF_RUBBLE_BLOOD;
-        sentinelBody->defense = DefenseType::DEFENSELESS;
-        sentinelBody->flags = (MONST_TURRET | MONST_CAST_SPELLS_SLOWLY | MONST_DIES_IF_NEGATED);
-        sentinelBody->flavor =  std::string("A crystal $BASE statue of indeterminable age, the $BASE sentinel holds aloft a $MAGIC that gleams with ") +
-                                std::string("ancient warding magic. Sentinels are always found in groups, and each will attempt to aid the others.");
-        sentinelBody->gender = GenderType::NONE;
-        sentinelBody->hp = 1000;
-        sentinelBody->light = SENTINEL_LIGHT;
-        sentinelBody->hp = 50;
-        sentinelBody->minDamage = 0;
-        sentinelBody->maxDamage = 0;
-        sentinelBody->regenSpeed = RegenSpeedType::NONE;
-        ChimeraMonster *sentinel = newMonster(*sentinelBody);
-        sentinelMonsterId = sentinel->monsterId;
-        sentinel->namePrefix = "sentinel";
-        std::vector<boltType> offenseBolts = { BOLT_SPARK, BOLT_SPARK, BOLT_POISON };
-        std::vector<boltType> defenseBolts = { BOLT_HEALING, BOLT_HEALING, BOLT_HASTE, BOLT_SHIELDING };
-        sentinel->bolts.push_back(offenseBolts[rand_range(0, offenseBolts.size() - 1)]);
-        sentinel->bolts.push_back(defenseBolts[rand_range(0, defenseBolts.size() - 1)]);
+    if (guardianBody != NULL) {
+        Body *sentinelBody = NULL;
+        for (int i = 0; i < 100 && sentinelBody == NULL; i += 1) {
+            sentinelBody = matchingBody([weird](const Body *body) {
+                if (body->genFlags & weird) {
+                    return false;
+                }
+                if (!(body->genFlags & GF_WIZARDLY)) {
+                    return false;
+                }
+                if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
+                    return false;
+                }
+                if (!(body->dangerLevel > 15) && rand_percent(50)) {
+                    return false;
+                }
+                return true;
+            });
+        }
+        if (sentinelBody != NULL) {
+            sentinelBody->abilFlags = 0;
+            sentinelBody->accuracy = AccuracyType::ACCURATE;
+            sentinelBody->baseColor = &sentinelColor;
+            sentinelBody->baseChar = toupper(guardianBody->baseChar);
+            sentinelBody->blood = DF_RUBBLE_BLOOD;
+            sentinelBody->defense = DefenseType::DEFENSELESS;
+            sentinelBody->flags = (MONST_TURRET | MONST_CAST_SPELLS_SLOWLY | MONST_DIES_IF_NEGATED);
+            sentinelBody->flavor =  std::string("A crystal $BASE statue of indeterminable age, the $BASE sentinel holds aloft a $MAGIC that gleams with ") +
+                                    std::string("ancient warding magic. Sentinels are always found in groups, and each will attempt to aid the others.");
+            sentinelBody->gender = GenderType::NONE;
+            sentinelBody->hp = 1000;
+            sentinelBody->light = SENTINEL_LIGHT;
+            sentinelBody->hp = 50;
+            sentinelBody->minDamage = 0;
+            sentinelBody->maxDamage = 0;
+            sentinelBody->regenSpeed = RegenSpeedType::NONE;
+            ChimeraMonster *sentinel = newMonster(*sentinelBody);
+            sentinelMonsterId = sentinel->monsterId;
+            sentinel->namePrefix = "sentinel";
+            std::vector<boltType> offenseBolts = { BOLT_SPARK, BOLT_SPARK, BOLT_POISON };
+            std::vector<boltType> defenseBolts = { BOLT_HEALING, BOLT_HEALING, BOLT_HASTE, BOLT_SHIELDING };
+            sentinel->bolts.push_back(offenseBolts[rand_range(0, offenseBolts.size() - 1)]);
+            sentinel->bolts.push_back(defenseBolts[rand_range(0, defenseBolts.size() - 1)]);
+        }
     }
     
     // Step 20: Constant monsters
@@ -856,7 +860,126 @@ void MonsterGenerator::generate() {
     conjuration = newMonster(*conjurationBody);
     conjurationMonsterId = conjuration->monsterId;
     
-    // Step 28: Summoner hoards
+    // Step 28: Bosses
+    std::vector<std::reference_wrapper<ChimeraMonster>> bossMooks;
+    for (int i = 0; i < bossCount; i += 1) {
+        int minDL = 5 + (i + 0) * ((AMULET_LEVEL - 10) / bossCount);
+        int maxDL = 5 + (i + 1) * ((AMULET_LEVEL - 10) / bossCount) + 1;
+        Horde *bossHorde = NULL;
+        while (bossHorde == NULL) {
+            if (rand_percent(50)) {
+                // a weirdass monster
+                Body *body = matchingBody([weird](const Body *body) {
+                    if (body->genFlags & weird) {
+                        return false;
+                    }
+                    if ((body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
+                        return false;
+                    }
+                    return true;
+                });
+                if (body == NULL) {
+                    continue;
+                }
+                Ability *ability = matchingAbility([body, minDL, maxDL](const Ability *ability) {
+                    if (!ability->validForBodyWithFlags(*body, GF_BOSS_ONLY)) {
+                        return false;
+                    }
+                    if (ability->requiredFlags & GF_PACK_MEMBER) {
+                        return false;
+                    }
+                    if (!(ability->requiredFlags & GF_BOSS_ONLY)) {
+                        return false;
+                    }
+                    int dl = body->dangerLevel + ability->dangerBoost;
+                    return dl >= minDL && dl <= maxDL;
+                });
+                if (ability == NULL) {
+                    continue;
+                }
+                
+                ChimeraMonster *boss = newMonster(*body);
+                boss->applyAbility(*ability);
+                bossHorde = &newHorde(*boss);
+            } else {
+                // a commander
+                std::vector<std::reference_wrapper<ChimeraMonster>> shuffledCommanders = std::vector<std::reference_wrapper<ChimeraMonster>>(mookMonsters);
+                std::random_shuffle(shuffledCommanders.begin(), shuffledCommanders.end());
+                for (ChimeraMonster &bossMook : shuffledCommanders) {
+                    if (!(bossMook.genFlags & (GF_ANIMAL | GF_SUPPORTS_CLASS | GF_ARMED | GF_WIZARDLY | GF_SHAMANISTIC))) {
+                        continue;
+                    }
+                    if (bossMook.genFlags & (GF_BRAINLESS | GF_NO_SPECIALS)) {
+                        continue;
+                    }
+                    bool used = false;
+                    for (ChimeraMonster &usedMook : bossMooks) {
+                        if (usedMook.getBaseName() == bossMook.getBaseName()) {
+                            used = true;
+                            break;
+                        }
+                    }
+                    if (used) {
+                        continue;
+                    }
+                    std::vector<std::reference_wrapper<ChimeraMonster>> minions;
+                    for (auto testSet : mookMinions) {
+                        for (ChimeraMonster &testMook : testSet) {
+                            if (testMook.getBaseName() == bossMook.getBaseName()) {
+                                minions.push_back(testMook);
+                            }
+                        }
+                    }
+                    if (minions.size() <= 1 && !(bossMook.genFlags & GF_ANIMAL)) {
+                        continue;
+                    }
+                    Ability *ability = matchingAbility([bossMook, minDL, maxDL](const Ability *ability) {
+                        if (!ability->validForMonsterWithFlags(bossMook, (GF_BOSS_ONLY | GF_PACK_MEMBER))) {
+                            return false;
+                        }
+                        unsigned long reqFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER);
+                        if ((ability->requiredFlags & reqFlags) != reqFlags) {
+                            return false;
+                        }
+                        int dl = bossMook.dangerLevel + ability->dangerBoost;
+                        return dl >= minDL && dl <= maxDL;
+                    });
+                    if (ability == NULL) {
+                        continue;
+                    }
+                    
+                    ChimeraMonster *boss = newMonster(&bossMook);
+                    boss->genFlags |= GF_PACK_MEMBER;
+                    boss->applyAbility(*ability);
+                    bossMooks.push_back(bossMook);
+                    bossHorde = &newHorde(*boss);
+                    
+                    for (ChimeraMonster *monster : monsters) {
+                        if (monster->baseMook == boss->baseMook && (monster->genFlags & GF_TOTEM)) {
+                            bossHorde->addMember(*monster, 1, 1);
+                        }
+                    }
+                    for (ChimeraMonster &minion : minions) {
+                        if (minion.baseMook == NULL) {
+                            if (minions.size() == 1) {
+                                bossHorde->addMember(minion, 3, 4);
+                            } else {
+                                bossHorde->addMember(minion, 2, 2);
+                            }
+                        } else {
+                            bossHorde->addMember(minion, 1, 1);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        bossHorde->purpose = HordePurposeType::BOSS;
+        bossHorde->overrideFloorMin = minDL;
+        bossHorde->overrideFloorMax = (maxDL > 15) ? DEEPEST_LEVEL : maxDL;
+    }
+    /*
+    // Step 29: Summoner hoards
     for (ChimeraMonster *monster : monsters) {
         switch (monster->summon) {
             case SummonType::CONJURATION: {
@@ -915,7 +1038,7 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 29: Captives
+    // Step 30: Captives
     std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> allVanillaSets;
     std::vector<std::reference_wrapper<Horde>> captiveHordes;
     for (ChimeraMonster &thief : thieves) {
@@ -938,7 +1061,7 @@ void MonsterGenerator::generate() {
             if (captive.flags & (MONST_IMMUNE_TO_WEAPONS)) {
                 continue;
             }
-            if (captive.summon != SummonType::NONE && rand_percent(75)) {
+            if (captive.summon != SummonType::NONE && rand_percent(66)) {
                 continue;
             }
             if ((captive.abilFlags & (MA_HIT_STEAL_FLEE)) && !((captive.genFlags & GF_ANIMAL) && captive.dangerLevel < 8)) {
@@ -950,7 +1073,7 @@ void MonsterGenerator::generate() {
                 }
             }
             captive.generateName();
-            if (captive.getBaseName() != captive.getDisplayName() && !(captive.flags & MONST_MAINTAINS_DISTANCE)) {
+            if (captive.getBaseName() != captive.getDisplayName() && captive.physique != PhysiqueType::SPELLCASTER) {
                 continue;
             }
             Horde &horde = newHorde(captive);
@@ -959,6 +1082,27 @@ void MonsterGenerator::generate() {
             if (captive.abilFlags & MA_HIT_STEAL_FLEE) {
                 horde.extraDanger = -4;
             }
+            
+            if (captive.bloodType == DF_RED_BLOOD) {
+                Horde &bloodbag = newHorde(captive);
+                bloodbag.purpose = HordePurposeType::BLOODBAG;
+                bloodbag.extraDanger -= 1;
+                if (captive.abilFlags & MA_HIT_STEAL_FLEE) {
+                    horde.extraDanger -= -4;
+                }
+                if (captive.physique == PhysiqueType::SPELLCASTER) {
+                    horde.extraDanger -= -2;
+                    horde.extraRange = 2;
+                }
+            }
+            
+            Horde &kennel = newHorde(captive);
+            kennel.purpose = HordePurposeType::KENNEL;
+            kennel.extraRange = 1;
+            
+            Horde &dungeonCaptive = newHorde(captive);
+            dungeonCaptive.purpose = HordePurposeType::DUNGEON_CAPTIVE;
+            dungeonCaptive.extraRange = 1;
             
             // find the captor(s)
             for (int j = i + 1; j >= 0; j -= 1) {
@@ -1017,7 +1161,7 @@ void MonsterGenerator::generate() {
     for (int i = captiveHordes.size(); i < targetCaptives; i += 1) {
         captiveHordes[rand_range(0, captiveHordes.size() - 1)].get().extraFrequency += 1;
     }
-    
+    */
     std::string report = debugReport();
     std::cout << report;
     return;
@@ -1067,10 +1211,6 @@ Ability *MonsterGenerator::matchingAbility(const std::function<bool(const Abilit
         }
     }
     return NULL;
-}
-
-ChimeraMonster &MonsterGenerator::generateBoss(int targetDL) {
-    
 }
 
 std::string MonsterGenerator::debugReport() const {

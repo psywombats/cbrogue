@@ -867,7 +867,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_BRAINLESS);
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC);
     body->reusable = true;
     bodies.push_back(body);
     
@@ -883,11 +883,11 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL | GF_BRAINLESS);
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL);
     bodies.push_back(body);
     
     body = new Body();
-    body->baseName = "$BASE obelisk";
+    body->baseName = "obelisk";
     body->flavor = "This sphere-topped pillar gleams menacingly in the darkness, a testament to the arcane power of the $BASE that crafted it.";
     body->hitMessages = { "gleams at" };
     body->baseChar = 0x03AA; // Ϊ
@@ -898,7 +898,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flags = (MONST_TURRET);
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
-    body->genFlags = (GF_TOTEM | GF_WIZARDLY | GF_BRAINLESS);
+    body->genFlags = (GF_TOTEM | GF_WIZARDLY);
     bodies.push_back(body);
     
     body = new Body();

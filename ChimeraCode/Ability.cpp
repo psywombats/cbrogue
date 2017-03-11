@@ -28,6 +28,7 @@ Ability::Ability() :
         attackSpeed(AttackSpeedType::NORMAL),
         accuracy(AccuracyType::NORMAL),
         defense(DefenseType::NORMAL),
+        physique(PhysiqueType::NORMAL),
         namePrefix(""),
         nameSuffix(""),
         colorOverride(NULL),
@@ -141,6 +142,10 @@ bool Ability::validForMonster(const ChimeraMonster &monster) const {
     return validForBodyWithFlags(monster.body, 0, &monster);
 }
 
+bool Ability::validForMonsterWithFlags(const ChimeraMonster &monster, unsigned long flags) const {
+    return validForBodyWithFlags(monster.body, flags, &monster);
+}
+
 bool Ability::validForBody(const Body &body) const {
     return validForBodyWithFlags(body, 0);
 }
@@ -179,7 +184,7 @@ bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags
         // no one would see this monstrosity, it's probably like an explosive horror or something
         return false;
     }
-    if ((summon == SummonType::SPAWN_BASE_MOOK || summon == SummonType::TRANSFORM_MOOK) && (baseMonster == NULL || baseMonster->baseMook == NULL)) {
+    if ((summon == SummonType::SPAWN_BASE_MOOK || summon == SummonType::TRANSFORM_MOOK) && (baseMonster == NULL)) {
         return false;
     }
     
@@ -665,7 +670,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 2;
     ability->hpBoost = 10;
     ability->abilFlags = (MA_TRANSFERENCE);
-    ability->forbiddenFlags = (GF_SUPPORTS_CLASS);
+    ability->forbiddenFlags = (GF_PACK_MEMBER | GF_BRAINLESS);
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -1136,12 +1141,12 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "flameshroud";
+    ability->namePrefix = "hell";
     ability->flavorOverride = "Fire and smoke congeal to form the silhouette of a $BASE, concealed completely behind an aura of raging flames.";
     ability->hitMessages = { "scorches", "burns", "torches" };
     ability->colorOverride = &fireForeColor;
     ability->light = FLAMEDANCER_LIGHT;
-    ability->dangerBoost = 5;
+    ability->dangerBoost = 0;
     ability->bolts = {BOLT_FIRE};
     ability->requiredFlags = (GF_BOSS_ONLY);
     ability->featurePeriodic = DF_FLAMEDANCER_CORONA;
@@ -1153,7 +1158,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "A fearsome hybrid between a $BASE and a dragon, this reptile breaths terrifying hellfire sure to incinerate all that stand before $HIMHER.";
     ability->colorOverride = &dragonColor;
     ability->light = FLAMEDANCER_LIGHT;
-    ability->dangerBoost = 10;
+    ability->dangerBoost = 6;
     ability->bolts = {BOLT_DRAGONFIRE};
     ability->flags = MONST_IMMUNE_TO_FIRE;
     ability->requiredFlags = (GF_BOSS_ONLY | GF_ANIMAL);
@@ -1165,7 +1170,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hitMessages = { "shocks", "cuts", "electrocutes" };
     ability->colorOverride = &lightningColor;
     ability->light = SENTINEL_LIGHT;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 2;
     ability->bolts = {BOLT_SPARK, BOLT_BLINKING};
     ability->requiredFlags = (GF_BOSS_ONLY);
     ability->flags = MONST_FLEES_NEAR_DEATH;
@@ -1179,13 +1184,77 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "This jumble of green and turquoise crystal superficially resembles a $BASE, emitting both a faint light and sure malevolence.";
     ability->colorOverride = &crystalWallLightColor;
     ability->light = CRYSTAL_WALL_LIGHT;
-    ability->dangerBoost = 6;
+    ability->dangerBoost = 3;
     ability->physique = PhysiqueType::BUFF;
     ability->bolts = {BOLT_SPARK};
     ability->requiredFlags = (GF_BOSS_ONLY);
     ability->regenSpeed = RegenSpeedType::NONE;
     ability->defense = DefenseType::HIGH;
     ability->flags = MONST_REFLECT_4;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "lord";
+    ability->flavorOverride = "Adorned with a garnet-studded crown, the $BASE lord issues rapid orders to $HISHER underlings with a voice well-practiced in command.";
+    ability->colorOverride = &blue;
+    ability->dangerBoost = 4;
+    ability->hpBoost = 10;
+    ability->bolts = {BOLT_HASTE, BOLT_SPARK};
+    ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->flags = MONST_MAINTAINS_DISTANCE | MONST_FLEES_NEAR_DEATH;
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_SUPPORTS_CLASS);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "king";
+    ability->flavorOverride = "Royalty among $BASEs, the $BASE king is an massive, muscular, and ageless, having weathered hundreds of years lording over the $BASE of the dungeon.";
+    ability->colorOverride = &darkBlue;
+    ability->dangerBoost = 3;
+    ability->moveSpeed = MoveSpeedType::FAST;
+    ability->regenSpeed = RegenSpeedType::VERY_FAST;
+    ability->physique = PhysiqueType::BUFF;
+    ability->summon = SummonType::TRANSFORM_MOOK;
+    ability->flags = MONST_FLEES_NEAR_DEATH;
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_ANIMAL);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->nameSuffix = "archmage";
+    ability->flavorOverride = "This $BASE stands tall with $MAGIC in hand, the very fabric of reality rippling before $HIMHER. $HISHER empty eyesockets survey $HISHER minions, issuing commands in a terrifying rasp.";
+    ability->colorOverride = &darkPurple;
+    ability->light = LICH_LIGHT;
+    ability->dangerBoost = 6;
+    ability->summon = SummonType::SPAWN_UNRELATED_MOOK;
+    ability->bolts = {BOLT_FIRE, BOLT_SLOW_2, BOLT_NEGATION, BOLT_DISCORD};
+    ability->flags = (MONST_MAINTAINS_DISTANCE);
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_WIZARDLY);
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "messiah";
+    ability->flavorOverride = "The priests of the $BASEs have finally succeeded in their mission, and their savior walks among them, bright white avatar of $HISHER people.";
+    ability->colorOverride = &white;
+    ability->light = UNICORN_LIGHT;
+    ability->dangerBoost = 3;
+    ability->hpBoost = 10;
+    ability->bolts = {BOLT_HEALING, BOLT_SHIELDING, BOLT_HASTE};
+    ability->regenSpeed = RegenSpeedType::FAST;
+    ability->flags = MONST_MAINTAINS_DISTANCE;
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_SHAMANISTIC);
+    ability->rarityPercent = 33;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->namePrefix = "chieftain";
+    ability->flavorOverride = "Taller, stronger and smarter than other $BASEs, the warlord commands the loyalty of $HISHER kind and can summon them into battle.";
+    ability->colorOverride = &blue;
+    ability->dangerBoost = 0;
+    ability->physique = PhysiqueType::BUFF;
+    ability->hpBoost = 5;
+    ability->flags = MONST_MAINTAINS_DISTANCE;
+    ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_SHAMANISTIC);
+    ability->rarityPercent = 33;
     abilities.push_back(ability);
     
     ability = new Ability();

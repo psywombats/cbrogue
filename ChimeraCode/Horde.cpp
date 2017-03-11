@@ -13,6 +13,8 @@ Horde::Horde(const ChimeraMonster &newLeader) :
         extraRange(0),
         extraFrequency(0),
         extraDanger(0),
+        overrideFloorMin(0),
+        overrideFloorMax(0),
         leader(newLeader) {
     this->members = std::list<HordeMember *>();
 }
@@ -77,6 +79,11 @@ hordeType Horde::convertToStruct() const {
     }
     
     hordeStruct.frequency = this->calculateFrequency();
+    
+    if (leader.flags & MONST_SUBMERGES) {
+        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_FIRE, LAVA);
+        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_WATER, DEEP_WATER);
+    }
 
     if (this->purpose == HordePurposeType::TOTEM) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
@@ -101,7 +108,7 @@ hordeType Horde::convertToStruct() const {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
         hordeStruct.spawnsIn = WALL;
     }
-    if (this->purpose == HordePurposeType::AQUA) {
+    if (this->purpose == HordePurposeType::AQUA || this->purpose == HordePurposeType::CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NEVER_OOD);
     }
     if (this->purpose == HordePurposeType::SUMMON || this->purpose == HordePurposeType::CONJURATION) {
@@ -112,8 +119,24 @@ hordeType Horde::convertToStruct() const {
     if (this->purpose == HordePurposeType::CONJURATION) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_DIES_ON_LEADER_DEATH);
     }
-    if (this->purpose == HordePurposeType::CAPTIVE) {
+    if (this->purpose == HordePurposeType::CAPTIVE || this->purpose == HordePurposeType::BLOODBAG ||
+            this->purpose == HordePurposeType::KENNEL || this->purpose == HordePurposeType::DUNGEON_CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_LEADER_CAPTIVE);
+    }
+    if (this->purpose == HordePurposeType::BLOODBAG) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_VAMPIRE_FODDER);
+    }
+    if (this->purpose == HordePurposeType::KENNEL) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_KENNEL);
+    }
+    if (this->purpose == HordePurposeType::DUNGEON_CAPTIVE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_CAPTIVE);
+    }
+    if (hordeStruct.flags & HORDE_LEADER_CAPTIVE && purpose != HordePurposeType::CAPTIVE) {
+        hordeStruct.spawnsIn = MONSTER_CAGE_CLOSED;
+    }
+    if (hordeStruct.flags & HORDE_MACHINE_BOSS) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_BOSS);
     }
 
     hordeStruct.leaderType = leader.monsterId;
@@ -124,11 +147,6 @@ hordeType Horde::convertToStruct() const {
         hordeStruct.memberType[i] = member->member.monsterId;
         hordeStruct.memberCount[i] = {member->minCount, member->maxCount, 1};
         i += 1;
-    }
-
-    if (leader.flags & MONST_SUBMERGES) {
-        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_FIRE, LAVA);
-        applySpecialSpawn(hordeStruct, MONST_IMMUNE_TO_WATER, DEEP_WATER);
     }
     
     return hordeStruct;
@@ -193,12 +211,18 @@ int Horde::calculateDL() const {
 }
 
 int Horde::minDL() const {
+    if (overrideFloorMin > 0) {
+        return overrideFloorMin;
+    }
     int danger = this->calculateDL();
     int dangerDelta = this->dangerDelta();
     return MIN(MAX(1, danger - dangerDelta), DEEPEST_LEVEL);
 }
 
 int Horde::maxDL() const {
+    if (overrideFloorMax > 0) {
+        return overrideFloorMax;
+    }
     int danger = this->calculateDL();
     int dangerDelta = this->dangerDelta();
     return MIN(MIN(DEEPEST_LEVEL-1, danger + dangerDelta), DEEPEST_LEVEL);
