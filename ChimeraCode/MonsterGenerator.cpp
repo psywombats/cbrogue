@@ -99,7 +99,6 @@ void MonsterGenerator::generate() {
     Body *specialistMookBody = NULL;
     std::vector<std::reference_wrapper<ChimeraMonster>> fodderMonsters;
     std::vector<std::reference_wrapper<ChimeraMonster>> mookMonsters;
-    std::vector<Body *> mookBodies;
     std::vector<std::vector<std::reference_wrapper<ChimeraMonster>>> mookMinions;
 
     // Step 2: Generate the vanilla mooks
@@ -122,9 +121,7 @@ void MonsterGenerator::generate() {
             specialistMookBody->inUse = true;
         } else {
             ChimeraMonster *monster = newMonster(*body);
-            monster->genFlags |= GF_MOOKISH;
             mookMonsters.push_back(*monster);
-            mookBodies.push_back(body);
         }
     }
     
@@ -137,11 +134,10 @@ void MonsterGenerator::generate() {
             continue;
         }
         ChimeraMonster *monster = newMonster(*body);
-        monster->genFlags |= GF_MOOKISH;
         fodderMonsters.push_back(*monster);
         if (i == 0) {
             Ability *ability = matchingAbility([body](const Ability *ability) {
-                return ability->validForBody(*body) && ability->dangerBoost <= 2;
+                return ability->isValidFor(*body) && ability->dangerBoost <= 2;
             });
             if (ability != NULL) {
                 monster->dangerLevel -= 1;
@@ -185,19 +181,12 @@ void MonsterGenerator::generate() {
         std::vector<std::reference_wrapper<ChimeraMonster>> specialistMooks;
         for (int i = 0; i < specialistMookClasses; i += 1) {
             Ability *ability = matchingAbility([specialistMookBody, i](const Ability *ability) {
-                if (i > 0) {
-                    return ability->validForBodyWithFlags(*specialistMookBody, (GF_MOOKISH | GF_PACK_MEMBER));
-                } else {
-                    return ability->validForBodyWithFlags(*specialistMookBody, GF_MOOKISH);
-                }
+                return ability->isValidFor(*specialistMookBody, (GF_PACK_MEMBER), NULL);
             });
             if (ability != NULL) {
                 ChimeraMonster *monster = newMonster(*specialistMookBody);
-                monster->genFlags |= GF_MOOKISH;
                 monster->baseMookName = specialistMookBody->baseName;
-                if (i > 0) {
-                    monster->genFlags |= GF_PACK_MEMBER;
-                }
+                monster->genFlags |= GF_PACK_MEMBER;
                 monster->applyAbility(*ability);
                 specialistMooks.push_back(*monster);
             }
@@ -210,8 +199,8 @@ void MonsterGenerator::generate() {
                 ChimeraMonster &additional = specialistMooks[k];
                 horde.addMember(additional, 1, rand_range(1, 2));
             }
-            if (horde.memberCount() == 1 && rand_percent(50)) {
-                horde.addMember(monster, 0, rand_range(1, 2));
+            if (horde.memberCount() == 1) {
+                horde.addMember(monster, 1, rand_range(1, 2));
             }
         }
         mookMinions.push_back(specialistMooks);
@@ -227,7 +216,7 @@ void MonsterGenerator::generate() {
             ChimeraMonster *monster = newMonster(&mook);
             monster->genFlags |= GF_PACK_MEMBER;
             Ability *ability = matchingAbility([monster](const Ability *ability) {
-                return ability->validForMonster(*monster);
+                return ability->isValidForMonster(*monster);
             });
             if (ability == NULL) {
                 continue;
@@ -244,9 +233,9 @@ void MonsterGenerator::generate() {
                 // two mutant types and a hunting party
                 ChimeraMonster *monster2 = newMonster(&mook);
                 monster2->genFlags |= GF_PACK_MEMBER;
-
+                
                 Ability *ability2 = matchingAbility([monster2](const Ability *ability) {
-                    return ability->validForMonster(*monster2);
+                    return ability->isValidForMonster(*monster2);
                 });
                 if (ability2 == NULL) {
                     continue;
@@ -286,7 +275,7 @@ void MonsterGenerator::generate() {
                 monster->genFlags |= GF_PACK_MEMBER;
             }
             Ability *ability = matchingAbility([monster](const Ability *ability) {
-                return ability->validForMonster(*monster);
+                return ability->isValidForMonster(*monster);
             });
             if (ability == NULL) {
                 continue;
@@ -299,7 +288,7 @@ void MonsterGenerator::generate() {
                 monster2->genFlags |= GF_PACK_MEMBER;
                 monster2->baseMookName = body->baseName;
                 Ability *ability = matchingAbility([monster2](const Ability *ability) {
-                    return ability->validForMonster(*monster2);
+                    return ability->isValidForMonster(*monster2);
                 });
                 if (ability == NULL) {
                     continue;
@@ -321,7 +310,7 @@ void MonsterGenerator::generate() {
     for (int i = 0; i < kamikazeMonstersCount; i += 1) {
         ChimeraMonster *monster = newMonster(*kamikazeBody);
         Ability *burst = matchingAbility([i, monster, kamikazeMonstersCount, kamikazeBody](const Ability *ability) {
-            if (!ability->validForMonster(*monster)) {
+            if (!ability->isValidForMonster(*monster)) {
                 return false;
             }
             int minDL = i * (AMULET_LEVEL / kamikazeMonstersCount) - 1;
@@ -355,7 +344,8 @@ void MonsterGenerator::generate() {
             retries = 0;
             break;
         }
-        Body *body;
+        Body *body = NULL;
+        ChimeraMonster *baseMook = NULL;
         if (rand_percent(80)) {
             body = matchingBody([](const Body *body) {
                 return body->genFlags & GF_THIEVING;
@@ -364,11 +354,12 @@ void MonsterGenerator::generate() {
                 continue;
             }
         } else {
-            body = mookBodies[rand_range(0, mookBodies.size() - 4)];
+            baseMook = &mookMonsters[rand_range(0, mookMonsters.size() - 5)].get();
+            body = &baseMook->body;
         }
 
-        Ability *ability = matchingAbility([i, thiefMonstersCount, body, maxThiefDL](const Ability *ability) {
-            if (!ability->validForBodyWithFlags(*body, GF_THIEVING)) {
+        Ability *ability = matchingAbility([i, thiefMonstersCount, body, maxThiefDL, baseMook](const Ability *ability) {
+            if (!ability->isValidFor(*body, GF_THIEVING, baseMook)) {
                 return false;
             }
             int minDL = i * (maxThiefDL / thiefMonstersCount) - 3;
@@ -412,7 +403,6 @@ void MonsterGenerator::generate() {
                 continue;
             }
             ChimeraMonster *monster = newMonster(*body);
-            monster->genFlags |= GF_MOOKISH;
             Horde &horde = newHorde(*monster);
             horde.purpose = HordePurposeType::AQUA;
             horde.extraRange = MAX(0, (3-i));
@@ -430,13 +420,13 @@ void MonsterGenerator::generate() {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForMonster(*monster);
+                        return ability->isValidForMonster(*monster);
                     });
                     Ability *groupAbility = matchingAbility([monster](const Ability *ability) {
                         if (!(ability->requiredFlags & GF_AQUATIC)) {
                             if (rand_percent(50)) return false;
                         }
-                        return ability->validForMonsterWithFlags(*monster, GF_PACK_MEMBER);
+                        return ability->isValidForMonster(*monster, GF_PACK_MEMBER);
                     });
                     if (soloAbility == NULL || groupAbility == NULL) {
                         continue;
@@ -461,7 +451,7 @@ void MonsterGenerator::generate() {
                     if (!(ability->requiredFlags & GF_AQUATIC)) {
                         if (rand_percent(50)) return false;
                     }
-                    return ability->validForMonster(*variantMonster);
+                    return ability->isValidForMonster(*variantMonster);
                 });
                 if (ability != NULL) {
                     variantMonster->applyAbility(*ability);
@@ -476,11 +466,12 @@ void MonsterGenerator::generate() {
             minDL -= 2;
             maxDL += 1;
             Body *body = NULL;
-            for (Body *body : mookBodies) {
-                if (!(body->genFlags & GF_AQUATIC)) {
+            ChimeraMonster *baseMook = NULL;
+            for (ChimeraMonster &mook : mookMonsters) {
+                if (!(mook.genFlags & GF_AQUATIC)) {
                     continue;
                 }
-                if (body->dangerLevel < minDL || body->dangerLevel > maxDL) {
+                if (mook.dangerLevel < minDL || mook.dangerLevel > maxDL) {
                     continue;
                 }
                 break;
@@ -503,8 +494,8 @@ void MonsterGenerator::generate() {
                 i -= 1;
                 continue;
             }
-            Ability *ability = matchingAbility([body](const Ability *ability) {
-                return ability->validForBody(*body) && (ability->requiredFlags & GF_AQUATIC);
+            Ability *ability = matchingAbility([body, baseMook](const Ability *ability) {
+                return ability->isValidFor(*body, 0, baseMook) && (ability->requiredFlags & GF_AQUATIC);
             });
             if (ability == NULL) {
                 i -= 1;
@@ -546,8 +537,8 @@ void MonsterGenerator::generate() {
         if (mook.dangerLevel > 20) {
             totem->hp += 30;
         }
-        Ability *ability = matchingAbility([totem](const Ability *ability) {
-            return ability->validForMonster(*totem) && (ability->requiredFlags & GF_TOTEM);
+        Ability *ability = matchingAbility([totem, mook](const Ability *ability) {
+            return ability->isValidForMonster(*totem) && (ability->requiredFlags & GF_TOTEM);
         });
         totem->applyAbility(*ability);
         
@@ -590,7 +581,7 @@ void MonsterGenerator::generate() {
             continue;
         }
         Ability *ability = matchingAbility([body](const Ability *ability) {
-            return ability->validForBody(*body) && (ability->requiredFlags & GF_TURRET);
+            return ability->isValidFor(*body) && (ability->requiredFlags & GF_TURRET);
         });
         if (ability == NULL) {
             continue;
@@ -882,7 +873,7 @@ void MonsterGenerator::generate() {
                     continue;
                 }
                 Ability *ability = matchingAbility([body, minDL, maxDL](const Ability *ability) {
-                    if (!ability->validForBodyWithFlags(*body, GF_BOSS_ONLY)) {
+                    if (!ability->isValidFor(*body, GF_BOSS_ONLY, NULL)) {
                         return false;
                     }
                     if (ability->requiredFlags & GF_PACK_MEMBER) {
@@ -934,7 +925,7 @@ void MonsterGenerator::generate() {
                         continue;
                     }
                     Ability *ability = matchingAbility([bossMook, minDL, maxDL](const Ability *ability) {
-                        if (!ability->validForMonsterWithFlags(bossMook, (GF_BOSS_ONLY | GF_PACK_MEMBER))) {
+                        if (!ability->isValidFor(bossMook.body, (GF_BOSS_ONLY | GF_PACK_MEMBER), &bossMook)) {
                             return false;
                         }
                         unsigned long reqFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER);
@@ -979,7 +970,7 @@ void MonsterGenerator::generate() {
         bossHorde->overrideFloorMax = (maxDL > 15) ? DEEPEST_LEVEL : maxDL;
     }
     /*
-    // Step 29: Summoner hoards
+    // Step 29: Summoner hordes
     for (ChimeraMonster *monster : monsters) {
         switch (monster->summon) {
             case SummonType::CONJURATION: {

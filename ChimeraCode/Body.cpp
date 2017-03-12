@@ -942,7 +942,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 15;
     body->dangerLevel = 11;
     body->defense = DefenseType::HIGH;
-    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER | GF_UNDEAD);
+    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER | GF_UNDEAD | GF_NO_GROUPS);
     body->flags = (MONST_INVISIBLE);
     body->rarityPercent = 25;
     body->periodicFeatureChance = 15;
@@ -1028,7 +1028,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 30;
     body->dangerLevel = 25;
     body->defense = DefenseType::DEFENSELESS;
-    body->genFlags = (GF_NO_SPECIALS);
+    body->genFlags = (GF_NO_SPECIALS | GF_NO_GROUPS);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     bodies.push_back(body);
     
@@ -1040,11 +1040,11 @@ std::vector<Body *> Body::loadBodies() {
     body->baseChar = 'G';
     body->minDamage = 8;
     body->maxDamage = 12;
-    body->hp = 15;
+    body->hp = 12;
     body->dangerLevel = 14;
     body->defense = DefenseType::DEFENSELESS;
     body->moveSpeed = MoveSpeedType::SLOW;
-    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD);
+    body->genFlags = (GF_NO_SPECIALS | GF_UNDEAD | GF_NO_GROUPS);
     body->flags = MONST_IMMUNE_TO_WEAPONS;
     body->rarityPercent = 25;
     bodies.push_back(body);
@@ -1062,7 +1062,7 @@ std::vector<Body *> Body::loadBodies() {
     body->summon = SummonType::SPAWN_UNRELATED_MOOK;
     body->defense = DefenseType::HIGH;
     body->light = LICH_LIGHT;
-    body->genFlags = (GF_NO_SPECIALS | GF_WIZARDLY);
+    body->genFlags = (GF_NO_SPECIALS | GF_WIZARDLY |GF_NO_GROUPS);
     body->dangerLevel = 30;
     body->rarityPercent = 33;
     bodies.push_back(body);
@@ -1079,7 +1079,7 @@ std::vector<Body *> Body::loadBodies() {
     body->abilFlags = MONST_MAINTAINS_DISTANCE;
     body->summon = SummonType::SPAWN_FODDER;
     body->defense = DefenseType::HIGH;
-    body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER | GF_UNDEAD | GF_DIGGER);
+    body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER | GF_UNDEAD | GF_DIGGER | GF_NO_GROUPS);
     body->dangerLevel = 15;
     body->rarityPercent = 25;
     bodies.push_back(body);

@@ -138,23 +138,19 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
     inUse = true;
 }
 
-bool Ability::validForMonster(const ChimeraMonster &monster) const {
-    return validForBodyWithFlags(monster.body, 0, &monster);
+bool Ability::isValidForMonster(const ChimeraMonster &monster) const {
+    return isValidFor(monster.body, 0, monster.baseMook);
 }
 
-bool Ability::validForMonsterWithFlags(const ChimeraMonster &monster, unsigned long flags) const {
-    return validForBodyWithFlags(monster.body, flags, &monster);
+bool Ability::isValidForMonster(const ChimeraMonster &monster, unsigned long ignoredFlags) const {
+    return isValidFor(monster.body, ignoredFlags, monster.baseMook);
 }
 
-bool Ability::validForBody(const Body &body) const {
-    return validForBodyWithFlags(body, 0);
+bool Ability::isValidFor(const Body &body) const {
+    return isValidFor(body, 0, NULL);
 }
 
-bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags) const {
-    return validForBodyWithFlags(body, ignoredFlags, NULL);
-}
-
-bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags, const ChimeraMonster *baseMonster) const {
+bool Ability::isValidFor(const Body &body, unsigned long ignoredFlags, const ChimeraMonster *baseMook) const {
     unsigned long effectiveRequiredFlags = (requiredFlags & (~ignoredFlags));
     if ((effectiveRequiredFlags & body.genFlags) != effectiveRequiredFlags) {
         return false;
@@ -184,7 +180,7 @@ bool Ability::validForBodyWithFlags(const Body &body, unsigned long ignoredFlags
         // no one would see this monstrosity, it's probably like an explosive horror or something
         return false;
     }
-    if ((summon == SummonType::SPAWN_BASE_MOOK || summon == SummonType::TRANSFORM_MOOK) && (baseMonster == NULL)) {
+    if ((summon == SummonType::SPAWN_BASE_MOOK || summon == SummonType::TRANSFORM_MOOK) && baseMook == NULL) {
         return false;
     }
     
@@ -899,7 +895,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &darkGray;
     ability->dangerBoost = 2;
     ability->regenSpeed = RegenSpeedType::VERY_FAST;
-    ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER | MONST_FLEES_NEAR_DEATH);
+    ability->flags = (MONST_SUBMERGES | MONST_IMMUNE_TO_WATER);
     ability->requiredFlags = (GF_AQUATIC);
     ability->forbiddenFlags = (GF_AQUATIC_ONLY);
     ability->rarityPercent = 50;
@@ -1206,7 +1202,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->nameSuffix = "king";
+    ability->namePrefix = "king";
     ability->flavorOverride = "Royalty among $BASEs, the $BASE king is an massive, muscular, and ageless, having weathered hundreds of years lording over the $BASE of the dungeon.";
     ability->colorOverride = &darkBlue;
     ability->dangerBoost = 3;
@@ -1231,7 +1227,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "messiah";
+    ability->nameSuffix = "messiah";
     ability->flavorOverride = "The priests of the $BASEs have finally succeeded in their mission, and their savior walks among them, bright white avatar of $HISHER people.";
     ability->colorOverride = &white;
     ability->light = UNICORN_LIGHT;
@@ -1245,7 +1241,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "chieftain";
+    ability->nameSuffix = "chieftain";
     ability->flavorOverride = "Taller, stronger and smarter than other $BASEs, the warlord commands the loyalty of $HISHER kind and can summon them into battle.";
     ability->colorOverride = &blue;
     ability->dangerBoost = 0;

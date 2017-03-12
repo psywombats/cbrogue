@@ -55,6 +55,8 @@ public:
     int rarityPercent;
     bool reusable;
     bool inUse;
+    bool groupsForbidden;
+    bool abilsForbidden;
 
     // flavor
     GenderType gender;
