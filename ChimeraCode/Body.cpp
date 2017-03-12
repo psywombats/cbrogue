@@ -62,6 +62,7 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     
     monster.baseDisplayChar = this->baseChar;
     monster.baseFlavor = this->flavor;
+    monster.hitMessages = this->hitMessages;
     
     this->inUse = true;
 
@@ -884,6 +885,23 @@ std::vector<Body *> Body::loadBodies() {
     body->defense = DefenseType::DEFENSELESS;
     body->regenSpeed = RegenSpeedType::NONE;
     body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL);
+    body->rarityPercent = 25;
+    bodies.push_back(body);
+    
+    body = new Body();
+    body->baseName = "ivory $BASE";
+    body->flavor = "This mysterious $BASE is carved completely out of pure white ivory. The $BASE nearby seem oddly attracted.";
+    body->hitMessages = { "gleams at" };
+    body->baseChar = STATUE_CHAR;
+    body->baseColor = &white;
+    body->blood = DF_RUBBLE_BLOOD;
+    body->hp = 30;
+    body->attackSpeed = AttackSpeedType::TOTEM;
+    body->flags = (MONST_TURRET);
+    body->defense = DefenseType::DEFENSELESS;
+    body->regenSpeed = RegenSpeedType::NONE;
+    body->genFlags = (GF_TOTEM | GF_SHAMANISTIC | GF_ANIMAL);
+    body->rarityPercent = 25;
     bodies.push_back(body);
     
     body = new Body();

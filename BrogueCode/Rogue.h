@@ -1983,6 +1983,9 @@ typedef struct creatureType {
     char DFMessage[DCOLS * 2];
     char summonMessage[DCOLS * 2];
     
+    // chimeric additions
+    short danger;
+    
 } creatureType;
 
 enum creatureStates {

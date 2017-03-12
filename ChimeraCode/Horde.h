@@ -24,10 +24,13 @@ enum class HordePurposeType {
     AQUA,
     AQUA_MACHINE,
     TOTEM,
+    WARREN,
+    WARREN_CAPTIVE,
     TURRET,
     TURRET_MACHINE,
     STATUE_MACHINE,
     SUMMON,
+    SUMMON_DISTANCE,
     CONJURATION,
     CAPTIVE,
     BLOODBAG,
@@ -50,6 +53,7 @@ public:
 
     void addMember(const ChimeraMonster &member, short min, short max);
     std::string debugReport() const;
+    std::string getBaseName() const;
     int memberCount() const;
     int calculateDL() const;
     

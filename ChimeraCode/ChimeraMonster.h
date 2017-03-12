@@ -99,6 +99,7 @@ enum class GenderType {
 enum class SummonType {
     NONE,
     SPAWN_BASE_MOOK,
+    SPAWN_BASE_MOOK_DISTANT,
     SPAWN_UNRELATED_MOOK,
     SPAWN_FODDER,
     TRANSFORM_MOOK,

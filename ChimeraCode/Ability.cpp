@@ -119,6 +119,7 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
         monster.feature = featureKamikaze;
         monster.flags |= (MA_DF_ON_DEATH);
         monster.featureMessage = featureMessage;
+        monster.featureKamikaze = true;
     } else if (featurePeriodic != DF_NONE) {
         monster.feature = featurePeriodic;
         monster.featurePeriodicPercent = featurePeriodicPercent;
@@ -664,7 +665,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "$HISHER teeth appear sharper than usual, and $HISHER eyes gleam hungrily in the dark.";
     ability->colorOverride = &gray;
     ability->dangerBoost = 2;
-    ability->hpBoost = 10;
+    ability->hpBoost = 4;
     ability->abilFlags = (MA_TRANSFERENCE);
     ability->forbiddenFlags = (GF_PACK_MEMBER | GF_BRAINLESS);
     abilities.push_back(ability);
@@ -1043,6 +1044,13 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->summon = SummonType::SPAWN_BASE_MOOK;
     ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     ability->rarityPercent = 12;
+    abilities.push_back(ability);
+    
+    ability = new Ability();
+    ability->colorMod = ColorModFlavor::TOTEM;
+    ability->dangerBoost = 0;
+    ability->summon = SummonType::SPAWN_BASE_MOOK_DISTANT;
+    ability->requiredFlags = (GF_TOTEM | GF_ANIMAL);
     abilities.push_back(ability);
     
     ability = new Ability();

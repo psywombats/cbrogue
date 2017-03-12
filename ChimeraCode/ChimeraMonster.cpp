@@ -59,7 +59,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         attackSpeed(AttackSpeedType::NORMAL) {
 
     if (ChimeraMonster::nextChimeraId == 0) {
-        ChimeraMonster::nextChimeraId = getWardenMonsterId() + 1;
+        ChimeraMonster::nextChimeraId = 3;
     }
     monsterId = ChimeraMonster::nextChimeraId;
     ChimeraMonster::nextChimeraId += 1;
@@ -178,6 +178,8 @@ creatureType ChimeraMonster::convertToStruct() {
             creatureStruct.abilityFlags = MA_ENTER_SUMMONS;
         }
     }
+    
+    creatureStruct.danger = (short)dangerLevel;
 
     // TODO
     //char summonMessage[DCOLS * 2];

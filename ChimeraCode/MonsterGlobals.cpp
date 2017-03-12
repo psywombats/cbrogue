@@ -124,7 +124,7 @@ monsterClass *getMonsterClassCatalog() {
 
 short getRatTrapMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_RAT;
     } else {
         return generator->ratTrapMonsterId;
@@ -133,7 +133,7 @@ short getRatTrapMonsterId() {
 
 short getWarrenBossMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_GOBLIN_CHIEFTAN;
     } else {
         return generator->warrenBossMonsterId;
@@ -142,7 +142,7 @@ short getWarrenBossMonsterId() {
 
 short getVampireBossMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_VAMPIRE;
     } else {
         return generator->vampireBossMonsterId;
@@ -151,7 +151,7 @@ short getVampireBossMonsterId() {
 
 short getWingedGuardianMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_WINGED_GUARDIAN;
     } else {
         return generator->wingedGuardianMonsterId;
@@ -160,7 +160,7 @@ short getWingedGuardianMonsterId() {
 
 short getGuardianMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_GUARDIAN;
     } else {
         return generator->guardianMonsterId;
@@ -169,7 +169,7 @@ short getGuardianMonsterId() {
 
 short getSentinelMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_SENTINEL;
     } else {
         return generator->sentinelMonsterId;
@@ -178,7 +178,7 @@ short getSentinelMonsterId() {
 
 short getWardenMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED && generator->wardenMonsterId > 0) {
+    if (!CHIMERAS_ENABLED) {
         return MK_WARDEN_OF_YENDOR;
     } else {
         return generator->wardenMonsterId;
@@ -187,7 +187,7 @@ short getWardenMonsterId() {
 
 short getMirrorMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_MIRRORED_TOTEM;
     } else {
         return generator->mirrorMonsterId;
@@ -196,7 +196,7 @@ short getMirrorMonsterId() {
 
 short getWebberMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_SPIDER;
     } else {
         return generator->webberMonsterId;
@@ -290,8 +290,7 @@ void ensureCatalogsInitialized() {
 int getMonsterCatalogCount() {
     ensureCatalogsInitialized();
     if (CHIMERAS_ENABLED) {
-        // extra 2: one for you, one for Yendor
-        return generator->getMonsters().size() + 2;
+        return generator->getMonsters().size() + (getWardenMonsterId() + 1);
     } else {
         return MONSTER_CLASS_COUNT;
     }

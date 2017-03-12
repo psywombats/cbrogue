@@ -30,6 +30,10 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
     this->members.push_back(member);
 }
 
+std::string Horde::getBaseName() const {
+    return leader.getBaseName();
+}
+
 Horde *Horde::createMachineVariant() const {
     Horde *newHorde = new Horde(*this);
     switch (purpose) {
@@ -52,6 +56,11 @@ Horde *Horde::createMachineVariant() const {
         case HordePurposeType::THIEF: {
             // most of this logic elsewhere
             newHorde->purpose = HordePurposeType::THIEF;
+            break;
+        }
+        case HordePurposeType::TOTEM: {
+            newHorde->purpose = HordePurposeType::WARREN;
+            newHorde->extraFrequency = -1 * (calculateFrequency() / 2);
             break;
         }
         default:
@@ -141,6 +150,9 @@ hordeType Horde::convertToStruct() const {
     if (this->purpose == HordePurposeType::TURRET) {
         hordeStruct.spawnsIn = WALL;
     }
+    if (this->purpose == HordePurposeType::WARREN || this->purpose == HordePurposeType::WARREN_CAPTIVE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_GOBLIN_WARREN);
+    }
     if (this->purpose == HordePurposeType::TURRET_MACHINE) {
         hordeStruct.spawnsIn = TURRET_DORMANT;
     }
@@ -154,16 +166,20 @@ hordeType Horde::convertToStruct() const {
     if (this->purpose == HordePurposeType::AQUA || this->purpose == HordePurposeType::CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NEVER_OOD);
     }
-    if (this->purpose == HordePurposeType::SUMMON || this->purpose == HordePurposeType::CONJURATION) {
+    if (this->purpose == HordePurposeType::SUMMON || this->purpose == HordePurposeType::CONJURATION || this->purpose == HordePurposeType::SUMMON_DISTANCE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_IS_SUMMONED);
         hordeStruct.minLevel = 0;
         hordeStruct.maxLevel = 0;
+    }
+    if (this->purpose == HordePurposeType::SUMMON_DISTANCE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_SUMMONED_AT_DISTANCE);
     }
     if (this->purpose == HordePurposeType::CONJURATION) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_DIES_ON_LEADER_DEATH);
     }
     if (this->purpose == HordePurposeType::CAPTIVE || this->purpose == HordePurposeType::BLOODBAG ||
-            this->purpose == HordePurposeType::KENNEL || this->purpose == HordePurposeType::DUNGEON_CAPTIVE) {
+            this->purpose == HordePurposeType::KENNEL || this->purpose == HordePurposeType::DUNGEON_CAPTIVE ||
+            this->purpose == HordePurposeType::WARREN_CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_LEADER_CAPTIVE);
     }
     if (this->purpose == HordePurposeType::BLOODBAG) {
@@ -297,6 +313,7 @@ int Horde::calculateFrequency() const {
         case HordePurposeType::KAMIKAZE:            frequency = 5;                  break;
         case HordePurposeType::THIEF:               frequency = 8;                  break;
         case HordePurposeType::CAPTIVE:             frequency = 1;                  break;
+        case HordePurposeType::WARREN_CAPTIVE:      frequency = 1;                  break;
         default:                                    frequency = 10;                 break;
     }
     if (purpose != HordePurposeType::CONJURATION && purpose != HordePurposeType::SUMMON) {
