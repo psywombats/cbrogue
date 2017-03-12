@@ -30,6 +30,37 @@ void Horde::addMember(const ChimeraMonster &monster, short minCount, short maxCo
     this->members.push_back(member);
 }
 
+Horde *Horde::createMachineVariant() const {
+    Horde *newHorde = new Horde(*this);
+    switch (purpose) {
+        case HordePurposeType::AQUA: {
+            newHorde->purpose = HordePurposeType::AQUA_MACHINE;
+            if (maxDL() > 20) {
+                newHorde->overrideFloorMax = DEEPEST_LEVEL - 1;
+            } else {
+                newHorde->extraRange = 1;
+                newHorde->extraDanger = 1;
+            }
+            break;
+        }
+        case HordePurposeType::TURRET: {
+            newHorde->purpose = HordePurposeType::TURRET_MACHINE;
+            newHorde->extraDanger = -1;
+            newHorde->extraRange = 1;
+            break;
+        }
+        case HordePurposeType::THIEF: {
+            // most of this logic elsewhere
+            newHorde->purpose = HordePurposeType::THIEF;
+            break;
+        }
+        default:
+            return NULL;
+    }
+    
+    return newHorde;
+}
+
 std::string Horde::debugReport() const {
     std::string report = "";
 
@@ -74,6 +105,9 @@ hordeType Horde::convertToStruct() const {
     int danger = this->calculateDL();
     hordeStruct.minLevel = this->minDL();
     hordeStruct.maxLevel = this->maxDL();
+    if (hordeStruct.maxLevel >= 32) {
+        hordeStruct.maxLevel = DEEPEST_LEVEL-1;
+    }
     if (danger >= 28) {
         hordeStruct.maxLevel = DEEPEST_LEVEL-1;
     }
@@ -105,8 +139,17 @@ hordeType Horde::convertToStruct() const {
         }
     }
     if (this->purpose == HordePurposeType::TURRET) {
-        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
         hordeStruct.spawnsIn = WALL;
+    }
+    if (this->purpose == HordePurposeType::TURRET_MACHINE) {
+        hordeStruct.spawnsIn = TURRET_DORMANT;
+    }
+    if (this->purpose == HordePurposeType::STATUE_MACHINE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_STATUE);
+        hordeStruct.spawnsIn = STATUE_DORMANT;
+    }
+    if (this->purpose == HordePurposeType::TOTEM || this->purpose == HordePurposeType::TURRET) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NO_PERIODIC_SPAWN);
     }
     if (this->purpose == HordePurposeType::AQUA || this->purpose == HordePurposeType::CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_NEVER_OOD);
@@ -131,6 +174,9 @@ hordeType Horde::convertToStruct() const {
     }
     if (this->purpose == HordePurposeType::DUNGEON_CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_CAPTIVE);
+    }
+    if (this->purpose == HordePurposeType::AQUA_MACHINE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_WATER_MONSTER);
     }
     if (hordeStruct.flags & HORDE_LEADER_CAPTIVE && purpose != HordePurposeType::CAPTIVE) {
         hordeStruct.spawnsIn = MONSTER_CAGE_CLOSED;
@@ -201,9 +247,6 @@ int Horde::calculateDL() const {
 //                }
                 danger += members.size();
                 danger += count / 3;
-                if (leader.genFlags & GF_NO_SPECIALS) {
-                    danger += (count * 3);
-                }
             }
         }
     }

@@ -20,9 +20,13 @@ enum class HordePurposeType {
     GENERAL,
     KAMIKAZE,
     THIEF,
+    THIEF_MACHINE,
     AQUA,
+    AQUA_MACHINE,
     TOTEM,
     TURRET,
+    TURRET_MACHINE,
+    STATUE_MACHINE,
     SUMMON,
     CONJURATION,
     CAPTIVE,
@@ -48,6 +52,8 @@ public:
     std::string debugReport() const;
     int memberCount() const;
     int calculateDL() const;
+    
+    Horde *createMachineVariant() const;
 
     HordePurposeType purpose;
     

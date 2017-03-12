@@ -107,7 +107,7 @@ void MonsterGenerator::generate() {
             if (body->genFlags & weird) {
                 return false;
             }
-            if (i == specialistOnlyMook && !(body->genFlags & GF_SUPPORTS_CLASS)) {
+            if (i == specialistOnlyMook && !((body->genFlags & GF_SUPPORTS_CLASS) || (body->genFlags & GF_NO_GROUPS))) {
                 return false;
             }
             int dl = body->dangerLevel;
@@ -158,6 +158,9 @@ void MonsterGenerator::generate() {
         if (j >= fodderGroupHordes) {
             break;
         }
+        if (monster.genFlags & GF_NO_GROUPS) {
+            continue;
+        }
         j += 1;
         Horde &horde = newHorde(monster);
         horde.addMember(monster, 1, 2);
@@ -170,6 +173,9 @@ void MonsterGenerator::generate() {
 
     // Step 7: Mook group hordes
     for (ChimeraMonster &monster : mookMonsters) {
+        if (monster.genFlags & GF_NO_GROUPS) {
+            continue;
+        }
         if (rand_percent(75 - (monster.dangerLevel * 2))) {
             Horde &horde = newHorde(monster);
             horde.addMember(monster, 2, rand_range(2, 3));
@@ -225,11 +231,11 @@ void MonsterGenerator::generate() {
             mookSet.push_back(*monster);
             newHorde(*monster);
 
-            if (choice == 1) {
+            if (choice == 1 && !(monster->genFlags & GF_NO_GROUPS)) {
                 // and some followers?
                 Horde &horde = newHorde(*monster);
                 horde.addMember(mook, 2, rand_range(2, 4));
-            } else if (choice == 2) {
+            } else if (choice == 2 && !(monster->genFlags & GF_NO_GROUPS)) {
                 // two mutant types and a hunting party
                 ChimeraMonster *monster2 = newMonster(&mook);
                 monster2->genFlags |= GF_PACK_MEMBER;
@@ -242,13 +248,15 @@ void MonsterGenerator::generate() {
                 }
                 monster2->applyAbility(*ability2);
                 mookSet.push_back(*monster2);
+                
+                if  (!(monster2->genFlags & GF_NO_GROUPS)) {
+                    Horde &horde = newHorde(*monster2);
+                    horde.addMember(*monster, 1, 1);
 
-                Horde &horde = newHorde(*monster2);
-                horde.addMember(*monster, 1, 1);
-
-                Horde &horde2 = newHorde(*monster2);
-                horde2.addMember(*monster, 1, 1);
-                horde2.addMember(mook, rand_range(1, 2), 2);
+                    Horde &horde2 = newHorde(*monster2);
+                    horde2.addMember(*monster, 1, 1);
+                    horde2.addMember(mook, rand_range(1, 2), 2);
+                }
             }
         } else if (choice == 3) {
             // shit out of luck, we make someone new
@@ -262,7 +270,10 @@ void MonsterGenerator::generate() {
                 maxDL = mook.dangerLevel - 2;
                 minDL = mook.dangerLevel/2 - 1;
             }
-            Body *body = matchingBody([minDL, maxDL, mook, weird](const Body *body) {
+            Body *body = matchingBody([minDL, maxDL, mook, weird, solo](const Body *body) {
+                if (!solo && (body->genFlags & GF_NO_GROUPS)) {
+                    return false;
+                }
                 return body->dangerLevel <= maxDL && body->dangerLevel >= minDL && !(body->genFlags & weird);
             });
             if (body == NULL) {
@@ -407,7 +418,7 @@ void MonsterGenerator::generate() {
             horde.purpose = HordePurposeType::AQUA;
             horde.extraRange = MAX(0, (3-i));
             
-            if (rand_percent(75)) {
+            if (rand_percent(75) && !(body->genFlags & GF_NO_GROUPS)) {
                 // let's make a group for it
                 if (rand_percent(75)) {
                     // a simple group
@@ -457,8 +468,10 @@ void MonsterGenerator::generate() {
                     variantMonster->applyAbility(*ability);
                 }
                 Horde &groupHorde = newHorde(*variantMonster);
-                groupHorde.addMember(*monster, 0, 2);
-                groupHorde.extraRange = 1;
+                if (!(variantMonster->genFlags & GF_NO_GROUPS) && !(monster->genFlags & GF_NO_GROUPS)) {
+                    groupHorde.addMember(*monster, 0, 2);
+                    groupHorde.extraRange = 1;
+                }
             }
         } else {
             // convert a monster
@@ -514,6 +527,9 @@ void MonsterGenerator::generate() {
     for (std::vector<std::reference_wrapper<ChimeraMonster>> &mookSet : mookMinions) {
         if (j >= totemsCount) {
             break;
+        }
+        if (mookSet[0].get().genFlags & GF_NO_GROUPS) {
+            continue;
         }
         ChimeraMonster &mook = mookSet[0];
         Body *body = matchingBody([mook](const Body *body) {
@@ -607,10 +623,7 @@ void MonsterGenerator::generate() {
     }
     ratTrapMonsterId = lowestMonsterId;
     
-    
-    // Step 16: TODO: populate the goblin warren
-    
-    // Step 17: "Vampire" boss
+    // Step 16: "Vampire" boss
     Body *vampireBody = matchingBody([weird](const Body *body) {
         if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {
             return false;
@@ -626,7 +639,7 @@ void MonsterGenerator::generate() {
         vampireBossMonsterId = vampire->monsterId;
     }
     
-    // Step 18: Guardians
+    // Step 17: Guardians
     Body *guardianBody = NULL;
     for (int i = 0; i < 100 && guardianBody == NULL; i += 1) {
         guardianBody = matchingBody([weird](const Body *body) {
@@ -691,7 +704,7 @@ void MonsterGenerator::generate() {
         charmGuardian->lightType = SPECTRAL_IMAGE_LIGHT;
     }
     
-    // Step 19: Sentinels
+    // Step 18: Sentinels
     if (guardianBody != NULL) {
         Body *sentinelBody = NULL;
         for (int i = 0; i < 100 && sentinelBody == NULL; i += 1) {
@@ -738,11 +751,11 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 20: Constant monsters
+    // Step 19: Constant monsters
     wardenMonsterId = 0;
     spectralImageMonsterId = 0;
     
-    // Step 21: Mirror totem
+    // Step 20: Mirror totem
     Body *mirrorBody = NULL;
     mirrorBody = matchingBody([weird](const Body *body) {
         if (!(body->genFlags & GF_TOTEM) || (body->genFlags & GF_ANIMAL)) {
@@ -763,7 +776,7 @@ void MonsterGenerator::generate() {
         mirrorTotem->featurePeriodicPercent = 100;
     }
     
-    // Step 22: Webber (if we have one)
+    // Step 21: Webber (if we have one)
     for (ChimeraMonster *monster : monsters) {
         for (boltType bolt : monster->bolts) {
             if (bolt == BOLT_SPIDERWEB) {
@@ -776,7 +789,7 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 23: Digger
+    // Step 22: Digger
     ChimeraMonster *digger = NULL;
     for (ChimeraMonster *existing : monsters) {
         if (!(existing->genFlags & GF_DIGGER) || (existing->genFlags & (GF_BOSS_ONLY | GF_AQUATIC_ONLY | GF_KAMIKAZE))) {
@@ -807,7 +820,7 @@ void MonsterGenerator::generate() {
         digger->flags |= MONST_NEVER_SLEEPS;
     }
     
-    // Step 24: Spark turret (if we have one)
+    // Step 23: Spark turret (if we have one)
     for (ChimeraMonster *monster : monsters) {
         if (!(monster->genFlags & GF_TURRET)) {
             continue;
@@ -823,7 +836,7 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 25: Undead (if we have one)
+    // Step 24: Undead (if we have one)
     for (ChimeraMonster *monster : monsters) {
         if (!(monster->genFlags & GF_UNDEAD)) {
             undeadMonsterId = monster->monsterId;
@@ -831,7 +844,7 @@ void MonsterGenerator::generate() {
         }
     }
     
-    // Step 26: Invisibility (if we have any)
+    // Step 25: Invisibility (if we have any)
     for (ChimeraMonster *monster : monsters) {
         if (!(monster->flags & MONST_INVISIBLE)) {
             invisibleMonsterId = monster->monsterId;
@@ -843,7 +856,7 @@ void MonsterGenerator::generate() {
         invisibleMonsterId = undeadMonsterId;
     }
     
-    // Step 27: Conjuration
+    // Step 26: Conjuration
     ChimeraMonster *conjuration;
     Body *conjurationBody = matchingBody([](const Body *body) {
         return body->genFlags & GF_CONJURATION;
@@ -851,7 +864,7 @@ void MonsterGenerator::generate() {
     conjuration = newMonster(*conjurationBody);
     conjurationMonsterId = conjuration->monsterId;
     
-    // Step 28: Bosses
+    // Step 27: Bosses
     std::vector<std::reference_wrapper<ChimeraMonster>> bossMooks;
     for (int i = 0; i < bossCount; i += 1) {
         int minDL = 5 + (i + 0) * ((AMULET_LEVEL - 10) / bossCount);
@@ -969,7 +982,7 @@ void MonsterGenerator::generate() {
         bossHorde->overrideFloorMin = minDL;
         bossHorde->overrideFloorMax = (maxDL > 15) ? DEEPEST_LEVEL : maxDL;
     }
-    /*
+    
     // Step 29: Summoner hordes
     for (ChimeraMonster *monster : monsters) {
         switch (monster->summon) {
@@ -1152,7 +1165,38 @@ void MonsterGenerator::generate() {
     for (int i = captiveHordes.size(); i < targetCaptives; i += 1) {
         captiveHordes[rand_range(0, captiveHordes.size() - 1)].get().extraFrequency += 1;
     }
-    */
+    
+    // Step 31: Mark some new hordes for machines
+    for (Horde *horde : hordes) {
+        if (horde->purpose == HordePurposeType::AQUA || horde->purpose == HordePurposeType::TURRET) {
+            Horde *newHorde = horde->createMachineVariant();
+            hordes.push_back(newHorde);
+        }
+        int thievesCreated = 0;
+        if (horde->purpose == HordePurposeType::THIEF && horde->memberCount() == 1 && thievesCreated < 2) {
+            thievesCreated += 1;
+            Horde *newHorde = horde->createMachineVariant();
+            hordes.push_back(newHorde);
+            newHorde->overrideFloorMin = (thievesCreated+0) * AMULET_LEVEL / 2;
+            newHorde->overrideFloorMax = (thievesCreated+1) * AMULET_LEVEL / 2;
+        }
+    }
+    
+    // Step 32: Statue machines
+    for (ChimeraMonster &mook : mookMonsters) {
+        if (!(mook.genFlags & (GF_DIGGER))) {
+            if ((mook.abilFlags & MA_CLONE_SELF_ON_DEFEND) && mook.monsterId != getDiggerMonsterId()) {
+                continue;
+            }
+            if (mook.genFlags & (GF_ANIMAL | GF_WIZARDLY | GF_ARMED)) {
+                continue;
+            }
+        }
+        Horde &horde = newHorde(mook);
+        horde.purpose = HordePurposeType::STATUE_MACHINE;
+        horde.extraDanger = 2;
+    }
+    
     std::string report = debugReport();
     std::cout << report;
     return;
