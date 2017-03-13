@@ -110,7 +110,7 @@ extern DECLSPEC SDL_TimerID SDLCALL SDL_AddTimer(Uint32 interval, SDL_NewTimerCa
 
 /**
  * Remove one of the multiple timers knowing its ID.
- * Returns a boolean value indicating success.
+ * Returns a bool value indicating success.
  */
 extern DECLSPEC SDL_bool SDLCALL SDL_RemoveTimer(SDL_TimerID t);
 

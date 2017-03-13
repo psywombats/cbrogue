@@ -19,13 +19,13 @@ short brogueFontSize = -1;
 extern playerCharacter rogue;
 struct brogueConsole currentConsole;
 
-boolean serverMode = false;
-boolean noMenu = false;
+bool serverMode = false;
+bool noMenu = false;
 unsigned long int firstSeed = 0;
 
 void dumpScores();
 
-static boolean endswith(const char *str, const char *ending)
+static bool endswith(const char *str, const char *ending)
 {
 	int str_len = strlen(str), ending_len = strlen(ending);
 	if (str_len < ending_len) return false;

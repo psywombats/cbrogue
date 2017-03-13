@@ -55,18 +55,18 @@ void pausingTimerStartsNow() {
 	
 }
 
-boolean shiftKeyIsDown() {
+bool shiftKeyIsDown() {
 	return currentConsole.modifierHeld(0);
 }
-boolean controlKeyIsDown() {
+bool controlKeyIsDown() {
 	return currentConsole.modifierHeld(1);
 }
 
-void nextKeyOrMouseEvent(rogueEvent *returnEvent, boolean textInput, boolean colorsDance) {
+void nextKeyOrMouseEvent(rogueEvent *returnEvent, bool textInput, bool colorsDance) {
 	currentConsole.nextKeyOrMouseEvent(returnEvent, textInput, colorsDance);
 }
 
-boolean pauseForMilliseconds(short milliseconds) {
+bool pauseForMilliseconds(short milliseconds) {
 	return currentConsole.pauseForMilliseconds(milliseconds);
 }
 
@@ -88,7 +88,7 @@ short sortScoreBuffer() {
 	short i, j, highestUnsortedLine, mostRecentSortedLine;
 	long highestUnsortedScore, mostRecentDate;
 	brogueScoreEntry sortedScoreBuffer[HIGH_SCORES_COUNT];
-	boolean lineSorted[HIGH_SCORES_COUNT];
+	bool lineSorted[HIGH_SCORES_COUNT];
 	
 	mostRecentDate = 0;
 	
@@ -234,7 +234,7 @@ short getHighScoresList(rogueHighScoresEntry returnList[HIGH_SCORES_COUNT]) {
 	return mostRecentLineNumber;
 }
 
-boolean saveHighScore(rogueHighScoresEntry theEntry) {
+bool saveHighScore(rogueHighScoresEntry theEntry) {
 	short i, lowestScoreIndex = -1;
 	long lowestScore = -1;
 	

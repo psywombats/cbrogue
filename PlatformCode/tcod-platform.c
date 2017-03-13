@@ -135,7 +135,7 @@ static void initWithFont(int fontSize)
 	refreshScreen();
 }
 
-static boolean processSpecialKeystrokes(TCOD_key_t k, boolean text) {
+static bool processSpecialKeystrokes(TCOD_key_t k, bool text) {
 	if (k.vk == TCODK_PRINTSCREEN) {
 		// screenshot
 		TCOD_sys_save_screenshot(NULL);
@@ -198,7 +198,7 @@ struct mapsymbol {
 
 static struct mapsymbol *keymap = NULL;
 
-static void rewriteKey(TCOD_key_t *key, boolean text) {
+static void rewriteKey(TCOD_key_t *key, bool text) {
 	if (key->vk == TCODK_CHAR && (SDL_GetModState() & KMOD_CAPS)) {
 		// cancel out caps lock
 		if (!key->shift) {
@@ -230,7 +230,7 @@ static void getModifiers(rogueEvent *returnEvent) {
 
 
 // returns true if input is acceptable
-static boolean processKeystroke(TCOD_key_t key, rogueEvent *returnEvent, boolean text)
+static bool processKeystroke(TCOD_key_t key, rogueEvent *returnEvent, bool text)
 {
 	if (processSpecialKeystrokes(key, text)) {
 		return false;
@@ -321,7 +321,7 @@ static boolean processKeystroke(TCOD_key_t key, rogueEvent *returnEvent, boolean
 	return true;
 }
 
-static boolean tcod_pauseForMilliseconds(short milliseconds)
+static bool tcod_pauseForMilliseconds(short milliseconds)
 {
 	TCOD_mouse_t mouse;
 	TCOD_console_flush();
@@ -355,9 +355,9 @@ static boolean tcod_pauseForMilliseconds(short milliseconds)
 
 #define PAUSE_BETWEEN_EVENT_POLLING		36//17
 
-static void tcod_nextKeyOrMouseEvent(rogueEvent *returnEvent, boolean textInput, boolean colorsDance)
+static void tcod_nextKeyOrMouseEvent(rogueEvent *returnEvent, bool textInput, bool colorsDance)
 {
-	boolean tryAgain;
+	bool tryAgain;
 	TCOD_key_t key;
 	TCOD_mouse_t mouse;
 	uint32 theTime, waitTime;
@@ -622,7 +622,7 @@ static void tcod_remap(const char *input_name, const char *output_name) {
 	keymap = sym;
 }
 
-static boolean modifier_held(int modifier) {
+static bool modifier_held(int modifier) {
 	rogueEvent tempEvent;
 
 	getModifiers(&tempEvent);

@@ -2,11 +2,11 @@
 
 struct brogueConsole {
 	void (*gameLoop)();
-	boolean (*pauseForMilliseconds)(short milliseconds);
-	void (*nextKeyOrMouseEvent)(rogueEvent *returnEvent, boolean textInput, boolean colorsDance);
+	bool (*pauseForMilliseconds)(short milliseconds);
+	void (*nextKeyOrMouseEvent)(rogueEvent *returnEvent, bool textInput, bool colorsDance);
 	void (*plotChar)(uchar, short, short, short, short, short, short, short, short);
 	void (*remap)(const char *, const char *);
-	boolean (*modifierHeld)(int modifier);
+	bool (*modifierHeld)(int modifier);
 };
 
 void loadKeymap();
@@ -20,6 +20,6 @@ extern struct brogueConsole cursesConsole;
 #endif
 
 extern struct brogueConsole currentConsole;
-extern boolean serverMode;
-extern boolean noMenu;
+extern bool serverMode;
+extern bool noMenu;
 

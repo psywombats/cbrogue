@@ -91,7 +91,7 @@ struct mapsymbol {
 
 static struct mapsymbol *keymap = NULL;
 
-static int rewriteKey(int key, boolean text) {
+static int rewriteKey(int key, bool text) {
 	if (text) return key;
 
 	struct mapsymbol *s = keymap;
@@ -114,7 +114,7 @@ static uint32_t getTime() {
 	return 1000 * time.time + time.millitm;
 }
 
-static boolean curses_pauseForMilliseconds(short milliseconds) {
+static bool curses_pauseForMilliseconds(short milliseconds) {
 	Term.refresh();
 	Term.wait(milliseconds);
 	
@@ -122,7 +122,7 @@ static boolean curses_pauseForMilliseconds(short milliseconds) {
 	return Term.hasKey();
 }
 
-static void curses_nextKeyOrMouseEvent(rogueEvent *returnEvent, boolean textInput, boolean colorsDance) {
+static void curses_nextKeyOrMouseEvent(rogueEvent *returnEvent, bool textInput, bool colorsDance) {
 	int key;
 	// TCOD_mouse_t mouse;
 	uint32_t theTime, waitTime;
@@ -211,7 +211,7 @@ static void curses_remap(const char *input_name, const char *output_name) {
 	keymap = sym;
 }
 
-static boolean modifier_held(int modifier) {
+static bool modifier_held(int modifier) {
 	return 0;
 }
 
