@@ -72,6 +72,7 @@ public:
     std::string nameSuffix;
     std::string flavorOverride;
     std::string flavorAddition;
+    std::string summonMessage;
     std::vector<std::string> hitMessages;
     ColorModFlavor colorMod;
     const color *colorOverride;

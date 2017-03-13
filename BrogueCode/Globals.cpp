@@ -1006,6 +1006,9 @@ dungeonFeature dungeonFeatureCatalog[NUMBER_DUNGEON_FEATURES] = {
     // goblin warren:
     {STENCH_SMOKE_GAS,          GAS,        50,     0,      0, "", NO_LIGHT, 0, 0, NOTHING, DF_PLAIN_FIRE},
     {STENCH_SMOKE_GAS,          GAS,        50,     0,      0, "", NO_LIGHT, 0, 0, NOTHING, DF_EMBERS},
+    
+    // chimeric:
+    {RUBBLE,                    SURFACE,    0,      0,      (DFF_ACTIVATE_DORMANT_MONSTER)},
 };
 
 #pragma mark Dungeon Profiles

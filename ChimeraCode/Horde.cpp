@@ -55,7 +55,7 @@ Horde *Horde::createMachineVariant() const {
         }
         case HordePurposeType::THIEF: {
             // most of this logic elsewhere
-            newHorde->purpose = HordePurposeType::THIEF;
+            newHorde->purpose = HordePurposeType::THIEF_MACHINE;
             break;
         }
         case HordePurposeType::TOTEM: {
@@ -150,6 +150,9 @@ hordeType Horde::convertToStruct() const {
     if (this->purpose == HordePurposeType::TURRET) {
         hordeStruct.spawnsIn = WALL;
     }
+    if (this->purpose == HordePurposeType::THIEF_MACHINE) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_THIEF);
+    }
     if (this->purpose == HordePurposeType::WARREN || this->purpose == HordePurposeType::WARREN_CAPTIVE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_GOBLIN_WARREN);
     }
@@ -194,13 +197,13 @@ hordeType Horde::convertToStruct() const {
     if (this->purpose == HordePurposeType::AQUA_MACHINE) {
         hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_WATER_MONSTER);
     }
+    if (this->purpose == HordePurposeType::BOSS) {
+        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_BOSS);
+    }
     if (hordeStruct.flags & HORDE_LEADER_CAPTIVE && purpose != HordePurposeType::CAPTIVE) {
         hordeStruct.spawnsIn = MONSTER_CAGE_CLOSED;
     }
-    if (hordeStruct.flags & HORDE_MACHINE_BOSS) {
-        hordeStruct.flags = (hordeFlags)(hordeStruct.flags | HORDE_MACHINE_BOSS);
-    }
-
+    
     hordeStruct.leaderType = leader.monsterId;
 
     hordeStruct.numberOfMemberTypes = this->members.size();
@@ -263,6 +266,12 @@ int Horde::calculateDL() const {
 //                }
                 danger += members.size();
                 danger += count / 3;
+                if ((leader.genFlags & GF_NO_SPECIALS) && memberCount() > 1) {
+                    danger += 4;
+                }
+                if (memberCount() > 1) {
+                    danger += 2;
+                }
             }
         }
     }

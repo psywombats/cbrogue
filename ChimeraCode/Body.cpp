@@ -13,6 +13,8 @@ Body::Body() :
         hp(0),
         baseName(""),
         flavor(""),
+        summonMessage(""),
+        featureMessage(""),
         baseChar('?'),
         rarityPercent(50),
         genFlags(0),
@@ -63,6 +65,11 @@ void Body::applyToMonster(ChimeraMonster &monster) {
     monster.baseDisplayChar = this->baseChar;
     monster.baseFlavor = this->flavor;
     monster.hitMessages = this->hitMessages;
+    monster.summonMessage = this->summonMessage;
+    monster.featureMessage = this->featureMessage;
+    
+    monster.featurePeriodicPercent = this->periodicFeature;
+    monster.feature = this->periodicFeature;
     
     this->inUse = true;
 
@@ -141,7 +148,7 @@ std::vector<Body *> Body::loadBodies() {
     body->baseName = "jackal";
     body->flavor = "The jackal prowls the caverns for intruders to rend with $HISHER powerful jaws.";
     body->hitMessages = { "claws", "bites", "mauls" };
-    body->baseColor = &tanColor;
+    body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
     body->maxDamage = 4;
@@ -160,8 +167,8 @@ std::vector<Body *> Body::loadBodies() {
     body->baseColor = &darkGray;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 3;
-    body->maxDamage = 6;
-    body->hp = 12;
+    body->maxDamage = 5;
+    body->hp = 10;
     body->dangerLevel = 4;
     body->accuracy = AccuracyType::INACCURATE;
     body->gender = GenderType::BOTH;
@@ -171,23 +178,24 @@ std::vector<Body *> Body::loadBodies() {
     body = new Body();
     body->baseName = "hyena";
     body->flavor = "The hyena is an opportunistic predator, stalking the halls by itself or in packs.";
-    body->hitMessages = { "claws", "bites", "slashes" };
+    body->hitMessages = { "claws", "bites", "slashes at" };
     body->baseColor = &tanColor;
     body->blood = DF_RED_BLOOD;
-    body->minDamage = 2;
+    body->minDamage = 1;
     body->maxDamage = 4;
     body->hp = 10;
     body->moveSpeed = MoveSpeedType::FAST;
     body->regenSpeed = RegenSpeedType::FAST;
-    body->dangerLevel = 4;
+    body->dangerLevel = 3;
     body->genFlags = (GF_ANIMAL);
     body->flags = (MONST_FLEES_NEAR_DEATH);
+    body->rarityPercent = 25;
     bodies.push_back(body);
 
     body = new Body();
     body->baseName = "goblin";
     body->flavor = "A filthy little primate, the tribalistic goblin often travels in packs.";
-    body->hitMessages = { "stabs", "punches", "slashes" };
+    body->hitMessages = { "stabs", "punches", "hits" };
     body->baseColor = &brown;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -220,7 +228,7 @@ std::vector<Body *> Body::loadBodies() {
     body->flavor = "Wreathed from head to toe in filthy robes, it is difficult to tell if the acolyte underneath is human at all.";
     body->hitMessages = { "stabs", "knifes", "slices" };
     body->baseChar = 'A';
-    body->baseColor = &darkGray;
+    body->baseColor = &darkRed;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
     body->maxDamage = 5;
@@ -248,7 +256,7 @@ std::vector<Body *> Body::loadBodies() {
     body = new Body();
     body->baseName = "bat";
     body->flavor = "Often hunting in packs, leathery wings and keen senses guide the vampire bat unerringly to $HISHER prey.";
-    body->hitMessages = { "nips", "bites", "slashes" };
+    body->hitMessages = { "nips", "bites", "dives at" };
     body->baseColor = &gray;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 2;
@@ -406,10 +414,10 @@ std::vector<Body *> Body::loadBodies() {
     body->hitMessages = { "bites", "grazes", "rakes" };
     body->baseChar = 'V';
     body->baseColor = &gray;
-    body->minDamage = 5;
-    body->maxDamage = 10;
-    body->hp = 30;
-    body->dangerLevel = 9;
+    body->minDamage = 4;
+    body->maxDamage = 7;
+    body->hp = 27;
+    body->dangerLevel = 10;
     body->abilFlags = (MA_TRANSFERENCE);
     body->gender = GenderType::BOTH;
     body->genFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY | GF_UNDEAD);
@@ -454,8 +462,8 @@ std::vector<Body *> Body::loadBodies() {
     body->blood = DF_RED_BLOOD;
     body->minDamage = 3;
     body->maxDamage = 5;
-    body->hp = 20;
-    body->dangerLevel = 6;
+    body->hp = 23;
+    body->dangerLevel = 8;
     body->gender = GenderType::BOTH;
     body->genFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     bodies.push_back(body);
@@ -501,12 +509,12 @@ std::vector<Body *> Body::loadBodies() {
     body->baseChar = 'U';
     body->baseColor = &gray;
     body->blood = DF_WORM_BLOOD;
-    body->minDamage = 18;
-    body->maxDamage = 22;
-    body->hp = 80;
+    body->minDamage = 14;
+    body->maxDamage = 18;
+    body->hp = 70;
     body->moveSpeed = MoveSpeedType::SLOW;
     body->attackSpeed = AttackSpeedType::SLOW;
-    body->dangerLevel = 13;
+    body->dangerLevel = 14;
     body->genFlags = (GF_ANIMAL | GF_INSECTOID | GF_AQUATIC | GF_DIGGER | GF_BRAINLESS);
     bodies.push_back(body);
     
@@ -695,12 +703,12 @@ std::vector<Body *> Body::loadBodies() {
     body = new Body();
     body->baseName = "ferret";
     body->flavor = "The ferret is a mischevious weasel that makes $HISHER home in the grasses of the upper dungeon.";
-    body->hitMessages = { "punches", "scratches", "scuffs" };
+    body->hitMessages = { "nips", "scratches", "scuffs" };
     body->baseColor = &tanColor;
     body->blood = DF_RED_BLOOD;
     body->minDamage = 1;
     body->maxDamage = 3;
-    body->hp = 10;
+    body->hp = 7;
     body->dangerLevel = 5;
     body->defense = DefenseType::HIGH;
     body->genFlags = (GF_THIEVING | GF_ANIMAL);
@@ -729,7 +737,7 @@ std::vector<Body *> Body::loadBodies() {
     body->minDamage = 1;
     body->maxDamage = 3;
     body->hp = 10;
-    body->dangerLevel = 4;
+    body->dangerLevel = 3;
     body->flags = (MONST_FLIES | MONST_FLITS);
     body->genFlags = (GF_THIEVING | GF_THIEVING_ONLY | GF_ANIMAL);
     body->rarityPercent = 66;
@@ -737,14 +745,14 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "quasit";
-    body->flavor = "An unusual construction of bone and magic, the quasit is the construct of some more powerful entity of the lower depths.";
+    body->flavor = "An unusual construction of wood and magic, the quasit is the creation of some more powerful entity of the lower depths.";
     body->hitMessages = { "whacks", "flails at", "swipes" };
     body->baseColor = &white;
     body->blood = DF_ASH_BLOOD;
     body->minDamage = 4;
-    body->maxDamage = 9;
+    body->maxDamage = 8;
     body->hp = 35;
-    body->dangerLevel = 8;
+    body->dangerLevel = 9;
     body->genFlags = (GF_SUPPORTS_CLASS | GF_THIEVING);
     body->flags = MONST_DIES_IF_NEGATED;
     bodies.push_back(body);
@@ -890,7 +898,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "ivory $BASE";
-    body->flavor = "This mysterious $BASE is carved completely out of pure white ivory. The $BASE nearby seem oddly attracted.";
+    body->flavor = "This mysterious $BASE is carved completely out of pure white ivory. The $BASEs nearby seem oddly attracted.";
     body->hitMessages = { "gleams at" };
     body->baseChar = STATUE_CHAR;
     body->baseColor = &white;
@@ -985,7 +993,7 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "construct";
-    body->flavor = "Formed of clay by sculptor well-versed in the eldritch arts, the construct can absorb heavy damage for $HISHER master.";
+    body->flavor = "Formed of clay by a sculptor well-versed in the eldritch arts, the construct can absorb heavy damage for $HISHER master.";
     body->hitMessages = { "knees", "punches", "knocks" };
     body->baseColor = &gray;
     body->baseChar = '&';
@@ -1019,26 +1027,26 @@ std::vector<Body *> Body::loadBodies() {
     
     body = new Body();
     body->baseName = "ghoul";
-    body->flavor = "Emaciated and howling, the ghoul stalks the earth to rend the flesh from living victims. Malodorous flesh hanging from $HISHER gaunt form is enough to induce vomiting.";
+    body->flavor = "Emaciated and howling, the ghoul stalks the earth to rend the flesh from living victims. One whiff of $HISHER putrid flesh is enough to induce vomiting.";
     body->hitMessages = { "rakes", "bites", "claws" };
     body->baseColor = &vomitColor;
     body->baseChar = 'z';
     body->blood = DF_ROT_GAS_BLOOD;
-    body->minDamage = 4;
-    body->maxDamage = 6;
+    body->minDamage = 3;
+    body->maxDamage = 5;
     body->hp = 40;
-    body->dangerLevel = 7;
+    body->dangerLevel = 8;
     body->defense = DefenseType::DEFENSELESS;
     body->periodicFeature = DF_ROT_GAS_PUFF;
     body->periodicFeatureChance = 20;
-    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER);
+    body->genFlags = (GF_NO_SPECIALS | GF_DIGGER | GF_UNDEAD);
     body->rarityPercent = 25;
     bodies.push_back(body);
     
     body = new Body();
     body->baseName = "revenant";
     body->flavor = "This unholy ghast stalks the deep places of the earth without fear, impervious to conventional attacks.";
-    body->hitMessages = { "hits", "slashes" };
+    body->hitMessages = { "hits", "scrapes at" };
     body->baseColor = &ectoplasmColor;
     body->baseChar = 'R';
     body->minDamage = 15;
@@ -1078,6 +1086,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 35;
     body->abilFlags = MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25;
     body->summon = SummonType::SPAWN_UNRELATED_MOOK;
+    body->summonMessage = "utters a terrifying incantation!";
     body->defense = DefenseType::HIGH;
     body->light = LICH_LIGHT;
     body->genFlags = (GF_NO_SPECIALS | GF_WIZARDLY |GF_NO_GROUPS);
@@ -1096,6 +1105,7 @@ std::vector<Body *> Body::loadBodies() {
     body->hp = 35;
     body->abilFlags = MONST_MAINTAINS_DISTANCE;
     body->summon = SummonType::SPAWN_FODDER;
+    body->summonMessage = " lifts $HISHER robe!";
     body->defense = DefenseType::HIGH;
     body->genFlags = (GF_SHAMANISTIC | GF_PACK_MEMBER | GF_UNDEAD | GF_DIGGER | GF_NO_GROUPS);
     body->dangerLevel = 15;

@@ -1610,6 +1610,9 @@ void killCreature(creature *decedent, bool administrativeDeath) {
     }
     
     if (!administrativeDeath && (decedent->info.abilityFlags & MA_DF_ON_DEATH)) {
+        if (decedent->info.DFType == DF_SHATTERING_SPELL) {
+            crystalize(8);
+        }
         spawnDungeonFeature(decedent->xLoc, decedent->yLoc, &dungeonFeatureCatalog[decedent->info.DFType], true, false);
         
         creatureType *catalog = getMonsterCatalog();

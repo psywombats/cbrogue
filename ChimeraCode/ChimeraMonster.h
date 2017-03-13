@@ -134,6 +134,7 @@ public:
     // flavor
     std::string baseName;
     std::string baseFlavor;
+    std::string summonMessage;
     const color *displayColor;
     uchar baseDisplayChar;
     dungeonFeatureTypes bloodType;
@@ -173,6 +174,7 @@ public:
     int dangerLevel;
     
     static void replace(std::string &source, const std::string &token, const std::string &replacement);
+    static void reset();
 
 private:
 

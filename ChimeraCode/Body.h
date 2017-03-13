@@ -44,6 +44,8 @@ public:
     // flavor
     std::string baseName;
     std::string flavor;
+    std::string summonMessage;
+    std::string featureMessage;
     uchar baseChar;
     const color *baseColor;
     lightType light;

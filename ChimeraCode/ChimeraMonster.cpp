@@ -37,6 +37,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         nameSuffix(""),
         namePrefix(""),
         baseFlavor(""),
+        summonMessage(""),
         displayChar('?'),
         baseDisplayChar('?'),
         accuracy(AccuracyType::NORMAL),
@@ -59,7 +60,7 @@ ChimeraMonster::ChimeraMonster(Body &newBody) :
         attackSpeed(AttackSpeedType::NORMAL) {
 
     if (ChimeraMonster::nextChimeraId == 0) {
-        ChimeraMonster::nextChimeraId = 3;
+        reset();
     }
     monsterId = ChimeraMonster::nextChimeraId;
     ChimeraMonster::nextChimeraId += 1;
@@ -84,6 +85,7 @@ creatureType ChimeraMonster::convertToStruct() {
     strcpy(creatureStruct.flavorText, flavor.c_str());
     strcpy(creatureStruct.absorbStatus, absorb.status.c_str());
     strcpy(creatureStruct.absorbing, absorb.message.c_str());
+    strcpy(creatureStruct.summonMessage, summonMessage.c_str());
 
     creatureStruct.monsterID = monsterId;
     creatureStruct.displayChar = displayChar;
@@ -146,21 +148,22 @@ creatureType ChimeraMonster::convertToStruct() {
 
     for (unsigned int i = 0; i < bolts.size(); i += 1) {
         creatureStruct.bolts[i] = bolts[i];
-        i += 1;
     }
 
     if (genFlags & GF_SUPPORTS_CLASS) {
         // TODO: do this more smartlier
         creatureStruct.abilityFlags |= MA_AVOID_CORRIDORS;
     }
-    
     if (genFlags & GF_AQUATIC_ONLY) {
         creatureStruct.flags |= MONST_RESTRICTED_TO_LIQUID | MONST_NEVER_SLEEPS;
     }
     
     creatureStruct.DFType = feature;
-    memcpy(&creatureStruct.DFMessage, featureMessage.c_str(), featureMessage.length()+1);
+    strcpy(creatureStruct.DFMessage, featureMessage.c_str());
     creatureStruct.DFChance = featurePeriodicPercent;
+    if (featureKamikaze) {
+        creatureStruct.abilityFlags |= (MA_DF_ON_DEATH | MA_KAMIKAZE);
+    }
     
     if (bloodType == DF_NONE) {
         if ((genFlags & GF_ANIMAL) > 0) {
@@ -175,14 +178,11 @@ creatureType ChimeraMonster::convertToStruct() {
     if (summon != SummonType::NONE) {
         creatureStruct.abilityFlags |= MA_CAST_SUMMON;
         if (summon == SummonType::TRANSFORM_MOOK) {
-            creatureStruct.abilityFlags = MA_ENTER_SUMMONS;
+            creatureStruct.abilityFlags |= MA_ENTER_SUMMONS;
         }
     }
     
     creatureStruct.danger = (short)dangerLevel;
-
-    // TODO
-    //char summonMessage[DCOLS * 2];
 
     return creatureStruct;
 }
@@ -495,5 +495,10 @@ const std::string &ChimeraMonster::getBaseName() const {
     } else {
         return baseName;
     }
+}
+
+void ChimeraMonster::reset() {
+    ChimeraMonster::nextChimeraId = 3;
+    ChimeraMonster::usedChars.clear();
 }
 

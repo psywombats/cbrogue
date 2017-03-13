@@ -1598,6 +1598,9 @@ enum dungeonFeatureTypes {
     DF_STENCH_BURN,
     DF_STENCH_SMOLDER,
     
+    // chimeric
+    DF_SHATTER_BLOAT,
+    
     NUMBER_DUNGEON_FEATURES,
 };
 
@@ -3084,6 +3087,9 @@ extern "C" {
     void pdsClear(pdsMap *map, short maxDistance, bool eightWays);
     void pdsSetDistance(pdsMap *map, short x, short y, short distance);
     void pdsBatchOutput(pdsMap *map, short **distanceMap);
+    
+    // chimeric
+    void crystalize(short radius);
     
 #if defined __cplusplus
 }

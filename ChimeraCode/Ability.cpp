@@ -36,6 +36,7 @@ Ability::Ability() :
         light(NO_LIGHT),
         flavorOverride(""),
         flavorAddition(""),
+        summonMessage(""),
         inUse(false) {
 
 }
@@ -75,6 +76,12 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
     if (hitMessages.size() > 0) {
         // overwrite the existing messages
         monster.hitMessages = hitMessages;
+    }
+    if (summonMessage.length() > 0) {
+        monster.summonMessage = summonMessage;
+    }
+    if (featureMessage.length() > 0) {
+        monster.featureMessage = featureMessage;
     }
     
     int origHp = monster.hp;
@@ -140,11 +147,11 @@ void Ability::applyToMonster(ChimeraMonster &monster) {
 }
 
 bool Ability::isValidForMonster(const ChimeraMonster &monster) const {
-    return isValidFor(monster.body, 0, monster.baseMook);
+    return isValidFor(monster.body, monster.genFlags, monster.baseMook);
 }
 
 bool Ability::isValidForMonster(const ChimeraMonster &monster, unsigned long ignoredFlags) const {
-    return isValidFor(monster.body, ignoredFlags, monster.baseMook);
+    return isValidFor(monster.body, (ignoredFlags | monster.genFlags), monster.baseMook);
 }
 
 bool Ability::isValidFor(const Body &body) const {
@@ -195,8 +202,10 @@ const color *Ability::blendColor(const color *baseColor) const {
             return &gray;
         } else if (baseColor == &brown || baseColor == &gray) {
             return &darkGray;
-        } else if (baseColor == &darkGray || baseColor == &darkRed) {
+        } else if (baseColor == &darkRed) {
             return &veryDarkGray;
+        } else if (baseColor == &darkGray) {
+            return &darkRed;
         } else if (baseColor == &tanColor || baseColor == &darkGreen) {
             return &darkBlue;
         } else if (baseColor == &darkYellow) {
@@ -543,7 +552,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->namePrefix = "mirror";
-    ability->flavorOverride = "Instead of hide or hair, $HISHER body is covered in weird metal plates.";
+    ability->flavorAddition = "Instead of hide or hair, $HISHER body is covered in weird metal plates.";
     ability->colorOverride = &beckonColor;
     ability->dangerBoost = 2;
     ability->flags = MONST_REFLECT_4;
@@ -729,7 +738,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 6;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_BLOAT_DEATH;
-    ability->featureMessage = "bursts, leaving behind an expanding cloud of caustic gas!";
+    ability->featureMessage = "bursts, into a expanding cloud of caustic gas!";
     ability->rarityPercent = 66;
     abilities.push_back(ability);
     
@@ -740,7 +749,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 7;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_HOLE_POTION;
-    ability->featureMessage = "bursts, causing the floor underneath $HIMHER to disappear!";
+    ability->featureMessage = "blows out a hole in the floor!";
     ability->rarityPercent = 33;
     abilities.push_back(ability);
     
@@ -762,7 +771,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 15;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_MUTATION_LICHEN;
-    ability->featureMessage = "bursts, filling the air with a cloud of fungal spores!";
+    ability->featureMessage = "bursts into a cloud of fungal spores!";
     ability->rarityPercent = 25;
     abilities.push_back(ability);
     
@@ -785,7 +794,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_SHATTERING_SPELL;
-    ability->featureMessage = "bursts, releasing a wave of turquoise radiation! The walls begin to shimmer.";
+    ability->featureMessage = "shatters, releasing a wave of turquoise radiation!";
     ability->rarityPercent = 25;
     abilities.push_back(ability);
     
@@ -796,7 +805,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 13;
     ability->requiredFlags = (GF_BURSTS);
     ability->featureKamikaze = DF_DEWAR_METHANE;
-    ability->featureMessage = "bursts, and an offensive odor accompanies the hiss of escaping methane!";
+    ability->featureMessage = "explodes with an ominous hiss!";
     ability->rarityPercent = 25;
     abilities.push_back(ability);
     
@@ -1017,6 +1026,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 3;
     ability->summon = SummonType::CONJURATION;
+    ability->summonMessage = " flashes white!";
     ability->bolts = {BOLT_INVISIBILITY};
     ability->requiredFlags = (GF_TOTEM | GF_WIZARDLY);
     ability->rarityPercent = 33;
@@ -1042,6 +1052,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 4;
     ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->summonMessage = "pulses with unseen energy.";
     ability->requiredFlags = (GF_TOTEM | GF_SHAMANISTIC);
     ability->rarityPercent = 12;
     abilities.push_back(ability);
@@ -1050,6 +1061,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::TOTEM;
     ability->dangerBoost = 0;
     ability->summon = SummonType::SPAWN_BASE_MOOK_DISTANT;
+    ability->summonMessage = "vibrates with a maddening hum.";
     ability->requiredFlags = (GF_TOTEM | GF_ANIMAL);
     abilities.push_back(ability);
     
@@ -1205,19 +1217,19 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = 10;
     ability->bolts = {BOLT_HASTE, BOLT_SPARK};
     ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->summonMessage = "calls to the distance!";
     ability->flags = MONST_MAINTAINS_DISTANCE | MONST_FLEES_NEAR_DEATH;
     ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
     
     ability = new Ability();
     ability->namePrefix = "king";
-    ability->flavorOverride = "Royalty among $BASEs, the $BASE king is an massive, muscular, and ageless, having weathered hundreds of years lording over the $BASE of the dungeon.";
+    ability->flavorOverride = "Royalty among $BASEs, the $BASE king is massive, muscular, and ageless, having weathered hundreds of years lording over the $BASE of the dungeon.";
     ability->colorOverride = &darkBlue;
     ability->dangerBoost = 3;
     ability->moveSpeed = MoveSpeedType::FAST;
     ability->regenSpeed = RegenSpeedType::VERY_FAST;
     ability->physique = PhysiqueType::BUFF;
-    ability->summon = SummonType::TRANSFORM_MOOK;
     ability->flags = MONST_FLEES_NEAR_DEATH;
     ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_ANIMAL);
     abilities.push_back(ability);
@@ -1229,6 +1241,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->light = LICH_LIGHT;
     ability->dangerBoost = 6;
     ability->summon = SummonType::SPAWN_UNRELATED_MOOK;
+    ability->summonMessage = "speaks a terrible word!";
     ability->bolts = {BOLT_FIRE, BOLT_SLOW_2, BOLT_NEGATION, BOLT_DISCORD};
     ability->flags = (MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_WIZARDLY);
@@ -1257,6 +1270,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hpBoost = 5;
     ability->flags = MONST_MAINTAINS_DISTANCE;
     ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->summonMessage = "bellows a warcry!";
     ability->requiredFlags = (GF_BOSS_ONLY | GF_PACK_MEMBER | GF_SHAMANISTIC);
     ability->rarityPercent = 33;
     abilities.push_back(ability);
@@ -1265,8 +1279,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "were";
     ability->flavorOverride = "This hunched and furred form could be a human wearing $BASE skin, or else a malformed $BASE learned to walk upright. $HESHE is able to switch forms at will.";
     ability->colorMod = ColorModFlavor::SUMMONING;
-    ability->dangerBoost = 1;
+    ability->dangerBoost = 3;
     ability->summon = SummonType::TRANSFORM_MOOK;
+    ability->summonMessage = "erupts in hair and feathers!";
     ability->requiredFlags = (GF_ANIMAL);
     ability->forbiddenFlags = (GF_AQUATIC | GF_SUPPORTS_CLASS);
     abilities.push_back(ability);
@@ -1279,6 +1294,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 2;
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->summon = SummonType::CONJURATION;
+    ability->summonMessage = "gestures ominously!";
     ability->flags = (MONST_CARRY_ITEM_25 | MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_SUPPORTS_CLASS);
     ability->rarityPercent = 100;
@@ -1291,8 +1307,9 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorMod = ColorModFlavor::SUMMONING;
     ability->dangerBoost = 4;
     ability->physique = PhysiqueType::SPELLCASTER;
-    ability->bolts = {BOLT_HASTE};
+    ability->bolts = {BOLT_HEALING};
     ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->summonMessage = "recites a magic word!";
     ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_MAINTAINS_DISTANCE);
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->rarityPercent = 33;
@@ -1304,9 +1321,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 6;
     ability->hpBoost = -5;
     ability->maxDamageBoost = -1;
-    ability->bolts = {BOLT_SHIELDING, BOLT_SPARK};
+    ability->bolts = {BOLT_HASTE, BOLT_SPARK};
     ability->flags = MONST_CAST_SPELLS_SLOWLY;
     ability->summon = SummonType::SPAWN_BASE_MOOK;
+    ability->summonMessage = "murmurs and chants!";
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_SHAMANISTIC);
     ability->rarityPercent = 33;
 

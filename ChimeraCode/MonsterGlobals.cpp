@@ -205,7 +205,7 @@ short getWebberMonsterId() {
 
 short getDiggerMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_UNDERWORM;
     } else {
         return generator->diggerMonsterId;
@@ -214,7 +214,7 @@ short getDiggerMonsterId() {
 
 short getSparkMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_SPARK_TURRET;
     } else {
         return generator->sparkMonsterId;
@@ -223,7 +223,7 @@ short getSparkMonsterId() {
 
 short getUndeadMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_ZOMBIE;
     } else {
         return generator->undeadMonsterId;
@@ -232,7 +232,7 @@ short getUndeadMonsterId() {
 
 short getInvisibleMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_PHANTOM;
     } else {
         return generator->invisibleMonsterId;
@@ -250,7 +250,7 @@ short getSpectralImageMonsterId() {
 
 short getConjurationMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_SPECTRAL_BLADE;
     } else {
         return generator->conjurationMonsterId;
@@ -259,7 +259,7 @@ short getConjurationMonsterId() {
 
 short getCharmSummonMonsterId() {
     ensureCatalogsInitialized();
-    if (CHIMERAS_ENABLED) {
+    if (!CHIMERAS_ENABLED) {
         return MK_CHARM_GUARDIAN;
     } else {
         return generator->charmSummonMonsterId;
@@ -268,6 +268,7 @@ short getCharmSummonMonsterId() {
 
 void resetMonsterGeneration() {
     monsterCatalogInitialized = false;
+    ChimeraMonster::reset();
 }
 
 void ensureCatalogsInitialized() {

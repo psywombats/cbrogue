@@ -22,6 +22,14 @@
          contextName = "MonsterGenerator::generate():MonsterGenerator.cpp">
       </ContextState>
       <ContextState
+         contextName = "Ability::isValidFor(Body const&amp;, unsigned long, ChimeraMonster const*) const:Ability.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "body.genFlags">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "paintLight:Light.c">
       </ContextState>
       <ContextState

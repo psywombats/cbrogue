@@ -176,7 +176,7 @@ void MonsterGenerator::generate() {
         if (monster.genFlags & GF_NO_GROUPS) {
             continue;
         }
-        if (rand_percent(75 - (monster.dangerLevel * 2))) {
+        if (rand_percent(70 - (monster.dangerLevel * 2))) {
             Horde &horde = newHorde(monster);
             horde.addMember(monster, 2, rand_range(2, 3));
         }
@@ -632,13 +632,15 @@ void MonsterGenerator::generate() {
         }
         return !(body->genFlags & weird) && body->dangerLevel >= 15 && body->dangerLevel <= 22;
     });
-    Ability *vampireAbility = matchingAbility([](const Ability *ability) {
-        return (ability->abilFlags & MA_TRANSFERENCE);
-    });
-    if (vampireBody != NULL && vampireAbility != NULL) {
-        ChimeraMonster *vampire = newMonster(*vampireBody);
-        vampire->applyAbility(*vampireAbility);
-        vampireBossMonsterId = vampire->monsterId;
+    if (vampireBody != NULL) {
+        Ability *vampireAbility = matchingAbility([vampireBody](const Ability *ability) {
+            return (ability->abilFlags & MA_TRANSFERENCE) && ability->isValidFor(*vampireBody);
+        });
+        if (vampireBody != NULL && vampireAbility != NULL) {
+            ChimeraMonster *vampire = newMonster(*vampireBody);
+            vampire->applyAbility(*vampireAbility);
+            vampireBossMonsterId = vampire->monsterId;
+        }
     }
     
     // Step 17: Guardians
@@ -696,7 +698,7 @@ void MonsterGenerator::generate() {
         charmSummonMonsterId = charmGuardian->monsterId;
         charmGuardian->flags = (MONST_INANIMATE | MONST_NEVER_SLEEPS | MONST_IMMUNE_TO_FIRE | MONST_IMMUNE_TO_WEAPONS |
                                 MONST_DIES_IF_NEGATED | MONST_REFLECT_4 | MONST_ALWAYS_USE_ABILITY);
-        wingedGuardian->baseMookName = guardianBody->baseName;
+        charmGuardian->baseMookName = guardianBody->baseName;
         charmGuardian->namePrefix = "guardian";
         charmGuardian->baseFlavor = "A spectral outline of a $BASE carrying a $WEAPON casts an ethereal light on its surroundings.";
         charmGuardian->damage.lowerBound = 5;
@@ -1069,7 +1071,7 @@ void MonsterGenerator::generate() {
                     }
                 }
                 int dangerDelta = mookSet[0].get().dangerLevel - horde.calculateDL();
-                if (dangerDelta > 5) {
+                if (dangerDelta > 4) {
                     continue;
                 } else if (dangerDelta > 2) {
                     horde.addMember(mookSet[0], 1, 1);
@@ -1230,7 +1232,7 @@ void MonsterGenerator::generate() {
             case SummonType::CONJURATION: {
                 Horde &horde = newHorde(*monster);
                 horde.purpose = HordePurposeType::CONJURATION;
-                horde.addMember(*conjuration, 3 + monster->dangerLevel / 12, 5 + monster->dangerLevel / 10);
+                horde.addMember(*conjuration, 3 + monster->dangerLevel / 15, 5 + monster->dangerLevel / 10);
                 break;
             }
             case SummonType::SPAWN_BASE_MOOK_DISTANT:
