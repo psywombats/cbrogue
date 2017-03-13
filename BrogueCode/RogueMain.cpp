@@ -946,6 +946,15 @@ void freeCreature(creature *monst) {
         freeCreature(monst->carriedMonster);
         monst->carriedMonster = NULL;
     }
+    
+    // Chimeric addition -- trying to fix a crash for were-creatures have bad leaders
+    // disabled for now in case it breaks something or other
+//    for (creature *allyMonster = monst->nextCreature; allyMonster != NULL; allyMonster = allyMonster->nextCreature) {
+//        if (allyMonster->leader == monst) {
+//            allyMonster->leader = NULL;
+//        }
+//    }
+    
     free(monst);
 }
 

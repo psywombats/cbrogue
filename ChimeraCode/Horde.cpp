@@ -256,14 +256,6 @@ int Horde::calculateDL() const {
                     count += avgMembers;
                     totalDanger += member->member.dangerLevel * avgMembers;
                 }
-//                int avgDanger = totalDanger / count;
-//                if (avgDanger + 2 <= danger) {
-//                    // this is a swarm of similar DL monsters
-//                    danger += CLAMP(count, 2, 4);
-//                } else {
-//                    // the leader is powerful (mage?) with some trailing minions
-//                    danger += members.size() + CLAMP(avgDanger / 4, 0, 4);
-//                }
                 danger += members.size();
                 danger += count / 3;
                 if ((leader.genFlags & GF_NO_SPECIALS) && memberCount() > 1) {
@@ -274,6 +266,15 @@ int Horde::calculateDL() const {
                 }
             }
         }
+    }
+    bool hasHealer = std::find(leader.bolts.begin(), leader.bolts.end(), BOLT_HEALING) != leader.bolts.end();
+    bool hasNoRegen = leader.regenSpeed == RegenSpeedType::NONE;
+    for (HordeMember *member : members) {
+        hasHealer = hasHealer || std::find(member->member.bolts.begin(), member->member.bolts.end(), BOLT_HEALING) != member->member.bolts.end();
+        hasNoRegen = hasNoRegen || member->member.regenSpeed == RegenSpeedType::NONE;
+    }
+    if (hasHealer && hasNoRegen) {
+        danger += 3;
     }
     return danger;
 }

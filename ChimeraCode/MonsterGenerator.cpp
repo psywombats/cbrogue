@@ -176,7 +176,7 @@ void MonsterGenerator::generate() {
         if (monster.genFlags & GF_NO_GROUPS) {
             continue;
         }
-        if (rand_percent(70 - (monster.dangerLevel * 2))) {
+        if (rand_percent(70 - (monster.dangerLevel * 2)) && rand_percent(60)) {
             Horde &horde = newHorde(monster);
             horde.addMember(monster, 2, rand_range(2, 3));
         }
@@ -235,8 +235,14 @@ void MonsterGenerator::generate() {
 
             if (choice == 1 && !(monster->genFlags & GF_NO_GROUPS)) {
                 // and some followers?
-                Horde &horde = newHorde(*monster);
-                horde.addMember(mook, 2, rand_range(2, 4));
+                int choice = rand_range(0, 3);
+                if (choice == 0 || choice == 1) {
+                    Horde &horde = newHorde(*monster);
+                    horde.addMember(mook, 2, rand_range(2, 3));
+                } else if (choice == 1) {
+                    Horde &horde = newHorde(*monster);
+                    horde.addMember(*monster, 1, 1);
+                }
             } else if (choice == 2 && !(monster->genFlags & GF_NO_GROUPS)) {
                 // two mutant types and a hunting party
                 ChimeraMonster *monster2 = newMonster(&mook);
@@ -650,7 +656,7 @@ void MonsterGenerator::generate() {
             if (body->genFlags & weird) {
                 return false;
             }
-            if (!(body->genFlags & GF_ARMED)) {
+            if (!(body->genFlags & GF_ARMED) && rand_percent(80)) {
                 return false;
             }
             if (!(body->genFlags & GF_BOSSLIKE) && rand_percent(50)) {

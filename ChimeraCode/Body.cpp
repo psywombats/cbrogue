@@ -168,7 +168,7 @@ std::vector<Body *> Body::loadBodies() {
     body->blood = DF_RED_BLOOD;
     body->minDamage = 3;
     body->maxDamage = 5;
-    body->hp = 10;
+    body->hp = 11;
     body->dangerLevel = 4;
     body->accuracy = AccuracyType::INACCURATE;
     body->gender = GenderType::BOTH;

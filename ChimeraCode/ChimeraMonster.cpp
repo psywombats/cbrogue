@@ -434,20 +434,21 @@ void ChimeraMonster::generateName() {
     if (name == "lizardman dominatrix")     name = "salamander";
     if (name == "lizardman axeman")         name = "naga";
     if (name == "horseman archer")          name = "centaur";
-    if (name == "mounted goblin")           name = "warg rider";
     if (name == "thieving ferret")          name = "ferret";
     if (name == "thieving monkey")          name = "monkey";
-    if (name == "thieving raven")           name = "raven";
     if (name == "thieving magpie")          name = "magpie";
     if (name == "impish quasit")            name = "imp";
     if (name == "tentacle mollusk")         name = "kraken";
     if (name == "winged quasit")            name = "gargoyle";
-    if (name == "acolyte idol")             name = "demonic idol";
-    if (name == "acolyte obelisk")          name = "obsidian obelisk";
+    if (name == "acolyte idol")             name = "unholy idol";
     if (name == "acolyte archmage")         name = "archmage";
     if (name == "skeleton lord")            name = "skeletal lord";
+    if (name == "skeleton king")            name = "skeletal king";
     if (name == "burrowing worm")           name = "underworm";
     if (name == "monkey bandit")            name = "lemur";
+    if (name == "silk arachnid")            name = "spider";
+    if (name == "were rat")                 name = "wererat";
+    if (name == "were jackal")              name = "werejackal";
 
     displayName = name;
 }
