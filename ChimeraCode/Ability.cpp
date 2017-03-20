@@ -13,6 +13,7 @@ Ability::Ability() :
         rarityPercent(50),
         requiredFlags(0),
         flags(0),
+        minDL(0),
         forbiddenFlags(0),
         abilFlags(0),
         dangerBoost(0),
@@ -167,6 +168,9 @@ bool Ability::isValidFor(const Body &body, unsigned long ignoredFlags, const Chi
         return false;
     }
     if ((forbiddenFlags & body.genFlags) > 0) {
+        return false;
+    }
+    if (body.dangerLevel < minDL) {
         return false;
     }
     if ((featureKamikaze != DF_NONE || featurePeriodic != DF_NONE) && body.periodicFeature != DF_NONE) {
@@ -351,10 +355,13 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
 
     ability = new Ability();
-    ability->nameSuffix = "webweaver";
+    ability->namePrefix = "silk";
     ability->flavorAddition = "Spinnerets stand at attention, ready to fire vollies of webs to trap $HISHER victims.";
     ability->colorOverride = &white;
     ability->dangerBoost = 2;
+    ability->maxDamageBoost = -1;
+    ability->minDamageBoost = -1;
+    ability->hpBoost = -1;
     ability->bolts = {BOLT_SPIDERWEB};
     ability->requiredFlags = GF_INSECTOID;
     ability->flags = (MONST_CAST_SPELLS_SLOWLY | MONST_IMMUNE_TO_WEBS);
@@ -366,7 +373,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "This $BASE is unarmed, but $HISHER fingers ripple with an innate magic that $HESHE uses to shield $HISHER allies.";
     ability->hitMessages = { "bops", "tweaks", "kicks" };
     ability->colorOverride = &goblinMysticColor;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 1;
     ability->bolts = {BOLT_SHIELDING};
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_PACK_MEMBER | GF_SHAMANISTIC | GF_SUPPORTS_CLASS);
@@ -382,7 +389,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->dangerBoost = 4;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
     ability->maxDamageBoost = 2;
-    ability->minDamageBoost = 0;
+    ability->minDamageBoost = 1;
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = GF_SUPPORTS_CLASS;
     ability->rarityPercent = 33;
@@ -423,7 +430,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
 
     ability = new Ability();
     ability->nameSuffix = "priest";
-    ability->flavorOverride = "Underneath the robe of this $BASE, the $BASE priest carries $HISHER holy $MAGIC and $MAGIC.";
+    ability->flavorOverride = "Underneath the robe of this $BASE, the $BASE priest carries $HISHER holy $MAGIC.";
     ability->hitMessages = { "bludgeons", "elbows" };
     ability->colorOverride = &darPriestessColor;
     ability->dangerBoost = 5;
@@ -453,6 +460,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->hitMessages = { "whacks", "slaps" };
     ability->colorOverride = &darMageColor;
     ability->dangerBoost = 7;
+    ability->minDL = 7;
     ability->bolts = {BOLT_FIRE, BOLT_DISCORD, BOLT_SLOW_2};
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->defense = DefenseType::LOW;
@@ -465,7 +473,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorOverride = "The many gowns and scarves worn by this $BASE would give $HIMHER a more dignified air if they weren't singed and smelling strongly of sulfur.";
     ability->hitMessages = { "singes", "shinkicks" };
     ability->colorMod = ColorModFlavor::FIRE;
-    ability->dangerBoost = 4;
+    ability->dangerBoost = 5;
+    ability->minDL = 6;
     ability->bolts = {BOLT_FIRE};
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
@@ -482,6 +491,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->physique = PhysiqueType::SPELLCASTER;
     ability->requiredFlags = (GF_SUPPORTS_CLASS | GF_WIZARDLY);
     ability->flags = (MONST_MAINTAINS_DISTANCE | MONST_CARRY_ITEM_25);
+    ability->rarityPercent = 66;
     abilities.push_back(ability);
 
     ability = new Ability();
@@ -489,7 +499,8 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "Brimstone falls from $HISHER maw and burns disfigure $HISHER breast.";
     ability->colorMod = ColorModFlavor::FIRE;
     ability->light = LAVA_LIGHT;
-    ability->dangerBoost = 6;
+    ability->dangerBoost = 7;
+    ability->minDL = 6;
     ability->bolts = {BOLT_FIRE};
     ability->requiredFlags = (GF_ANIMAL);
     ability->flags = (MONST_CAST_SPELLS_SLOWLY);
@@ -787,7 +798,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     abilities.push_back(ability);
     
     ability = new Ability();
-    ability->namePrefix = "shattering";
+    ability->namePrefix = "shatter";
     ability->flavorAddition = "The magical energy fueling $HIMHER will erode the surrounding walls when $HESHE detonates.";
     ability->light = SENTINEL_LIGHT;
     ability->colorOverride = &teal;
@@ -916,10 +927,10 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->flavorAddition = "$HESHE possesses a specialized organ that allows $HIMHER to subdue $HISHER prey with electric shocks.";
     ability->hitMessages = { "shocks" };
     ability->colorOverride = &yellow;
-    ability->dangerBoost = 3;
+    ability->dangerBoost = 7;
     ability->bolts = {BOLT_SPARK};
     ability->requiredFlags = (GF_AQUATIC_ONLY | GF_AQUATIC | GF_ANIMAL);
-    ability->rarityPercent = 100;
+    ability->rarityPercent = 75;
     abilities.push_back(ability);
     
     ability = new Ability();
@@ -1069,7 +1080,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->namePrefix = "arrow";
     ability->flavorAddition = "$HESHE automatically acquires targets and fires arrows from a spring-loaded mechanism.";
     ability->colorOverride = &black;
-    ability->dangerBoost = 9;
+    ability->dangerBoost = 8;
     ability->bolts = {BOLT_DISTANCE_ATTACK};
     ability->minDamageBoost = 2;
     ability->maxDamageBoost = 6;
@@ -1240,6 +1251,7 @@ std::vector<Ability *> Ability::loadModifierAbilities() {
     ability->colorOverride = &darkPurple;
     ability->light = LICH_LIGHT;
     ability->dangerBoost = 6;
+    ability->minDL = 5;
     ability->summon = SummonType::SPAWN_UNRELATED_MOOK;
     ability->summonMessage = "speaks a terrible word!";
     ability->bolts = {BOLT_FIRE, BOLT_SLOW_2, BOLT_NEGATION, BOLT_DISCORD};
