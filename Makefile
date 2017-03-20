@@ -7,10 +7,10 @@ CFLAGS=$(FLAGS) -I$(LIBTCODDIR)/include -I$(SDLDIR)/include -IChimeraCode -IBrog
 # ^ yes this is my ghetto build configurations strategy
 
 %.o : %.cpp
-	gcc $(CPPFLAGS) -g -o $@ -c $< 
+	gcc $(CPPFLAGS) -s -O2 -o $@ -c $< 
 
 %.o : %.c
-	gcc $(CFLAGS) -g -o $@ -c $< 
+	gcc $(CFLAGS) -s -O2 -o $@ -c $< 
 
 OBJS=BrogueCode/Architect.o \
 	BrogueCode/Combat.o \
